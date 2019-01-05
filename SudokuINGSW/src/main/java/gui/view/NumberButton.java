@@ -1,4 +1,4 @@
-package tmp;
+package gui.view;
 
 import javafx.scene.control.Button;
 

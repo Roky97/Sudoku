@@ -1,4 +1,4 @@
-package tmp;
+package gui.view;
 
 import javafx.scene.control.Button;
 
@@ -16,7 +16,7 @@ public class SudokuCell extends Button {
 		if(this.value > 0) {
 			setText(Integer.toString(value));
 		}
-		setScaleX(2.5);
-		setScaleY(1.5);
+		setScaleX(2.1);
+		setScaleY(1.3);
 	}
 }

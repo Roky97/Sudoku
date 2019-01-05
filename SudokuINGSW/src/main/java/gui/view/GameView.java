@@ -1,12 +1,17 @@
-package tmp;
+package gui.view;
 
-import java.awt.Paint;
+
 import java.util.ArrayList;
-import gui.model.sudokuButton;
+
+import gui.model.DIFFICULTY;
+import gui.model.SudokuButton;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -24,11 +29,18 @@ public class GameView {
 	private Scene gameScene;
 	private AnchorPane gamePane;
 	
-	private ArrayList<sudokuButton> gameButtons;
+	private Stage menuStage;
 	
-	public GameView() 
+	private DIFFICULTY difficulty;
+	
+	private ArrayList<SudokuButton> gameButtons;
+	
+	public GameView(Stage menu, DIFFICULTY difficulty) 
 	{
-		gameButtons = new ArrayList<sudokuButton>();
+		menuStage = menu;
+		this.difficulty = difficulty;
+		
+		gameButtons = new ArrayList<SudokuButton>();
 		gamePane = new AnchorPane();
 		gameScene = new Scene(gamePane, WIDTH, HEIGHT);
 		gameStage = new Stage();
@@ -37,68 +49,82 @@ public class GameView {
 		createGameBackground();
 		createGameButtons();
 		createGameGrid();
+		
+		menuStage.hide();
+		gameStage.show();
+		
 	}
 	
 	
 	
 	private void createGameButtons() 
 	{
-		sudokuButton backBtn = new sudokuButton("< back");
+		SudokuButton backBtn = new SudokuButton("< back");
+		backBtn.setOnMousePressed(new EventHandler<MouseEvent>() {
+
+			public void handle(MouseEvent event) {
+				if(event.getButton().equals(MouseButton.PRIMARY))
+					gameStage.close();
+					menuStage.show();
+				
+			}
+			
+		});
 		backBtn.setLayoutX(20);
 		backBtn.setLayoutY(20);
 		gameButtons.add(backBtn);
 				
-		sudokuButton undoBtn = new sudokuButton("undo");
+		SudokuButton undoBtn = new SudokuButton("undo");
 		undoBtn.setLayoutX(200);
 		undoBtn.setLayoutY(60);		
 		gameButtons.add(undoBtn);
 		
-		sudokuButton redoBtn = new sudokuButton("redo");
+		SudokuButton redoBtn = new SudokuButton("redo");
 		redoBtn.setLayoutX(350);
 		redoBtn.setLayoutY(60);		
 		gameButtons.add(redoBtn);		
 
-		sudokuButton infoBtn = new sudokuButton("info");
+		SudokuButton infoBtn = new SudokuButton("info");
 		infoBtn.setLayoutX(590);
 		infoBtn.setLayoutY(20);		
 		gameButtons.add(infoBtn);
 
-		sudokuButton newGameBtn = new sudokuButton("new game");
+		SudokuButton newGameBtn = new SudokuButton("new game");
 		newGameBtn.setLayoutX(590);
 		newGameBtn.setLayoutY(120);		
 		gameButtons.add(newGameBtn);
 
-		sudokuButton restartBtn = new sudokuButton("restart");
+		SudokuButton restartBtn = new SudokuButton("restart");
 		restartBtn.setLayoutX(590);
 		restartBtn.setLayoutY(170);		
 		gameButtons.add(restartBtn);		
 
-		sudokuButton hintBtn = new sudokuButton("hint");
+		SudokuButton hintBtn = new SudokuButton("hint");
 		hintBtn.setLayoutX(590);
 		hintBtn.setLayoutY(220);		
 		gameButtons.add(hintBtn);		
 		
-		sudokuButton deleteBtn = new sudokuButton("delete");
+		SudokuButton deleteBtn = new SudokuButton("delete");
 		deleteBtn.setLayoutX(590);
 		deleteBtn.setLayoutY(480);		
 		gameButtons.add(deleteBtn);
 				
-		sudokuButton stopBtn = new sudokuButton("stop");
+		SudokuButton stopBtn = new SudokuButton("stop");
 		stopBtn.setLayoutX(200);
 		stopBtn.setLayoutY(530);		
 		gameButtons.add(stopBtn);	
 
-		sudokuButton playBtn = new sudokuButton("play");
+		SudokuButton playBtn = new SudokuButton("play");
 		playBtn.setLayoutX(350);
 		playBtn.setLayoutY(530);		
 		gameButtons.add(playBtn);
 
-		sudokuButton saveBtn = new sudokuButton("save");
+		SudokuButton saveBtn = new SudokuButton("save");
 		saveBtn.setLayoutX(590);
 		saveBtn.setLayoutY(530);		
 		gameButtons.add(saveBtn);
 		
-		for(sudokuButton gb : gameButtons) {
+		for(SudokuButton gb : gameButtons) {
 			gb.setScaleX(0.7);
 			gb.setScaleY(0.7);
 			gamePane.getChildren().add(gb);

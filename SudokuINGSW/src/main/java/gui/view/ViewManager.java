@@ -1,10 +1,12 @@
 package gui.view;
-import gui.model.sudokuButton;
+import gui.model.*;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,30 +18,35 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.*;
 public class ViewManager {
 	
-	private static final int HEIGHT = 720;
-	private static final int WIDTH = 1080;
+	private static final int HEIGHT = 600;
+	private static final int WIDTH = 800;
 	
 	private Stage mainStage;
 	private Scene mainScene;
 	private AnchorPane mainPane;
 	
-//	private sudokuSubScene difficulty; //Da fare!
+	private SudokuSubscene difficultySubScene; 
+	private SudokuSubscene subSceneToHide;
 	
-//	private sudokuSubScene moveToHide;
-	
-	private static final int MENU_BUTTON_START_X = 100;
+	private static final int MENU_BUTTON_START_X = 50;
 	private static final int MENU_BUTTON_START_Y = 150;
 	
-	private ArrayList<sudokuButton> menuButtons;
+	private ArrayList<SudokuButton> menuButtons;
+	
+	private DIFFICULTY difficultyChoosen;
 	
 	public ViewManager() {
-		menuButtons = new ArrayList<sudokuButton>();
+		menuButtons = new ArrayList<SudokuButton>();
 		mainPane = new AnchorPane();
 		mainScene = new Scene(mainPane,WIDTH, HEIGHT);
 		mainStage = new Stage();
@@ -48,27 +55,99 @@ public class ViewManager {
 		createBackground();
 		createMenuButtons();
 		createLogo();
-//		createSubScene();
+		createSubScene();
 		
 		
 	}
 	
+	private void createSubScene() {
+		difficultySubScene = new SudokuSubscene();
+		mainPane.getChildren().add(difficultySubScene);
+		Label chooseDifficultyLabel = new Label("CHOOSE DIFFICULTY");
+		chooseDifficultyLabel.setLayoutX(120);
+		chooseDifficultyLabel.setLayoutY(30);
+		try {
+			chooseDifficultyLabel.setFont(Font.loadFont(new FileInputStream(new File("src/main/java/gui/resources/TeachersStudent.ttf")), 35));
+		} catch (FileNotFoundException e) {
+			System.err.println("FONT NON TROVATO!");
+			chooseDifficultyLabel.setFont(Font.loadFont("Verdana", 23));
+			
+		};
+		
+		VBox difficutyButtons = new VBox();
+		difficutyButtons.setSpacing(20);
+		difficutyButtons.setAlignment(Pos.CENTER_RIGHT);
+		
+		final SudokuDifficultyButton easy = new SudokuDifficultyButton("Facile", DIFFICULTY.EASY);
+		final SudokuDifficultyButton normal = new SudokuDifficultyButton("Normale", DIFFICULTY.NORMAL);
+		final SudokuDifficultyButton hard = new SudokuDifficultyButton("Difficile", DIFFICULTY.HARD);
+		
+		easy.setOnMousePressed(new EventHandler<MouseEvent>() {
+
+			public void handle(MouseEvent event) {
+				if(event.getButton().equals(MouseButton.PRIMARY))
+				{
+					difficultyChoosen = easy.getDifficulty();
+					GameView gameView = new GameView(mainStage, difficultyChoosen);
+					
+				}
+					
+				
+				
+			}
+			
+		});
+		
+		normal.setOnMousePressed(new EventHandler<MouseEvent>() {
+
+			public void handle(MouseEvent event) {
+				if(event.getButton().equals(MouseButton.PRIMARY))
+				{
+					difficultyChoosen = normal.getDifficulty();
+					GameView gameView = new GameView(mainStage, difficultyChoosen);
+				}
+				
+				
+			}
+			
+		});
+		
+		hard.setOnMousePressed(new EventHandler<MouseEvent>() {
+
+			public void handle(MouseEvent event) {
+				if(event.getButton().equals(MouseButton.PRIMARY))
+				{
+					difficultyChoosen = hard.getDifficulty();
+					GameView gameView = new GameView(mainStage, difficultyChoosen);
+				}
+				
+				
+			}
+			
+		});
+		
+		difficutyButtons.getChildren().addAll(easy,normal,hard);
+		
+		difficutyButtons.setLayoutX(130);
+		difficutyButtons.setLayoutY(100);
+		
+		
+		difficultySubScene.getPane().getChildren().add(chooseDifficultyLabel);
+		difficultySubScene.getPane().getChildren().add(difficutyButtons);
+//		difficultySubScene.getPane().getChildren().add(buttonToPlay);
+		
+	}
+
 	private void createMenuButtons() {
 		createStartButton();
 //		createScoreButton();
 //		createHelpButton();
 		createExitButton();
-		
-		
-		/*SpaceRunnerButton button = new SpaceRunnerButton("ciao");
-		button.setLayoutX(100);
-		button.setLayoutY(100);
-		mainPane.getChildren().add(button);
-		createBackground(); */
+	
 	}
 	
 	private void createExitButton() {
-		sudokuButton button = new sudokuButton("EXIT");
+		SudokuButton button = new SudokuButton("EXIT");
 		addMenuButton(button);
 		
 		button.setOnAction(new EventHandler<ActionEvent>() {
@@ -85,14 +164,14 @@ public class ViewManager {
 	}
 
 	private void createStartButton() {
-		sudokuButton button = new  sudokuButton("PLAY");
+		SudokuButton button = new  SudokuButton("PLAY");
 		addMenuButton(button);
 		
 		button.setOnAction(new EventHandler<ActionEvent>() {
 
 			
 			public void handle(ActionEvent event) {
-//				showSubScenes(shipChooserSubScene); //DA FARE
+				showSubScenes(difficultySubScene);
 				
 			}
 			
@@ -100,10 +179,23 @@ public class ViewManager {
 		
 	}
 	
+	protected void showSubScenes(SudokuSubscene moveScene) {
+		if(subSceneToHide!=null)
+		{
+			subSceneToHide.moveSubScene();
+		}
+		if(subSceneToHide!=moveScene)
+			moveScene.moveSubScene();
+		subSceneToHide = moveScene;
+		
+	}
+
 	private void createLogo() {
 		final ImageView logo = new ImageView("gui/resources/sudokuLogo.png");
-		logo.setLayoutX(420);
+		logo.setLayoutX(WIDTH/2 - 100);
 		logo.setLayoutY(150);
+		logo.setScaleX(0.9);
+		logo.setScaleY(0.9);
 		logo.setOnMouseEntered(new EventHandler<Event>() {
 
 			
@@ -128,7 +220,7 @@ public class ViewManager {
 	}
 	
 	
-	private void addMenuButton(sudokuButton button) {
+	private void addMenuButton(SudokuButton button) {
 		button.setLayoutX(MENU_BUTTON_START_X);
 		button.setLayoutY(MENU_BUTTON_START_Y + menuButtons.size() * 100);
 		menuButtons.add(button);
