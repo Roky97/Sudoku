@@ -2,9 +2,12 @@ package gui.view;
 
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import gui.model.DIFFICULTY;
+import gui.model.NumberButton;
 import gui.model.SudokuButton;
+import gui.model.SudokuCell;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -18,6 +21,8 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.stage.Stage;
+import tmp.Cell;
+import tmp.SudokuGenerator;
 
 @SuppressWarnings("restriction")
 public class GameView {
@@ -48,15 +53,23 @@ public class GameView {
 		
 		createGameBackground();
 		createGameButtons();
-		createGameGrid();
+		generateSudoku();
 		
 		menuStage.hide();
 		gameStage.show();
-		
 	}
 	
 	
 	
+	private void generateSudoku() {
+		SudokuGenerator generator = new SudokuGenerator(9,9);
+		ArrayList<Cell> cells = generator.generateSudoku();
+		System.out.println("size:"+cells.size());
+		createGameGrid(cells);
+	}
+
+
+
 	private void createGameButtons() 
 	{
 		SudokuButton backBtn = new SudokuButton("< back");
@@ -66,7 +79,6 @@ public class GameView {
 				if(event.getButton().equals(MouseButton.PRIMARY))
 					gameStage.close();
 					menuStage.show();
-				
 			}
 			
 		});
@@ -142,27 +154,64 @@ public class GameView {
 
 
 
-	private void createGameGrid() 
+	private void createGameGrid(ArrayList<Cell> cells) 
 	{
+		int cellToShow = 0;
+		switch (difficulty) 
+		{
+			case EASY:
+				cellToShow = 5*9;
+				break;
+			case NORMAL:
+				cellToShow = 4*9;
+				break;
+			case HARD:
+				cellToShow = 3*9;
+				break;
+			default:
+				break;
+		}
 		int x;
 		int y = 130;
 		
-		for(int r = 1; r <= 9; r++) {
+		for(int r = 0; r < 9; r++) 
+		{
 			x = 190;
-			for (int c = 1; c <= 9; c++) {
-				SudokuCell cell = new SudokuCell(r,c,0);
-				cell.setLayoutX(x);
-				if(c == 3 || c == 6)
-					x += 50;
-				else
-					x += 40;
-				cell.setLayoutY(y);
-				gamePane.getChildren().add(cell);
+			for (int c = 0; c < 9; c++) 
+			{
+				for(Cell cell : cells) 
+				{
+					if(cell.getRow() == r && cell.getColumn() == c) 
+					{
+						SudokuCell sudokuCell = new SudokuCell(r,c, cell.getValue());
+						sudokuCell.setLayoutX(x);
+
+						if(cellToShow > 0) 
+						{
+							boolean bool = new Random().nextBoolean();
+							if(bool) {
+								sudokuCell.showContent();
+								cellToShow -= 1;
+							}
+						}
+							
+						if(c == 2 || c == 5) {
+							x += 50;
+						}
+						else
+							x += 40;
+
+						sudokuCell.setLayoutY(y);
+						gamePane.getChildren().add(sudokuCell);
+					}
+				}
 			}
-			if(r == 3 || r == 6)
+			if(r == 2 || r == 5) {
 				y += 45;
-			else
+			}
+			else {
 				y += 38;
+			}
 		}
 	}
 

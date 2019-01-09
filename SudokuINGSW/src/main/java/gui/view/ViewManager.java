@@ -1,11 +1,11 @@
 package gui.view;
+
 import gui.model.*;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -17,7 +17,6 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -26,6 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
+
+@SuppressWarnings("restriction")
 public class ViewManager {
 	
 	private static final int HEIGHT = 600;
@@ -60,7 +61,8 @@ public class ViewManager {
 		
 	}
 	
-	private void createSubScene() {
+	private void createSubScene() 
+	{
 		difficultySubScene = new SudokuSubscene();
 		mainPane.getChildren().add(difficultySubScene);
 		Label chooseDifficultyLabel = new Label("CHOOSE DIFFICULTY");
@@ -70,8 +72,7 @@ public class ViewManager {
 			chooseDifficultyLabel.setFont(Font.loadFont(new FileInputStream(new File("src/main/java/gui/resources/TeachersStudent.ttf")), 35));
 		} catch (FileNotFoundException e) {
 			System.err.println("FONT NON TROVATO!");
-			chooseDifficultyLabel.setFont(Font.loadFont("Verdana", 23));
-			
+			chooseDifficultyLabel.setFont(Font.loadFont("Verdana", 23));			
 		};
 		
 		VBox difficutyButtons = new VBox();
@@ -82,20 +83,16 @@ public class ViewManager {
 		final SudokuDifficultyButton normal = new SudokuDifficultyButton("Normale", DIFFICULTY.NORMAL);
 		final SudokuDifficultyButton hard = new SudokuDifficultyButton("Difficile", DIFFICULTY.HARD);
 		
-		easy.setOnMousePressed(new EventHandler<MouseEvent>() {
-
-			public void handle(MouseEvent event) {
+		easy.setOnMousePressed(new EventHandler<MouseEvent>() 
+		{
+			public void handle(MouseEvent event) 
+			{
 				if(event.getButton().equals(MouseButton.PRIMARY))
 				{
 					difficultyChoosen = easy.getDifficulty();
 					GameView gameView = new GameView(mainStage, difficultyChoosen);
-					
 				}
-					
-				
-				
 			}
-			
 		});
 		
 		normal.setOnMousePressed(new EventHandler<MouseEvent>() {

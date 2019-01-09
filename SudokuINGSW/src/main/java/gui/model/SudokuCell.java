@@ -1,4 +1,4 @@
-package gui.view;
+package gui.model;
 
 import javafx.scene.control.Button;
 
@@ -13,10 +13,14 @@ public class SudokuCell extends Button {
 		this.row = row;
 		this.column = column;
 		this.value = value;
-		if(this.value > 0) {
-			setText(Integer.toString(value));
-		}
+	    setStyle("-fx-font: 8 arial;");
 		setScaleX(2.1);
-		setScaleY(1.3);
+		setScaleY(1.5);
 	}
+	
+	public void showContent() {
+		setText(Integer.toString(value));
+	}
+	
+	
 }
