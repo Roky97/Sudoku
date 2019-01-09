@@ -10,12 +10,13 @@ public class SudokuCell extends Button {
 	private int value;
 	
 	public SudokuCell(int row, int column, int value) {
+		setText("  ");
 		this.row = row;
 		this.column = column;
 		this.value = value;
-	    setStyle("-fx-font: 8 arial;");
-		setScaleX(2.1);
-		setScaleY(1.5);
+//	    setStyle("-fx-font: 8 arial;");
+		setScaleX(1.2);
+		setScaleY(1.2);
 	}
 	
 	public void showContent() {

@@ -24,7 +24,7 @@ public class SudokuGenerator {
 
 	public ArrayList<Cell> generateSudoku() 
 	{
-		handler = new DesktopHandler(new DLVDesktopService("lib/dlv.mingw.exe"));
+		handler = new DesktopHandler(new DLVDesktopService("lib/dlvApple.bin"));
 		InputProgram encoding = new ASPInputProgram();
 		encoding.addFilesPath(encodingResource);
 		handler.addProgram(encoding);
@@ -44,7 +44,7 @@ public class SudokuGenerator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		System.out.println(facts.getPrograms());
 		handler.addProgram(facts);
 		OptionDescriptor filter = new OptionDescriptor("-n=1 ");
 		handler.addOption(filter);
@@ -53,7 +53,7 @@ public class SudokuGenerator {
 
 		if(answer.getAnswersets().size() > 0) 
 		{
-//			cells.clear();
+			cells.clear();
 			System.out.println("Answer set find");
 			AnswerSet firstAs = answer.getAnswersets().get(0);
 			
@@ -63,7 +63,7 @@ public class SudokuGenerator {
 						if((obj instanceof Cell)) 
 						{
 							Cell cell = (Cell) obj;
-							if(!(cells.contains(cell)))
+//							if(!(cells.contains(cell)))
 								cells.add(cell);
 						}
 					}
@@ -89,20 +89,22 @@ public class SudokuGenerator {
 	private ArrayList<Cell> factsGenerator() {
 		
 		ArrayList<Cell> cells = new ArrayList<Cell>();
-		
-		for(int v = 1; v < 10; v++) 
+		ArrayList<Integer> values = new ArrayList<Integer>();
+		for(int i=1; i<10; i++)
 		{
-			Cell c = new Cell(new Random().nextInt(9), new Random().nextInt(9), v);
-			for(int i = 0; i < cells.size(); i++) 
-			{
-				if(cells.get(i).getRow() == c.getRow() && cells.get(i).getColumn() == c.getColumn()) 
-				{
-					c = new Cell(new Random().nextInt(9), new Random().nextInt(9), v);
-					i = 0;
-				}
-			}
-			cells.add(c);
+			values.add(i);
 		}
+		
+
+		for(int i=3; i<6; i++)
+			for(int j=3; j<6; j++)
+			{
+				int index = new Random().nextInt(values.size());
+				cells.add(new Cell(i,j,values.get(index)));
+				
+				values.remove(index);
+				
+			}
 		
 		return cells;
 	}
