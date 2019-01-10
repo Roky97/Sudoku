@@ -64,7 +64,6 @@ public class GameView {
 	private void generateSudoku() {
 		SudokuGenerator generator = new SudokuGenerator(9,9);
 		ArrayList<Cell> cells = generator.generateSudoku();
-		System.out.println("size:"+cells.size());
 		createGameGrid(cells);
 	}
 
@@ -174,6 +173,8 @@ public class GameView {
 		int x;
 		int y = 130;
 		
+		ArrayList<SudokuCell> sudokuCells = new ArrayList<SudokuCell>();
+		
 		for(int r = 0; r < 9; r++) 
 		{
 			x = 190;
@@ -185,34 +186,40 @@ public class GameView {
 					{
 						SudokuCell sudokuCell = new SudokuCell(r,c, cell.getValue());
 						sudokuCell.setLayoutX(x);
-
-						if(cellToShow > 0) 
-						{
-							boolean bool = new Random().nextBoolean();
-							if(bool) {
-								sudokuCell.showContent();
-								cellToShow -= 1;
-							}
-						}
 							
-						if(c == 2 || c == 5) {
+						if(c == 2 || c == 5)
 							x += 50;
-						}
 						else
 							x += 40;
 
 						sudokuCell.setLayoutY(y);
-						gamePane.getChildren().add(sudokuCell);
+						sudokuCells.add(sudokuCell);
 					}
 				}
 			}
-			if(r == 2 || r == 5) {
+			if(r == 2 || r == 5)
 				y += 45;
-			}
-			else {
+			else
 				y += 38;
+		}
+
+		while(cellToShow > 0) 
+		{
+			for(SudokuCell cell : sudokuCells) 
+			{
+				if(cellToShow > 0 && cell.getText().equals("  ")) 
+				{
+					boolean bool = new Random().nextBoolean();
+					if(bool) 
+					{
+						cell.showContent();
+						cellToShow -= 1;
+					}
+				}
 			}
 		}
+		for(SudokuCell cell : sudokuCells)
+			gamePane.getChildren().add(cell);
 	}
 
 

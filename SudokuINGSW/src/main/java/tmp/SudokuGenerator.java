@@ -24,7 +24,7 @@ public class SudokuGenerator {
 
 	public ArrayList<Cell> generateSudoku() 
 	{
-		handler = new DesktopHandler(new DLVDesktopService("lib/dlvApple.bin"));
+		handler = new DesktopHandler(new DLVDesktopService("lib/dlv.mingw.exe"));
 		InputProgram encoding = new ASPInputProgram();
 		encoding.addFilesPath(encodingResource);
 		handler.addProgram(encoding);
@@ -38,13 +38,12 @@ public class SudokuGenerator {
 		try {
 			for(int i = 0; i < cells.size(); i++)
 			{
-			System.out.println("cell("+cells.get(i).getRow()+","+cells.get(i).getColumn()+","+cells.get(i).getValue()+")");
 				facts.addObjectInput(cells.get(i));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(facts.getPrograms());
+//		System.out.println(facts.getPrograms());
 		handler.addProgram(facts);
 		OptionDescriptor filter = new OptionDescriptor("-n=1 ");
 		handler.addOption(filter);
@@ -63,7 +62,6 @@ public class SudokuGenerator {
 						if((obj instanceof Cell)) 
 						{
 							Cell cell = (Cell) obj;
-//							if(!(cells.contains(cell)))
 								cells.add(cell);
 						}
 					}

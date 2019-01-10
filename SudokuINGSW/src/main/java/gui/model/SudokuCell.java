@@ -11,16 +11,31 @@ public class SudokuCell extends Button {
 	
 	public SudokuCell(int row, int column, int value) {
 		setText("  ");
-		this.row = row;
-		this.column = column;
+		this.setRow(row);
+		this.setColumn(column);
 		this.value = value;
-//	    setStyle("-fx-font: 8 arial;");
 		setScaleX(1.2);
 		setScaleY(1.2);
 	}
 	
 	public void showContent() {
 		setText(Integer.toString(value));
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	public int getColumn() {
+		return column;
+	}
+
+	public void setColumn(int column) {
+		this.column = column;
 	}
 	
 	
