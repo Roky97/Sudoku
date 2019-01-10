@@ -10,7 +10,7 @@ public class SudokuCell extends Button {
 	private int value;
 	
 	public SudokuCell(int row, int column, int value) {
-		setText("  ");
+		hideContent();
 		this.setRow(row);
 		this.setColumn(column);
 		this.value = value;
@@ -20,6 +20,9 @@ public class SudokuCell extends Button {
 	
 	public void showContent() {
 		setText(Integer.toString(value));
+	}
+	public void hideContent() {
+		setText("  ");
 	}
 
 	public int getRow() {
@@ -36,6 +39,14 @@ public class SudokuCell extends Button {
 
 	public void setColumn(int column) {
 		this.column = column;
+	}
+
+	public void setValue(int value) {
+		this.value = value;
+	}
+	
+	public int getValue() {
+		return value;
 	}
 	
 	

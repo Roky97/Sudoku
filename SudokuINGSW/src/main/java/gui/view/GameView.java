@@ -39,14 +39,17 @@ public class GameView {
 	private DIFFICULTY difficulty;
 	
 	private ArrayList<SudokuButton> gameButtons;
+	private ArrayList<SudokuCell> sudokuCells;
 	
 	public GameView(Stage menu, DIFFICULTY difficulty) 
 	{
 		menuStage = menu;
 		this.difficulty = difficulty;
-		
+		sudokuCells = new ArrayList<SudokuCell>();
+
 		gameButtons = new ArrayList<SudokuButton>();
 		gamePane = new AnchorPane();
+		gamePane.setPickOnBounds(false);
 		gameScene = new Scene(gamePane, WIDTH, HEIGHT);
 		gameStage = new Stage();
 		gameStage.setScene(gameScene);
@@ -101,6 +104,14 @@ public class GameView {
 		gameButtons.add(infoBtn);
 
 		SudokuButton newGameBtn = new SudokuButton("new game");
+		newGameBtn.setOnMousePressed(new EventHandler<MouseEvent>() {
+
+			public void handle(MouseEvent event) {
+				if(event.getButton().equals(MouseButton.PRIMARY)) {
+					generateSudoku();
+				}
+			}
+		});
 		newGameBtn.setLayoutX(590);
 		newGameBtn.setLayoutY(120);		
 		gameButtons.add(newGameBtn);
@@ -170,39 +181,55 @@ public class GameView {
 			default:
 				break;
 		}
+		
 		int x;
 		int y = 130;
 		
-		ArrayList<SudokuCell> sudokuCells = new ArrayList<SudokuCell>();
-		
-		for(int r = 0; r < 9; r++) 
+		if(sudokuCells.isEmpty())
 		{
-			x = 190;
-			for (int c = 0; c < 9; c++) 
+			for(int r = 0; r < 9; r++) 
 			{
+				x = 190;
+				for (int c = 0; c < 9; c++) 
+				{
+					for(Cell cell : cells) 
+					{
+						if(cell.getRow() == r && cell.getColumn() == c) 
+						{
+							SudokuCell sudokuCell = new SudokuCell(r,c, cell.getValue());
+							sudokuCell.setLayoutX(x);
+								
+							if(c == 2 || c == 5)
+								x += 50;
+							else
+								x += 40;
+	
+							sudokuCell.setLayoutY(y);
+							sudokuCells.add(sudokuCell);
+						}
+					}
+				}
+				if(r == 2 || r == 5)
+					y += 45;
+				else
+					y += 38;
+			}
+		}
+		else {
+			gamePane.getChildren().removeAll(sudokuCells);
+			for(SudokuCell sudokuCell : sudokuCells) 
+			{
+				sudokuCell.hideContent();
 				for(Cell cell : cells) 
 				{
-					if(cell.getRow() == r && cell.getColumn() == c) 
+					if(cell.getRow() == sudokuCell.getRow() && cell.getColumn() == sudokuCell.getColumn()) 
 					{
-						SudokuCell sudokuCell = new SudokuCell(r,c, cell.getValue());
-						sudokuCell.setLayoutX(x);
-							
-						if(c == 2 || c == 5)
-							x += 50;
-						else
-							x += 40;
-
-						sudokuCell.setLayoutY(y);
-						sudokuCells.add(sudokuCell);
+						sudokuCell.setValue(cell.getValue());
 					}
 				}
 			}
-			if(r == 2 || r == 5)
-				y += 45;
-			else
-				y += 38;
 		}
-
+		
 		while(cellToShow > 0) 
 		{
 			for(SudokuCell cell : sudokuCells) 
@@ -218,8 +245,7 @@ public class GameView {
 				}
 			}
 		}
-		for(SudokuCell cell : sudokuCells)
-			gamePane.getChildren().add(cell);
+		gamePane.getChildren().addAll(sudokuCells);
 	}
 
 
