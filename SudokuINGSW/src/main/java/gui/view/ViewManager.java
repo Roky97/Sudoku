@@ -20,6 +20,7 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import logic.DIFFICULTY;
 
 import java.io.File;
 import java.io.FileInputStream;

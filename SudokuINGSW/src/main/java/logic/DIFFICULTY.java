@@ -1,4 +1,4 @@
-package gui.model;
+package logic;
 
 public enum DIFFICULTY {
 	EASY("/gui/resources/easyButton.png"),

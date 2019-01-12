@@ -1,4 +1,4 @@
-package tmp;
+package logic.ai;
 
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
