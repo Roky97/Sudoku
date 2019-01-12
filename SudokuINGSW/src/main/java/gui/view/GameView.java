@@ -14,7 +14,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -30,9 +30,9 @@ public class GameView {
 	private static final int HEIGHT = 600;
 	private static final int WIDTH = 800;
 	
+	private Pane gamePane;
 	private Stage gameStage;
 	private Scene gameScene;
-	private AnchorPane gamePane;
 	
 	private Stage menuStage;
 	
@@ -40,24 +40,26 @@ public class GameView {
 	
 	private ArrayList<SudokuButton> gameButtons;
 	private ArrayList<SudokuCell> sudokuCells;
+	private ArrayList<SudokuCell> startGrid;
 	
 	public GameView(Stage menu, DIFFICULTY difficulty) 
 	{
-		menuStage = menu;
+		gameStage = new Stage();
+
+		gamePane = new Pane();
+		gameScene = new Scene(gamePane, WIDTH, HEIGHT);
+		gameStage.setScene(gameScene);
+
 		this.difficulty = difficulty;
 		sudokuCells = new ArrayList<SudokuCell>();
-
+		setStartGrid(new ArrayList<SudokuCell>());
 		gameButtons = new ArrayList<SudokuButton>();
-		gamePane = new AnchorPane();
-		gamePane.setPickOnBounds(false);
-		gameScene = new Scene(gamePane, WIDTH, HEIGHT);
-		gameStage = new Stage();
-		gameStage.setScene(gameScene);
 		
 		createGameBackground();
 		createGameButtons();
 		generateSudoku();
 		
+		menuStage = menu;
 		menuStage.hide();
 		gameStage.show();
 	}
@@ -75,18 +77,18 @@ public class GameView {
 	private void createGameButtons() 
 	{
 		SudokuButton backBtn = new SudokuButton("< back");
-		backBtn.setOnMousePressed(new EventHandler<MouseEvent>() {
-
-			public void handle(MouseEvent event) {
-				if(event.getButton().equals(MouseButton.PRIMARY))
-					gameStage.close();
-					menuStage.show();
-			}
-			
-		});
 		backBtn.setLayoutX(20);
 		backBtn.setLayoutY(20);
 		gameButtons.add(backBtn);
+		backBtn.setOnMousePressed(new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent event) {
+				if(event.getButton().equals(MouseButton.PRIMARY))
+					gameStage.close();
+				menuStage.show();
+			}
+			
+		});
 				
 		SudokuButton undoBtn = new SudokuButton("undo");
 		undoBtn.setLayoutX(200);
@@ -103,23 +105,33 @@ public class GameView {
 		infoBtn.setLayoutY(20);		
 		gameButtons.add(infoBtn);
 
-		SudokuButton newGameBtn = new SudokuButton("new game");
+		final SudokuButton newGameBtn = new SudokuButton("new game");
+		newGameBtn.setLayoutX(590);
+		newGameBtn.setLayoutY(120);		
+		gameButtons.add(newGameBtn);
 		newGameBtn.setOnMousePressed(new EventHandler<MouseEvent>() {
-
+			
 			public void handle(MouseEvent event) {
 				if(event.getButton().equals(MouseButton.PRIMARY)) {
+					newGameBtn.setLayoutY(123.0 );		
 					generateSudoku();
 				}
 			}
 		});
-		newGameBtn.setLayoutX(590);
-		newGameBtn.setLayoutY(120);		
-		gameButtons.add(newGameBtn);
 
-		SudokuButton restartBtn = new SudokuButton("restart");
+		final SudokuButton restartBtn = new SudokuButton("restart");
 		restartBtn.setLayoutX(590);
 		restartBtn.setLayoutY(170);		
-		gameButtons.add(restartBtn);		
+		gameButtons.add(restartBtn);
+		restartBtn.setOnMousePressed(new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent event) {
+				if(event.getButton().equals(MouseButton.PRIMARY)) {
+					restartBtn.setLayoutY(173.0);
+					sudokuCells = getStartGrid();
+				}
+			}
+		});
 
 		SudokuButton hintBtn = new SudokuButton("hint");
 		hintBtn.setLayoutX(590);
@@ -160,6 +172,7 @@ public class GameView {
 			pos += 47;
 			gamePane.getChildren().add(b);
 		}
+		
 	}
 
 
@@ -214,9 +227,9 @@ public class GameView {
 				else
 					y += 38;
 			}
+			gamePane.getChildren().addAll(sudokuCells);
 		}
 		else {
-			gamePane.getChildren().removeAll(sudokuCells);
 			for(SudokuCell sudokuCell : sudokuCells) 
 			{
 				sudokuCell.hideContent();
@@ -245,10 +258,9 @@ public class GameView {
 				}
 			}
 		}
-		gamePane.getChildren().addAll(sudokuCells);
+		
+		setStartGrid(sudokuCells);
 	}
-
-
 
 	private void createGameBackground() 
 	{
@@ -267,5 +279,13 @@ public class GameView {
 	}
 
 	public Stage getStage() { return gameStage; }
+
+	public ArrayList<SudokuCell> getStartGrid() {
+		return startGrid;
+	}
+
+	public void setStartGrid(ArrayList<SudokuCell> startGrid) {
+		this.startGrid = startGrid;
+	}
 
 }
