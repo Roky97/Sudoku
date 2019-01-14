@@ -24,7 +24,13 @@ public class SudokuGenerator {
 
 	public ArrayList<Cell> generateSudoku() 
 	{
-		handler = new DesktopHandler(new DLVDesktopService("lib/dlvApple.bin"));
+		String os = System.getProperty("os.name");
+		
+		if(os.contains("Windows"))
+			handler = new DesktopHandler(new DLVDesktopService("lib/dlv.mingw.exe"));
+		else
+			handler = new DesktopHandler(new DLVDesktopService("lib/dlvApple.bin"));
+		
 		InputProgram encoding = new ASPInputProgram();
 		encoding.addFilesPath(encodingResource);
 		handler.addProgram(encoding);
