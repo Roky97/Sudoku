@@ -1,6 +1,12 @@
 package gui.view;
 
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -24,7 +30,7 @@ import javafx.stage.Stage;
 import tmp.Cell;
 import tmp.SudokuGenerator;
 
-@SuppressWarnings("restriction")
+@SuppressWarnings({ "restriction" })
 public class GameView {
 	
 	private static final int HEIGHT = 600;
@@ -64,14 +70,124 @@ public class GameView {
 		gameStage.show();
 	}
 	
+		
+	public GameView(Stage menu) 
+	{
+		sudokuCells = new ArrayList<SudokuCell>();
+		if(loadSudoku()) 
+		{
+			gameStage = new Stage();
 	
+			gamePane = new Pane();
+			gameScene = new Scene(gamePane, WIDTH, HEIGHT);
+			gameStage.setScene(gameScene);
 	
+			setStartGrid(new ArrayList<SudokuCell>());
+			gameButtons = new ArrayList<SudokuButton>();
+			
+			createGameBackground();
+			createGameButtons();
+			loadGrid();
+			
+			menuStage = menu;
+			menuStage.hide();
+			gameStage.show();
+		}
+	}
+
+	private void loadGrid() 
+	{
+		int x;
+		int y = 130;
+		
+		for(int r = 0; r < 9; r++) 
+		{
+			x = 190;
+			for (int c = 0; c < 9; c++) 
+			{
+				for(SudokuCell cell : sudokuCells) 
+				{
+					cell.setScaleX(1.2);
+					cell.setScaleY(1.2);
+					if(cell.getRow() == r && cell.getColumn() == c) 
+					{
+						if(cell.isHide())
+							cell.hideContent();
+						else
+							cell.showContent();
+						
+						cell.setLayoutX(x);
+							
+						if(c == 2 || c == 5)
+							x += 50;
+						else
+							x += 40;
+
+						cell.setLayoutY(y);
+					}
+				}
+			}
+			if(r == 2 || r == 5)
+				y += 45;
+			else
+				y += 38;
+		}
+		gamePane.getChildren().addAll(sudokuCells);		
+		setStartGrid(sudokuCells);
+	}
+
+
+	protected void saveGame() 
+	{
+		System.out.println("SAVE");
+	      try {
+	          FileOutputStream fileOut = new FileOutputStream("saves/game.ser");
+	          ObjectOutputStream out = new ObjectOutputStream(fileOut);
+	          out.writeObject(this.difficulty);
+	          out.writeObject(this.sudokuCells);
+	          out.close();
+	          fileOut.close();
+	          System.out.printf("Serialized data is saved in saves/game.ser");
+	       } catch (IOException i) {
+	          i.printStackTrace();
+	       }
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	private boolean loadSudoku() 
+	{
+		try {
+			FileInputStream fileIn;
+			fileIn = new FileInputStream("saves/game.ser");
+//manca la condizione per capire se il file è vuoto
+			ObjectInputStream in = new ObjectInputStream(fileIn);
+			this.difficulty = (DIFFICULTY) in.readObject();
+			this.sudokuCells = (ArrayList<SudokuCell>) in.readObject();
+			in.close();
+			fileIn.close();
+			System.out.println("Load successfull");
+
+			return true;
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("no load avaiable");
+		return false;
+	}
+
+
 	private void generateSudoku() {
 		SudokuGenerator generator = new SudokuGenerator(9,9);
 		ArrayList<Cell> cells = generator.generateSudoku();
 		createGameGrid(cells);
 	}
-
 
 
 	private void createGameButtons() 
@@ -153,11 +269,20 @@ public class GameView {
 		playBtn.setLayoutY(530);		
 		gameButtons.add(playBtn);
 
-		SudokuButton saveBtn = new SudokuButton("save");
+		final SudokuButton saveBtn = new SudokuButton("save");
 		saveBtn.setLayoutX(590);
 		saveBtn.setLayoutY(530);		
 		gameButtons.add(saveBtn);
-		
+		saveBtn.setOnMousePressed(new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent event) {
+				if(event.getButton().equals(MouseButton.PRIMARY)) {
+					saveBtn.setLayoutY(533.0);
+					saveGame();
+				}
+			}
+		});
+
 		for(SudokuButton gb : gameButtons) {
 			gb.setScaleX(0.7);
 			gb.setScaleY(0.7);
@@ -174,7 +299,6 @@ public class GameView {
 		}
 		
 	}
-
 
 
 	private void createGameGrid(ArrayList<Cell> cells) 
@@ -247,7 +371,7 @@ public class GameView {
 		{
 			for(SudokuCell cell : sudokuCells) 
 			{
-				if(cellToShow > 0 && cell.getText().equals("  ")) 
+				if(cellToShow > 0 && cell.isHide()) 
 				{
 					boolean bool = new Random().nextBoolean();
 					if(bool) 
@@ -262,6 +386,7 @@ public class GameView {
 		setStartGrid(sudokuCells);
 	}
 
+	
 	private void createGameBackground() 
 	{
 		Image backroundImage = new Image("/gui/resources/texture.png");
@@ -278,12 +403,15 @@ public class GameView {
 		gamePane.getChildren().add(rectangle2);
 	}
 
+	
 	public Stage getStage() { return gameStage; }
 
+	
 	public ArrayList<SudokuCell> getStartGrid() {
 		return startGrid;
 	}
 
+	
 	public void setStartGrid(ArrayList<SudokuCell> startGrid) {
 		this.startGrid = startGrid;
 	}

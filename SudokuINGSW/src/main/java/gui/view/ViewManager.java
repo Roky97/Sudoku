@@ -57,8 +57,6 @@ public class ViewManager {
 		createMenuButtons();
 		createLogo();
 		createSubScene();
-		
-		
 	}
 	
 	private void createSubScene() 
@@ -79,9 +77,9 @@ public class ViewManager {
 		difficutyButtons.setSpacing(20);
 		difficutyButtons.setAlignment(Pos.CENTER_RIGHT);
 		
-		final SudokuDifficultyButton easy = new SudokuDifficultyButton("Facile", DIFFICULTY.EASY);
-		final SudokuDifficultyButton normal = new SudokuDifficultyButton("Normale", DIFFICULTY.NORMAL);
-		final SudokuDifficultyButton hard = new SudokuDifficultyButton("Difficile", DIFFICULTY.HARD);
+		final SudokuDifficultyButton easy = new SudokuDifficultyButton("EASY", DIFFICULTY.EASY);
+		final SudokuDifficultyButton normal = new SudokuDifficultyButton("MEDIUM", DIFFICULTY.NORMAL);
+		final SudokuDifficultyButton hard = new SudokuDifficultyButton("HARD", DIFFICULTY.HARD);
 		
 		easy.setOnMousePressed(new EventHandler<MouseEvent>() 
 		{
@@ -137,27 +135,34 @@ public class ViewManager {
 
 	private void createMenuButtons() {
 		createStartButton();
-//		createScoreButton();
-//		createHelpButton();
+		createLoadButton();
 		createExitButton();
 	
 	}
 	
+	private void createLoadButton() {
+		SudokuButton button = new  SudokuButton("LOAD GAME");
+		addMenuButton(button);
+		
+		button.setOnAction(new EventHandler<ActionEvent>() {
+
+			public void handle(ActionEvent event) {
+				System.out.println("LOADING...");
+				GameView gameView = new GameView(mainStage);
+			}
+		});
+	}
+
 	private void createExitButton() {
 		SudokuButton button = new SudokuButton("EXIT");
 		addMenuButton(button);
 		
 		button.setOnAction(new EventHandler<ActionEvent>() {
 
-			
 			public void handle(ActionEvent event) {
 				mainStage.close();
-				
 			}
-			
 		});
-		
-		
 	}
 
 	private void createStartButton() {
@@ -166,14 +171,10 @@ public class ViewManager {
 		
 		button.setOnAction(new EventHandler<ActionEvent>() {
 
-			
 			public void handle(ActionEvent event) {
 				showSubScenes(difficultySubScene);
-				
 			}
-			
 		});
-		
 	}
 	
 	protected void showSubScenes(SudokuSubscene moveScene) {
@@ -195,22 +196,16 @@ public class ViewManager {
 		logo.setScaleY(0.9);
 		logo.setOnMouseEntered(new EventHandler<Event>() {
 
-			
 			public void handle(Event event) {
 				logo.setEffect(new DropShadow());
-				
 			}
-			
 		});
 		
 		logo.setOnMouseExited(new EventHandler<Event>() {
 
-			
 			public void handle(Event event) {
 				logo.setEffect(null);
-				
 			}
-			
 		});
 		
 		mainPane.getChildren().add(logo);
@@ -222,9 +217,6 @@ public class ViewManager {
 		button.setLayoutY(MENU_BUTTON_START_Y + menuButtons.size() * 100);
 		menuButtons.add(button);
 		mainPane.getChildren().add(button);
-		
-		
-		
 	}
 	
 	public Stage getStage() {

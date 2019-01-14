@@ -1,6 +1,5 @@
 package gui.model;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import javafx.event.EventHandler;
@@ -10,7 +9,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
 
+@SuppressWarnings("restriction")
 public class SudokuButton extends Button {
+	
 	private final String Font_Path = "src/main/java/gui/resources/TeachersStudent.ttf";
 	private final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/gui/resources/blue_buttonPressed.png');";
 	private final String BUTTON_FREE_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/gui/resources/blue_button.png');";
