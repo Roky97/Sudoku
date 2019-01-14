@@ -9,6 +9,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
+import logic.DIFFICULTY;
 
 public class SudokuDifficultyButton extends Button{
 	private final String Font_Path = "src/main/java/gui/resources/TeachersStudent.ttf";

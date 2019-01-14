@@ -10,7 +10,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
-import gui.model.DIFFICULTY;
 import gui.model.NumberButton;
 import gui.model.SudokuButton;
 import gui.model.SudokuCell;
@@ -27,8 +26,9 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.stage.Stage;
-import tmp.Cell;
-import tmp.SudokuGenerator;
+import logic.DIFFICULTY;
+import logic.ai.Cell;
+import logic.ai.SudokuGenerator;
 
 @SuppressWarnings({ "restriction" })
 public class GameView {

@@ -1,4 +1,4 @@
-package tmp;
+package logic.ai;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class SudokuGenerator {
 
 	public ArrayList<Cell> generateSudoku() 
 	{
-		handler = new DesktopHandler(new DLVDesktopService("lib/dlv.mingw.exe"));
+		handler = new DesktopHandler(new DLVDesktopService("lib/dlvApple.bin"));
 		InputProgram encoding = new ASPInputProgram();
 		encoding.addFilesPath(encodingResource);
 		handler.addProgram(encoding);
