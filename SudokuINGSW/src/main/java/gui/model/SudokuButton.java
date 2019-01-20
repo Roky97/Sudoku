@@ -13,84 +13,101 @@ import javafx.scene.text.Font;
 public class SudokuButton extends Button {
 	
 	private final String Font_Path = "src/main/java/gui/resources/TeachersStudent.ttf";
-	private final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/gui/resources/blue_buttonPressed.png');";
-	private final String BUTTON_FREE_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/gui/resources/blue_button.png');";
 	
-	public SudokuButton(String text) {
+	private String BUTTON_STYLE;
+	private String PRESSED_BUTTON_STYLE;
+	
+	private DIFFICULTY difficulty;
+	
+	public SudokuButton(String text) 
+	{
+		setText(text);
+		setButtonFont();
+		setPrefHeight(49);
+		setPrefWidth(190);
+		setDefaultStyle();
+		initalizeButtonListeners();
+	}
 
-			setText(text);
-			setButtonFont();
-			setPrefHeight(49);
-			setPrefWidth(190);
-			setStyle(BUTTON_FREE_STYLE);
-			initalizeButtonListeners();
+	public void setDifficulty(DIFFICULTY d) {
+		difficulty = d;
+	}
+	
+	public DIFFICULTY getDifficulty() { return difficulty; }
+	
+	private void setButtonFont() 
+	{
+		try {
+			setFont(Font.loadFont(new FileInputStream(Font_Path), 23));
+			
+		} catch (FileNotFoundException e) {
+			System.out.println("path non trovata!");
+			setFont(Font.loadFont("Verdana", 23));
 		}
-		
-		private void setButtonFont() {
-			try {
-				setFont(Font.loadFont(new FileInputStream(Font_Path), 23));
-			} catch (FileNotFoundException e) {
-				System.out.println("path non trovata!");
-				setFont(Font.loadFont("Verdana", 23));
+	}
+
+	private void setDefaultStyle() {
+		BUTTON_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/gui/resources/blue_button.png');";
+		PRESSED_BUTTON_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/gui/resources/blue_buttonPressed.png');";
+		setStyle(BUTTON_STYLE);
+	}
+
+	public void setDifficultyStyle() {
+		BUTTON_STYLE = "-fx-background-color: transparent; -fx-background-image: url('" + difficulty.getUrlImageButton()+"');";
+		PRESSED_BUTTON_STYLE = "-fx-background-color: transparent; -fx-background-image: url('" + difficulty.getUrlImageButton()+"');";
+		setStyle(BUTTON_STYLE);
+	}
+
+	private void setButtonPressedStyle() 
+	{
+		setStyle(PRESSED_BUTTON_STYLE);
+		setPrefHeight(45);
+		setLayoutY(getLayoutY() + 4);
+	}
+
+	private void setButtonReleasedStyle() 
+	{
+		setStyle(BUTTON_STYLE);
+		setPrefHeight(49);
+		setLayoutY(getLayoutY() -4);
+	}
+
+	private void initalizeButtonListeners() 
+	{
+		setOnMousePressed(new EventHandler<MouseEvent>() 
+		{
+			public void handle(MouseEvent event) 
+			{
+				if(event.getButton().equals(MouseButton.PRIMARY))
+					setButtonPressedStyle();
 			}
-		}
-		
-		private void setButtonPressedStyle() {
-			setStyle(BUTTON_PRESSED_STYLE);
-			setPrefHeight(45);
-			setLayoutY(getLayoutY() + 4);
-		}
-		
-		private void setButtonReleasedStyle() {
-			setStyle(BUTTON_FREE_STYLE);
-			setPrefHeight(49);
-			setLayoutY(getLayoutY() -4);
-		}
-		
-		private void initalizeButtonListeners() {
-			setOnMousePressed(new EventHandler<MouseEvent>() {
-
-				public void handle(MouseEvent event) {
-					if(event.getButton().equals(MouseButton.PRIMARY))
-						setButtonPressedStyle();
-					
-				}
 				
-			});
+		});
 			
-			setOnMouseReleased(new EventHandler<MouseEvent>() {
-
-	
-				public void handle(MouseEvent event) {
-					if(event.getButton().equals(MouseButton.PRIMARY))
-						setButtonReleasedStyle();
-					
-				}
-				
-			});
+		setOnMouseReleased(new EventHandler<MouseEvent>() 
+		{
+			public void handle(MouseEvent event) 
+			{
+				if(event.getButton().equals(MouseButton.PRIMARY))
+					setButtonReleasedStyle();
+			}
+		});
 			
-			setOnMouseEntered(new EventHandler<MouseEvent>() {
-
-				
-				public void handle(MouseEvent event) {
-
-						setEffect(new DropShadow());
-					
-				}
-				
-			});
+		setOnMouseEntered(new EventHandler<MouseEvent>() 
+		{
+			public void handle(MouseEvent event) 
+			{
+				setEffect(new DropShadow());
+			}
+		});
 			
-			setOnMouseExited(new EventHandler<MouseEvent>() {
-
-		
-				public void handle(MouseEvent event) {
-
-						setEffect(null);
-					
-				}
-				
-			});
-			
-		}
+		setOnMouseExited(new EventHandler<MouseEvent>() 
+		{
+			public void handle(MouseEvent event) 
+			{
+				setEffect(null);
+			}
+		});
+	}
 }
 		

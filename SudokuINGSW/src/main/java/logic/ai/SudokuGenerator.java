@@ -18,38 +18,42 @@ import it.unical.mat.embasp.specializations.dlv.desktop.DLVDesktopService;
 public class SudokuGenerator {
 
 	private static String encodingResource = "encoding/sudokugenerator";
+	private static String executable;
 	private static Handler handler;
 	
-	public SudokuGenerator(int r, int c) {}
-
-	public ArrayList<Cell> generateSudoku() 
+	private ArrayList<Cell> cells;
+	
+	public SudokuGenerator() 
 	{
+		cells = new ArrayList<Cell>();
 		String os = System.getProperty("os.name");
 		
 		if(os.contains("Windows"))
-			handler = new DesktopHandler(new DLVDesktopService("lib/dlv.mingw.exe"));
+			executable = "lib/dlv.mingw.exe";
 		else
-			handler = new DesktopHandler(new DLVDesktopService("lib/dlvApple.bin"));
+			executable = "lib/dlvApple.bin";
+
+	}
+
+	public boolean generateSudoku() 
+	{
+		handler = new DesktopHandler(new DLVDesktopService(executable));
 		
 		InputProgram encoding = new ASPInputProgram();
 		encoding.addFilesPath(encodingResource);
 		handler.addProgram(encoding);
 		
-		//facts
 		InputProgram facts = new ASPInputProgram();
-
 		
-		ArrayList<Cell> cells = new ArrayList<Cell>();
 		cells = factsGenerator();
+		
 		try {
 			for(int i = 0; i < cells.size(); i++)
-			{
 				facts.addObjectInput(cells.get(i));
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//		System.out.println(facts.getPrograms());
+
 		handler.addProgram(facts);
 		OptionDescriptor filter = new OptionDescriptor("-n=1 ");
 		handler.addOption(filter);
@@ -83,15 +87,16 @@ public class SudokuGenerator {
 					e.printStackTrace();
 				} catch (InstantiationException e) {
 					e.printStackTrace();
-				}			
+				}
+				return true;
 		} else {
 			System.out.println("No answer set");
 		}
-		return cells;
+		return false;
 	}
 
-	private ArrayList<Cell> factsGenerator() {
-		
+	private ArrayList<Cell> factsGenerator() 
+	{
 		ArrayList<Cell> cells = new ArrayList<Cell>();
 		ArrayList<Integer> values = new ArrayList<Integer>();
 		for(int i=1; i<10; i++)
@@ -99,18 +104,20 @@ public class SudokuGenerator {
 			values.add(i);
 		}
 		
-
-		for(int i=3; i<6; i++)
-			for(int j=3; j<6; j++)
+		int[] coordinate = {0,3,6};
+		int x_index = coordinate[new Random().nextInt(coordinate.length)];
+		int y_index = coordinate[new Random().nextInt(coordinate.length)];
+		for(int i=x_index; i<(x_index+3); i++) 
+		{
+			for(int j=y_index; j<(y_index+3); j++)
 			{
 				int index = new Random().nextInt(values.size());
 				cells.add(new Cell(i,j,values.get(index)));
-				
 				values.remove(index);
-				
 			}
-		
+		}
 		return cells;
 	}
 
+	public ArrayList<Cell> getGrid() { return cells; }
 }
