@@ -10,6 +10,8 @@ public class SudokuCell extends Button implements java.io.Serializable {
 	private int value;
 	private boolean hide;
 	
+	private int assignedValue;
+	
 	public SudokuCell(int row, int column, int value) {
 		hideContent();
 		this.setRow(row);
@@ -53,8 +55,31 @@ public class SudokuCell extends Button implements java.io.Serializable {
 	}
 
 	public boolean isHide() {return hide;}
+	
 	@Override
 	public String toString() {
 		return "(" + row + "," + column + "," + "value" + ")";
+	}
+
+	public int getAssignedValue() {
+		return assignedValue;
+	}
+
+	public void setAssignedValue(int assignedValue) 
+	{
+		this.assignedValue = assignedValue;
+		if(this.assignedValue > 0)
+		{
+			showContent(assignedValue);
+		}
+	}
+
+	private void showContent(int assignedValue) {
+		setText(Integer.toString(assignedValue));
+		hide = false;
+	}
+	
+	public void highlightCell() {
+		setStyle("-fx-background-color: Red");
 	}
 }
