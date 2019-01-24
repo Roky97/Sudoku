@@ -58,7 +58,7 @@ public class SudokuCell extends Button implements java.io.Serializable {
 	
 	@Override
 	public String toString() {
-		return "(" + row + "," + column + "," + "value" + ")";
+		return "(" + row + "," + column + "," + value + ")";
 	}
 
 	public int getAssignedValue() {
@@ -81,5 +81,14 @@ public class SudokuCell extends Button implements java.io.Serializable {
 	
 	public void highlightCell() {
 		setStyle("-fx-background-color: Red");
+	}
+	public boolean isHighlighted() {
+		if(getStyle().equals(null))
+			return false;
+		return true;
+	}
+
+	public void removeHiglight() {
+		setStyle(null);
 	}
 }

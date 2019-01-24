@@ -95,6 +95,7 @@ public class SudokuGenerator {
 		return false;
 	}
 
+	//inizializzazione casuale di una sottomatrice per avere delle celle da passare come fatti al risolutore
 	private ArrayList<Cell> factsGenerator() 
 	{
 		ArrayList<Cell> cells = new ArrayList<Cell>();

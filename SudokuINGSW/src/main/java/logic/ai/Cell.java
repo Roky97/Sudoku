@@ -1,5 +1,7 @@
 package logic.ai;
 
+import java.awt.Point;
+
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
 
@@ -30,4 +32,5 @@ public class Cell {
 	
 	public void setValue(int value) {this.value = value;}
 	public int getValue() {return value;}
+
 }
