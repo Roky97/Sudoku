@@ -26,6 +26,10 @@ public class NumberButton extends Button {
 
 	public void setCont(int cont) {
 		this.cont = cont;
+		if(this.cont == 0)
+			emptyColor();
+		else
+			setStyle(null);
 	}
 
 
@@ -37,4 +41,11 @@ public class NumberButton extends Button {
 		this.value = value;
 	}
 	
+	public boolean isEmpty() 
+	{
+		if(this.cont == 0)
+			return true;
+		
+		return false;
+	}
 }
