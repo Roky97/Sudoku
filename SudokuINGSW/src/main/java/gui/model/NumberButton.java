@@ -17,7 +17,9 @@ public class NumberButton extends Button {
 	}
 	
 	public void emptyColor() {
-		setStyle("-fx-background-color: Red");
+		setStyle("-fx-background-color: Red;" +
+				"-fx-text-fill: White;");
+		setDisable(true);
 	}
 
 	public int getCont() {
@@ -28,8 +30,11 @@ public class NumberButton extends Button {
 		this.cont = cont;
 		if(this.cont == 0)
 			emptyColor();
-		else
-			setStyle(null);
+		else {
+			setStyle("-fx-font-weight: bold;"+
+					"-fx-text-fill: Limegreen;");
+			setDisable(false);
+		}
 	}
 
 

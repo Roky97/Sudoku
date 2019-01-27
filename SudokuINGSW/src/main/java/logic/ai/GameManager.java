@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Random;
 
 import gui.model.DIFFICULTY;
 import gui.model.SudokuCell;
@@ -54,7 +55,8 @@ public class GameManager {
 	
 	public boolean setSudokuCellValue(SudokuCell sudokuCell, int value)
 	{
-		if(sudokuCell.isHide()) {
+		if(sudokuCell.isHide() && value != 0) 
+		{
 			sameValue.clear();
 			int index = sudokuCells.indexOf(sudokuCell);
 			//restituisco il valore booleano delle funzioni di controllo
@@ -195,6 +197,7 @@ public class GameManager {
 	}
 
 	public DIFFICULTY getDifficulty() { return this.difficulty; }
+	public void setDifficulty(DIFFICULTY diff) { this.difficulty = diff; }
 
 	public void setSudokuCells(ArrayList<SudokuCell> sudokuCells) { this.sudokuCells = sudokuCells; }
 	public ArrayList<SudokuCell> getSudokuCells() { return this.sudokuCells; }
@@ -243,7 +246,6 @@ public class GameManager {
 				if(cell.getRow() == selectedCell.getRow() && 
 						cell.getColumn() == selectedCell.getColumn() &&
 							!cell.isHide()) {
-					System.out.println("presente nello schema iniziale");
 					this.selectedCell = new SudokuCell();
 					return false;
 				}
@@ -252,7 +254,6 @@ public class GameManager {
 			{
 				if(cell.getRow() == selectedCell.getRow() && 
 						cell.getColumn() == selectedCell.getColumn()) {
-					System.out.println("Rimossa!");
 					cell.removeContent();
 					this.selectedCell = new SudokuCell();
 					return true;
@@ -262,7 +263,7 @@ public class GameManager {
 		return false;
 	}
 
-	public boolean solution() 
+	public boolean compareSolution() 
 	{
 		ArrayList<Cell> cells = new ArrayList<Cell>();
 		for(SudokuCell sudokuCell : startGrid) 
@@ -289,11 +290,35 @@ public class GameManager {
 					}
 				}
 			}
-			if(rightSolution)
+			if(rightSolution) {
+				System.out.println("is a solution");
 				return true;
+			}
 		}
 		return false;
 		
+	}
+
+	
+	public int computeVisibleCells() 
+	{
+		Random rand = new Random();
+		switch (difficulty)
+		{
+			case EASY:
+				return (rand.nextInt(75-70)+70);
+			case NORMAL:
+				return (rand.nextInt(40-35)+35);
+			case HARD:
+				return (rand.nextInt(27-25)+25);
+				
+			default:
+				return 0;
+		}
+	}
+
+	public void clearStartGrid() {
+		startGrid = new ArrayList<SudokuCell>();
 	}
 
 }

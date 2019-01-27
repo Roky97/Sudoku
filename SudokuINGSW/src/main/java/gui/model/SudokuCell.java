@@ -12,13 +12,13 @@ public class SudokuCell extends Button implements java.io.Serializable {
 	
 	private int assignedValue;
 	
-	public SudokuCell(int row, int column, int value) {
+	public SudokuCell(int row, int column, int value) 
+	{
 		hideContent();
 		this.setRow(row);
 		this.setColumn(column);
 		this.value = value;
-		setScaleX(1.2);
-		setScaleY(1.2);
+		setScale(1.2,1.2);
 	}
 	
 	public SudokuCell() {
@@ -30,6 +30,7 @@ public class SudokuCell extends Button implements java.io.Serializable {
 		assignedValue = value;
 		hide = false;
 	}
+	
 	public void hideContent() {
 		setText("  ");
 		hide = true;
@@ -85,21 +86,46 @@ public class SudokuCell extends Button implements java.io.Serializable {
 	}
 	
 	public void highlightCell() {
-		setStyle("-fx-background-color: Red");
+		setStyle(getStyle() + "\n-fx-background-color: Red;");
 	}
 	
-	public boolean isHighlighted() {
-		if(getStyle().equals(null))
-			return false;
-		return true;
+	public boolean isHighlighted() 
+	{
+		if(getStyle().contains("-fx-background-color: Red;"))
+			return true;
+		return false;
 	}
 
-	public void removeHiglight() {
-		setStyle(null);
+	public void removeHiglight() 
+	{
+		if(getStyle().contains("-fx-background-color: Red;")) 
+		{
+			setStyle(getStyle().replaceAll("-fx-background-color: Red;", " "));
+		}
 	}
 	
 	public void removeContent() {
 		assignedValue = 0;
 		hideContent();
+	}
+
+	public void setScale(double x, double y) {
+		this.setScaleX(1.2);
+		this.setScaleY(1.2);
+	}
+
+	public void setLayout(double x, double y) {
+		setLayoutX(x);
+		setLayoutY(y);
+	}
+	
+	public boolean checkPosition(double x, double y) {
+		if(row == x && column == y)
+			return true;
+		return false;
+	}
+
+	public void setStartFont() {
+		setStyle("-fx-font-weight: bold;");
 	}
 }

@@ -48,7 +48,7 @@ public class SudokuGenerator {
 		InputProgram facts = new ASPInputProgram();
 		
 		cells = factsGenerator();
-		
+				
 		try {
 			for(int i = 0; i < cells.size(); i++)
 				facts.addObjectInput(cells.get(i));
@@ -93,6 +93,7 @@ public class SudokuGenerator {
 				return true;
 		} else {
 			System.out.println("No answer set");
+			generateSudoku();
 		}
 		return false;
 	}

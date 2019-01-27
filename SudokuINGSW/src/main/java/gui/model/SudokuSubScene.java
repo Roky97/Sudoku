@@ -1,30 +1,22 @@
 package gui.model;
 
+import java.awt.Point;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
 import java.util.ArrayList;
-import javafx.util.Duration;
-
-import gui.view.GameView;
 
 import javafx.animation.TranslateTransition;
-import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 @SuppressWarnings("restriction")
 public class SudokuSubScene extends SubScene {
@@ -33,23 +25,28 @@ public class SudokuSubScene extends SubScene {
 	private boolean isHidden;
 	private Label label;
 	private ArrayList<SudokuButton> buttons;
+	private Point transition_xy;
 	
 	public SudokuSubScene() 
 	{
 		super(new AnchorPane(), 600, 400);
-		prefHeight(400);
-		prefWidth(600);
+		setDimension(600,400);
 		
 		label = new Label();
 		backgroundSettings();
 		
 		buttons = new ArrayList<SudokuButton>();
-		
+		transition_xy = new Point(-725, 0);
 		setLayoutX(1050);
 		setLayoutY(150);
 		isHidden = true;
 	}
 	
+	public void setDimension(int width, int height) {
+		setWidth(width);
+		setHeight(height);
+	}
+
 	public AnchorPane getPane() { return (AnchorPane) this.getRoot(); }
 	
 	public void moveSubScene() 
@@ -59,12 +56,12 @@ public class SudokuSubScene extends SubScene {
 		transition.setNode(this);
 		if(isHidden)
 		{
-			transition.setToX(-725);
+			transition.setToX(transition_xy.getX());
 			isHidden = false;
 		}
 		else
 		{
-			transition.setToX(0);
+			transition.setToX(transition_xy.getY());
 			isHidden = true;
 		}
 		
@@ -106,12 +103,8 @@ public class SudokuSubScene extends SubScene {
 
 	public ArrayList<SudokuButton> getButtons() { return buttons; }
 
-//	public DIFFICULTY getDifficulty() {
-//		return difficulty;
-//	}
-//
-//	public void setDifficulty(DIFFICULTY difficulty) {
-//		this.difficulty = difficulty;
-//	}
+	public void setTransitionCoordinate(int x, int y) {
+		transition_xy.setLocation(x, y);
+	}
 
 }
