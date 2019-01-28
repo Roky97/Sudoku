@@ -47,14 +47,19 @@ public class SudokuButton extends Button {
 	}
 
 	private void setDefaultStyle() {
-		BUTTON_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/gui/resources/blue_button.png');";
-		PRESSED_BUTTON_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/gui/resources/blue_buttonPressed.png');";
+		BUTTON_STYLE = "-fx-background-color: transparent;"+
+						"-fx-background-image: url('/gui/resources/blue_button.png');";
+		PRESSED_BUTTON_STYLE = "-fx-background-color: transparent;"+
+								"-fx-text-fill: White;"+
+								"-fx-background-image: url('/gui/resources/blue_buttonPressed.png');";
 		setStyle(BUTTON_STYLE);
 	}
 
 	public void setDifficultyStyle() {
-		BUTTON_STYLE = "-fx-background-color: transparent; -fx-background-image: url('" + difficulty.getUrlImageButton()+"');";
-		PRESSED_BUTTON_STYLE = "-fx-background-color: transparent; -fx-background-image: url('" + difficulty.getUrlImageButton()+"');";
+		BUTTON_STYLE = "-fx-background-color: transparent;"+
+						"-fx-background-image: url('" + difficulty.getUrlImageButton()+"');";
+		PRESSED_BUTTON_STYLE = "-fx-background-color: transparent;"+
+								"-fx-background-image: url('" + difficulty.getUrlImageButton()+"');";
 		setStyle(BUTTON_STYLE);
 	}
 

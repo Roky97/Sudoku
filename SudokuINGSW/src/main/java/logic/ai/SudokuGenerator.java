@@ -50,8 +50,8 @@ public class SudokuGenerator {
 		cells = factsGenerator();
 				
 		try {
-			for(int i = 0; i < cells.size(); i++)
-				facts.addObjectInput(cells.get(i));
+			for(Cell cell : cells)
+				facts.addObjectInput(cell);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -93,6 +93,7 @@ public class SudokuGenerator {
 				return true;
 		} else {
 			System.out.println("No answer set");
+			cells.clear();
 			generateSudoku();
 		}
 		return false;
@@ -124,67 +125,4 @@ public class SudokuGenerator {
 	}
 
 	public ArrayList<Cell> getGrid() { return cells; }
-
-	public ArrayList< ArrayList<Cell> > solveSudoku(ArrayList<Cell> cells) 
-	{	
-		handler = new DesktopHandler(new DLVDesktopService(executable));
-		
-		InputProgram encoding = new ASPInputProgram();
-		encoding.addFilesPath(encodingResource);
-		handler.addProgram(encoding);
-		
-		InputProgram facts = new ASPInputProgram();
-		
-		try {
-			for(int i = 0; i < cells.size(); i++)
-				facts.addObjectInput(cells.get(i));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		handler.addProgram(facts);
-		Output out = handler.startSync();
-		AnswerSets answer = (DLVAnswerSets) out;
-
-		ArrayList< ArrayList<Cell> > answerSetsCells = new ArrayList<ArrayList<Cell>>();
-		
-		if(answer.getAnswersets().size() > 0) 
-		{
-			System.out.println("Answer sets find " + answer.getAnswersets().size());			
-			for(AnswerSet as : answer.getAnswersets()) 
-			{
-				ArrayList<Cell> solutionCells = new ArrayList<Cell>();
-				try 
-				{
-					for (Object obj : as.getAtoms()) 
-					{
-						if((obj instanceof Cell)) 
-						{
-							Cell cell = (Cell) obj;
-							solutionCells.add(cell);
-						}
-					}
-					
-					if(solutionCells.size() > 0)
-						answerSetsCells.add(solutionCells);
-					
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					e.printStackTrace();
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				}
-			}
-		} else {
-			System.out.println("No answer set");
-		}
-		return answerSetsCells;
-	}
 }

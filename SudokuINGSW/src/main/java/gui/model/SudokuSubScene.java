@@ -33,12 +33,11 @@ public class SudokuSubScene extends SubScene {
 		setDimension(600,400);
 		
 		label = new Label();
-		backgroundSettings();
+		backgroundSettings(450,350);
 		
 		buttons = new ArrayList<SudokuButton>();
-		transition_xy = new Point(-725, 0);
-		setLayoutX(1050);
-		setLayoutY(150);
+		transition_xy = new Point(-1190, 0);
+		setLayout(1500, 150);
 		isHidden = true;
 	}
 	
@@ -77,7 +76,7 @@ public class SudokuSubScene extends SubScene {
 	
 	private void labelSettings() 
 	{
-		setLayout(120, 30);
+		setLabelLayout(120, 30);
 		try {
 			label.setFont(Font.loadFont(new FileInputStream(new File("src/main/java/gui/resources/TeachersStudent.ttf")), 35));
 		} catch (FileNotFoundException e) {
@@ -86,9 +85,9 @@ public class SudokuSubScene extends SubScene {
 		};
 	}
 	
-	private void backgroundSettings() 
+	public void backgroundSettings(int width, int height) 
 	{
-		BackgroundImage background = new BackgroundImage(new Image(BACKGROUND_IMAGE,450,350,false,true),BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,BackgroundPosition.DEFAULT,null);
+		BackgroundImage background = new BackgroundImage(new Image(BACKGROUND_IMAGE,width,height,false,true),BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,BackgroundPosition.DEFAULT,null);
 		AnchorPane root = (AnchorPane) this.getRoot();
 		root.setBackground(new Background(background));
 	}
@@ -106,8 +105,13 @@ public class SudokuSubScene extends SubScene {
 		transition_xy.setLocation(x, y);
 	}
 
-	public void setLayout(int x, int y) {
+	public void setLabelLayout(int x, int y) {
 		label.setLayoutX(x);
 		label.setLayoutY(y);
+	}
+	
+	public void setLayout(int x, int y) {
+		setLayoutX(x);
+		setLayoutY(y);
 	}
 }

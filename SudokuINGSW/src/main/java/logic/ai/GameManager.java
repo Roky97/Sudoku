@@ -258,43 +258,6 @@ public class GameManager {
 		}
 		return false;
 	}
-
-	public boolean compareSolution() 
-	{
-		ArrayList<Cell> cells = new ArrayList<Cell>();
-		for(SudokuCell sudokuCell : startGrid) 
-		{
-			if(!sudokuCell.isHide()) 
-			{
-				Cell cell = new Cell(sudokuCell.getRow(), sudokuCell.getColumn(), sudokuCell.getAssignedValue());
-				cells.add(cell);
-			}
-		}
-		ArrayList<ArrayList<Cell>> solutions = generator.solveSudoku(cells);
-		boolean rightSolution = true;
-		for(ArrayList<Cell> currentSolution : solutions) 
-		{
-			for(Cell cell : currentSolution) 
-			{
-				for(SudokuCell finalCell : sudokuCells) 
-				{
-					if(cell.getRow() == finalCell.getRow() &&
-							cell.getColumn() == finalCell.getColumn() &&
-								cell.getValue() != finalCell.getValue()) {
-									rightSolution = false;
-									break;
-					}
-				}
-			}
-			if(rightSolution) {
-				System.out.println("is a solution");
-				return true;
-			}
-		}
-		return false;
-		
-	}
-
 	
 	public int computeVisibleCells() 
 	{
@@ -302,7 +265,7 @@ public class GameManager {
 		switch (difficulty)
 		{
 			case EASY:
-				return (rand.nextInt(75-70)+70);
+				return (rand.nextInt(80-79)+79);
 			case NORMAL:
 				return (rand.nextInt(40-35)+35);
 			case HARD:
@@ -316,5 +279,4 @@ public class GameManager {
 	public void clearStartGrid() {
 		startGrid = new ArrayList<SudokuCell>();
 	}
-
 }

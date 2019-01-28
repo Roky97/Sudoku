@@ -23,10 +23,9 @@ import static org.bytedeco.javacpp.opencv_videoio.CV_CAP_PROP_FRAME_HEIGHT;
 import static org.bytedeco.javacpp.opencv_videoio.CV_CAP_PROP_FRAME_WIDTH;
 
 import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +38,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.SwingUtilities;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.bytedeco.javacpp.indexer.FloatRawIndexer;
 import org.bytedeco.javacpp.opencv_core.CvPoint;
@@ -53,9 +53,9 @@ import org.bytedeco.javacv.CanvasFrame;
 import org.deeplearning4j.clustering.cluster.Cluster;
 import org.deeplearning4j.clustering.cluster.ClusterSet;
 import org.deeplearning4j.clustering.kmeans.KMeansClustering;
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.emaraic.sudoku.SudokuSolver;
@@ -65,6 +65,7 @@ import com.emaraic.utils.Sudoku;
 import gui.model.*;
 
 import javafx.stage.Stage;
+import logic.ai.Cell;
 import logic.ai.GameManager;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -90,6 +91,9 @@ public class MenuView extends ViewManager implements IView {
 	
 	private SudokuSubScene difficultySubScene;
 	private SudokuSubScene scannerSubScene;
+	private boolean scanComplete = false;
+	private SudokuSubScene loadSubScene;
+	
 	
 	public MenuView() 
 	{
@@ -124,6 +128,11 @@ public class MenuView extends ViewManager implements IView {
 		playBtn.setOnAction(new EventHandler<ActionEvent>() {
 			
 			public void handle(ActionEvent event) {
+				for(SudokuButton btn : menuButtons) {
+					if(btn != playBtn) {
+						btn.setDisable(!btn.isDisable());
+					}
+				}
 				difficultySubScene.moveSubScene();
 			}
 		});
@@ -139,6 +148,14 @@ public class MenuView extends ViewManager implements IView {
 					game.setDifficulty(gameManager.getDifficulty());
 					game.hideStage(stage);
 				}
+				else {
+					for(SudokuButton btn : menuButtons) {
+						if(btn != loadBtn) {
+							btn.setDisable(!btn.isDisable());
+						}
+					}
+					loadSubScene.moveSubScene();
+				}
 			}
 		});
 		menuButtons.add(loadBtn);
@@ -147,6 +164,11 @@ public class MenuView extends ViewManager implements IView {
 			
 			public void handle(ActionEvent event) 
 			{
+				for(SudokuButton btn : menuButtons) {
+					if(btn != scannerBtn) {
+						btn.setDisable(!btn.isDisable());
+					}
+				}
 				scannerSubScene.moveSubScene();
 			}
 		});
@@ -225,6 +247,18 @@ public class MenuView extends ViewManager implements IView {
 		difficultySubScene.getPane().getChildren().add(difficultySubScene.getLabel());
 		difficultySubScene.getPane().getChildren().add(buttonsBox);
 		
+		//load
+		loadSubScene = new SudokuSubScene();
+		loadSubScene.setLabel("NESSUNA PARTITA SALVATA");
+		loadSubScene.setLabelLayout(20,35);
+		loadSubScene.setLayout(1500,300);
+		loadSubScene.getLabel().setStyle("-fx-text-fill : Gold;");
+		loadSubScene.backgroundSettings(350,100);
+		loadSubScene.setTransitionCoordinate(-1110, 0);
+		loadSubScene.getPane().getChildren().add(loadSubScene.getLabel());
+		
+		pane.getChildren().add(loadSubScene);
+		
 		//scanner
 		scannerSubScene = new SudokuSubScene();
 		scannerSubScene.setLabel("SCANSIONE SUDOKU DA IMMAGINE");
@@ -233,11 +267,12 @@ public class MenuView extends ViewManager implements IView {
 		ArrayList<SudokuButton> buttons2 = new ArrayList<SudokuButton>();
 		SudokuButton cameraBtn = new SudokuButton("CAMERA");
 		cameraBtn.setOnAction(new EventHandler<ActionEvent>() {
-			
-			public void handle(ActionEvent event) {
+
+			public void handle(ActionEvent event) 
+			{
 				/*Load Pre-trained Network */
-				 final org.slf4j.Logger log = LoggerFactory.getLogger(SudokuSolver.class);
-		         SudokuSolver.NETWORK = SudokuSolver.loadNetwork();
+				final Logger log = LoggerFactory.getLogger(SudokuSolver.class);
+				SudokuSolver.NETWORK = SudokuSolver.loadNetwork();
  
 		        final AtomicReference<VideoCapture> capture = new AtomicReference<VideoCapture>(new VideoCapture());
 		        capture.get().set(CV_CAP_PROP_FRAME_WIDTH, 1280);
@@ -251,81 +286,83 @@ public class MenuView extends ViewManager implements IView {
 
 		        Mat colorimg = new Mat();
 
-		        CanvasFrame mainframe = new CanvasFrame("Real-time Sudoku Solver");
-		        mainframe.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-		        mainframe.setCanvasSize(600, 600);
+		        CanvasFrame mainframe = new CanvasFrame("SCANNER");
+		        mainframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		        mainframe.setCanvasSize(500,500);
 		        mainframe.setLocationRelativeTo(null);
 		        mainframe.setLayout(new BoxLayout(mainframe.getContentPane(), BoxLayout.Y_AXIS));
-		        final JButton control = new JButton("Stop");//start and pause camera capturing
-		        control.addMouseListener(new MouseAdapter() {
-		            @Override
-		            public void mouseClicked(MouseEvent e) {
-		                if (SwingUtilities.isLeftMouseButton(e)) {
-		                    if (start.get() == true && capture.get().isOpened()) {
-		                        start.set(false);
-		                        capture.get().release();
-		                        //imwrite("color.jpg", colorimg);
-		                        control.setText("Start");
-		                    } else {
-		                        start.set(true);
-		                        capture.set(new VideoCapture());
-		                        capture.get().open(0);
-		                        control.setText("Stop");
-		                    }
-		                }
-		            }
-		        });
-		        mainframe.add(control, BorderLayout.CENTER);
+		        final JButton control = new JButton("STOP");//start and pause camera capturing
+		        JPanel panel = new JPanel();
+		        panel.setLayout(new FlowLayout());
+		        panel.setBackground(Color.WHITE);
+		        control.setBackground(new Color(55,135,255));
+		        control.setForeground(Color.WHITE);
+		        control.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(java.awt.event.ActionEvent e) 
+					{
+						if(control.getText() == "RIPETI") {
+							panel.removeAll();
+							panel.add(control);
+							panel.repaint();
+						}
+	                    if (start.get() == true && capture.get().isOpened()) 
+	                    {
+	                        start.set(false);
+	                        capture.get().release();
+	                        control.setText("START");
+	                    } else {
+	                        start.set(true);
+	                        capture.set(new VideoCapture());
+	                        capture.get().open(0);
+	                        control.setText("STOP");
+	                    }
+					}
+				});
+		        panel.add(control);
+		        mainframe.add(panel, BorderLayout.SOUTH);
 		        mainframe.pack();
 		        mainframe.setVisible(true);
-		        mainframe.addWindowListener(new WindowAdapter() {
-		            @Override
-		            public void windowClosing(WindowEvent e) {
-		                if (capture.get().isOpened()) {
-		                    capture.get().release();
-		                }
-		                System.exit(0);
-		            }
-		        });
+		        
 		        CanvasFrame procframe = new CanvasFrame("Processed Frames");
-		        procframe.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-		        procframe.setCanvasSize(400, 400);
+		        procframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		        procframe.setCanvasSize(200, 200);
 		        procframe.setLocation(0, 0);
+//		        procframe.setVisible(false);
+		        
 		        CanvasFrame result = new CanvasFrame("Result ");
-		        result.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-		        result.setCanvasSize(500, 500);
+		        result.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		        result.setCanvasSize(200, 200);
 		        result.setLocation(0, 440);
-
-		        while (true) {
-		            while (start.get() && capture.get().read(colorimg)) {
-		                if (mainframe.isVisible()) {
-
+//		        result.setVisible(false);
+		        
+		        while (!scanComplete) 
+		        {
+		            while (start.get() && capture.get().read(colorimg)) 
+		            {
+		                if (mainframe.isVisible()) 
+		                {
 		                    /*Convert to grayscale mode*/
 		                    Mat sourceGrey = new Mat(colorimg.size(), CV_8UC1);
 		                    cvtColor(colorimg, sourceGrey, COLOR_BGR2GRAY);
-		                    //imwrite("gray.jpg", new Mat(image)); // Save gray version of image
 
 		                    /*Apply Gaussian Filter*/
 		                    Mat blurimg = new Mat(colorimg.size(), CV_8UC1);
 		                    GaussianBlur(sourceGrey, blurimg, new Size(5, 5), 0);
-		                    //imwrite("blur.jpg", binimg);
 
 		                    /*Binarising Image*/
 		                    Mat binimg = new Mat(colorimg.size());
 		                    adaptiveThreshold(blurimg, binimg, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY_INV, 19, 3);
-		                    //imwrite("binarise.jpg", binimg);
 
 		                    Rect r = SudokuSolver.getLargestRect(binimg);
 		                    Mat procimg = SudokuSolver.warpPrespectivePuzzle(binimg.clone());
 
-
-		                    /*opencv_imgproc.dilate(procimg, procimg, opencv_imgproc.getStructuringElement(opencv_imgproc.MORPH_RECT, new Size(5, 5)));
-		                    opencv_imgproc.erode(procimg, procimg, opencv_imgproc.getStructuringElement(opencv_imgproc.MORPH_RECT, new Size(3, 3)));
-		                    opencv_imgproc.morphologyEx(procimg, procimg, opencv_imgproc.MORPH_CLOSE, opencv_imgproc.getStructuringElement(opencv_imgproc.MORPH_RECT, new Size(2,2)),
-		                    new Point(0,0), 1, BORDER_CONSTANT, new Scalar());*/
 		                    Mat color = new Mat(colorimg);
-		                    if (SudokuSolver.isSudokuExist(binimg)) {
+		                    if (SudokuSolver.isSudokuExist(binimg)) 
+		                    {
+		                    	//IL SUDOKU VIENE RICONOSCIUTO NELL'INQUADRATURA
 		                        SudokuSolver.printCornerPoints(r, colorimg);
+		                        //IL MAIN FRAME MOSTRA GLI ANGOLI
 		                        mainframe.showImage(SudokuSolver.converter.convert(colorimg));
 		                        bitwise_not(procimg, procimg);
 		                        Mat clonedf = new Mat(procimg.clone());
@@ -333,7 +370,7 @@ public class MenuView extends ViewManager implements IView {
 		                        Canny(procimg, canimg, 30, 90);
 		                        //imwrite("canny.jpg", canimg);
 
-		                        /* Apply Satndard Hough Line Transform */
+		                        /* Apply Standard Hough Line Transform */
 		                        Mat lines = new Mat();//vector stores the parameters (rho,theta) of the detected lines
 		                        //HoughLines(canimg, lines, 1, CV_PI / 180, 70,1,1, 0, CV_PI);
 		                        HoughLines(canimg, lines, 1, CV_PI / 180, 100);
@@ -380,60 +417,64 @@ public class MenuView extends ViewManager implements IView {
 		                                }
 
 		                                vlines.addAll(hlines);//appen hlines to vlines to print them in one for loop
-		                                for (int i = 0; i < vlines.size(); i++) {
+		                                for (int i = 0; i < vlines.size(); i++) 
+		                                {
 		                                    Cluster get = vlines.get(i);
 		                                    double rho = get.getCenter().getArray().getDouble(0);
 		                                    double theta = get.getCenter().getArray().getDouble(1);
 		                                    double a = Math.cos(theta), b = Math.sin(theta);
 		                                    double x0 = a * rho, y0 = b * rho;
-		                                    CvPoint pt1 = cvPoint((int) Math.round(x0 + 1000 * (-b)), (int) Math.round(y0 + 1000 * (a))), pt2 = cvPoint((int) Math.round(x0 - 1000 * (-b)), (int) Math.round(y0 - 1000 * (a)));
+		                                    CvPoint pt1 = cvPoint((int) Math.round(x0 + 1000 * (-b)), 
+		                                    						(int) Math.round(y0 + 1000 * (a))), 
+		                                    						  pt2 = cvPoint((int) Math.round(x0 - 1000 * (-b)), 
+		                                    						    (int) Math.round(y0 - 1000 * (a)));
 		                                    line(procimg, new Point(pt1.x(), pt1.y()),
-		                                            new Point(pt2.x(), pt2.y()), new Scalar(0, 0, 0, 0), 3, CV_AA, 0);
+		                                    				new Point(pt2.x(), pt2.y()), 
+		                                    				  new Scalar(0, 0, 0, 0), 3, CV_AA, 0);
 
 		                                }
 
-		                                double puzzel[] = new double[81];
+		                                double puzzle[] = new double[81];
 		                                int j = 0;
 		                                //Form rectangles of 81 cells from the 100 intersection points
 		                                List<Rect> rects = new ArrayList<Rect>();
-		                                for (int i = 0; i < points.size() - 11; i++) {
+		                                for (int i = 0; i < points.size() - 11; i++) 
+		                                {
 		                                    int ri = i / 10;
 		                                    int ci = i % 10;
-		                                    if (ci != 9 && ri != 9) {
+		                                    if (ci != 9 && ri != 9) 
+		                                    {
 		                                        Point get = points.get(i);
 		                                        Point get2 = points.get(i + 11);
 		                                        Rect r1 = new Rect(get, get2);
-		                                        //Rect r1 = new Rect(new Point(get.x()+5,get.y()+5), new Point(get2.x()-5,get2.y()-5));
-		                                        //imwrite("di\\points" + i + ".jpg", clonedf.apply(r1));
-		                                        if ((r1.x() + r1.width() <= clonedf.cols()) && (r1.y() + r1.height() <= clonedf.rows()) && r1.x() >= 0 && r1.y() >= 0) {
+		                                        if ((r1.x() + r1.width() <= clonedf.cols()) && (r1.y() + r1.height() <= clonedf.rows()) && r1.x() >= 0 && r1.y() >= 0) 
+		                                        {
 		                                            Mat s = SudokuSolver.detectDigit(clonedf.apply(r1));
 		                                            rects.add(r1);
-		                                            //imwrite("di\\points" + i + ".jpg", s);
-		                                            if (s.cols() == 28 && s.rows() == 28) {
-		                                                puzzel[j] = SudokuSolver.recogniseDigit(s);
-		                                            } else {
-		                                                puzzel[j] = 0;
-		                                            }
+		                                            if (s.cols() == 28 && s.rows() == 28)
+		                                                puzzle[j] = SudokuSolver.recogniseDigit(s);
+		                                            else
+		                                                puzzle[j] = 0;
 		                                            j++;
 		                                        }
 		                                    }
 		                                }
+		                                
 		                                imwrite("procimg.jpg", procimg);
-		                                INDArray pd = Nd4j.create(puzzel);
+		                                INDArray pd = Nd4j.create(puzzle);
 		                                INDArray puz = pd.reshape(new int[]{9, 9});
 		                                INDArray solvedpuz = puz.dup();
-		                                if (Sudoku.isValid(puzzel)) {
+		                                if (Sudoku.isValid(puzzle)) 
+		                                {
 		                                    //this code section is reponsible for if the solution of sudoku takes more than 5 second, break it.
 		                                    ExecutorService service = Executors.newSingleThreadExecutor();
 		                                    try {
-												Future<Object> solver = (Future<Object>) service.submit(() -> {
-		                                            Sudoku.solve(0, 0, solvedpuz);
-		                                        });
+												Future<Object> solver = (Future<Object>) service.submit(() -> {Sudoku.solve(0, 0, solvedpuz);});
 		                                        System.out.println(solver.get(5, TimeUnit.SECONDS));
 		                                    } catch (final TimeoutException e) {
 		                                        log.info("It takes a lot of time to solve, Going to break!!");
 		                                        /*break to get another image if sudoku solution takes more than 5 seconds
-		                                        sometime it takes along time for solving sudoku as a result of incorrect digit recognition.
+		                                        sometime it takes long time for solving sudoku as a result of incorrect digit recognition.
 		                                        Mostely you face this when you rotate the puzzle */
 		                                        break;
 		                                    } catch (final Exception e) {
@@ -443,12 +484,8 @@ public class MenuView extends ViewManager implements IView {
 		                                    }
 
 		                                    if (SudokuSolver.isContainsZero(solvedpuz)) {
-		                                        /*  putText(procimg, "CAN Not Solve It", new Point(0, procimg.cols() / 2),
-		                                        FONT_HERSHEY_COMPLEX, 1, new Scalar(0, 0, 0, 0), 3, 2, false);*/
 		                                        break; //break to get another image if solution is invalid
 		                                    } else {
-		                                        /*resimg = colorimg.apply(r);
-		                                        resize(resimg, resimg, new Size(600, 600));*/
 		                                        color = new Mat(procimg.size(), CV_8UC3);
 		                                        cvtColor(procimg, color, COLOR_GRAY2BGR);
 		                                        SudokuSolver.printResult(color, solvedpuz, puz, rects);
@@ -458,10 +495,33 @@ public class MenuView extends ViewManager implements IView {
 		                                }
 		                                start.set(Boolean.FALSE);
 		                                capture.get().release();
-		                                control.setText("Try Again");
+
+		                                JButton solutionBtn = new JButton("SOLUZIONE");
+		                                solutionBtn.setBackground(new Color(55,135,255));
+		                                solutionBtn.setForeground(Color.white);
+		                                solutionBtn.addActionListener(new ActionListener() {
+											
+											@Override
+											public void actionPerformed(java.awt.event.ActionEvent e) {
+												createCellFromImage(puzzle);
+											}
+										});
+		                                JButton playBtn = new JButton("GIOCA");
+		                                playBtn.setBackground(new Color(55,135,255));
+		                                playBtn.setForeground(Color.white);
+		                                playBtn.addActionListener(new ActionListener() {
+											
+											@Override
+											public void actionPerformed(java.awt.event.ActionEvent e) {
+												createCellFromImage(puzzle);
+											}
+										});
+		                		        panel.add(solutionBtn);
+		                		        panel.add(playBtn);
+		                                control.setText("RIPETI");
+		                                
 		                            }//End if checkLines
 		                        }
-
 		                        procframe.showImage(SudokuSolver.converter.convert(procimg));
 		                        result.showImage(SudokuSolver.converter.convert(color));
 
@@ -470,7 +530,7 @@ public class MenuView extends ViewManager implements IView {
 		                        procframe.showImage(SudokuSolver.converter.convert(procimg));
 		                        result.showImage(SudokuSolver.converter.convert(color));
 		                    }
-		                } else {//End if graabbed image equal null
+		                } else {//End if grabbed image equal null
 		                    System.out.println("Error!!!!");
 		                    System.exit(1);
 		                }
@@ -485,9 +545,8 @@ public class MenuView extends ViewManager implements IView {
 		            } catch (InterruptedException ex) {
 		                log.error(ex.getMessage());
 		            }
-		        }//End While True
+		        }//End While !Continue
 		    }
-			
 		});
 		buttons2.add(cameraBtn);
 		SudokuButton galleryBtn = new SudokuButton("GALLERIA");
@@ -506,13 +565,41 @@ public class MenuView extends ViewManager implements IView {
 		buttonsBox2.getChildren().addAll(scannerSubScene.getButtons());
 		buttonsBox2.setLayoutX(130);
 		buttonsBox2.setLayoutY(130);
-		scannerSubScene.setLayout(30,30);
+		scannerSubScene.setLabelLayout(30,30);
 		scannerSubScene.getPane().getChildren().add(scannerSubScene.getLabel());
 		scannerSubScene.getPane().getChildren().add(buttonsBox2);
 		
 		pane.getChildren().add(scannerSubScene);
 	}
 
+	public void createCellFromImage(double[] puzzle) 
+	{
+		ArrayList<Cell> cells = new ArrayList<Cell>();
+		int r = 0, c = 0;
+		for(int i = 0; i < puzzle.length; i++) 
+		{
+			if(puzzle[i] != 0) {
+				Cell cell = new Cell(r,c,(int)puzzle[i]);
+				cells.add(cell);
+			}
+			c++;
+        	if(isMultiple(i+1)) {
+        		r++;
+        		c = 0;
+        	}
+        }
+		if(cells.size() > 0)
+	        scanComplete = true;
+	}
+
+	private boolean isMultiple(int i) 
+	{
+		for(int j = 1; j <= 81; j++)
+			if(9*j == i)
+				return true;
+		return false;
+	}
+	
 	private void playSudoku(SudokuButton button) 
 	{
 		GameView game = new GameView(button.getDifficulty());
