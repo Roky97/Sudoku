@@ -153,7 +153,6 @@ public class GameManager {
 
 	public void saveGame(DIFFICULTY difficulty, ArrayList<SudokuCell> sudokuCells) 
 	{
-		System.out.println("SAVE");
 	      try {
 	          FileOutputStream fileOut = new FileOutputStream("saves/game.ser");
 	          ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -161,7 +160,6 @@ public class GameManager {
 	          out.writeObject(sudokuCells);
 	          out.close();
 	          fileOut.close();
-	          System.out.println("Serialized data is saved in saves/game.ser");
 	       } catch (IOException i) {
 	          i.printStackTrace();
 	       }
@@ -180,7 +178,6 @@ public class GameManager {
 				this.sudokuCells = (ArrayList<SudokuCell>) in.readObject();
 				in.close();
 				fileIn.close();
-				System.out.println("Load successfull");
 	
 				return true;
 			}
@@ -192,7 +189,6 @@ public class GameManager {
 			e.printStackTrace();
 		}
 
-		System.out.println("no load avaiable");
 		return false;
 	}
 

@@ -77,8 +77,7 @@ public class SudokuSubScene extends SubScene {
 	
 	private void labelSettings() 
 	{
-		label.setLayoutX(120);
-		label.setLayoutY(30);
+		setLayout(120, 30);
 		try {
 			label.setFont(Font.loadFont(new FileInputStream(new File("src/main/java/gui/resources/TeachersStudent.ttf")), 35));
 		} catch (FileNotFoundException e) {
@@ -107,4 +106,8 @@ public class SudokuSubScene extends SubScene {
 		transition_xy.setLocation(x, y);
 	}
 
+	public void setLayout(int x, int y) {
+		label.setLayoutX(x);
+		label.setLayoutY(y);
+	}
 }

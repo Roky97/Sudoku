@@ -29,6 +29,7 @@ public class MenuView extends ViewManager implements IView {
 	private ArrayList<SudokuButton> menuButtons; 
 	
 	private SudokuSubScene difficultySubScene;
+	private SudokuSubScene scannerSubScene;
 	
 	public MenuView() 
 	{
@@ -37,7 +38,7 @@ public class MenuView extends ViewManager implements IView {
 		setMenuButtons(new ArrayList<SudokuButton>());
 
 		createBackground();
-		createSubScene();
+		createSubScenes();
 		createButtons();
 		
 		stage.setScene(scene);
@@ -82,6 +83,13 @@ public class MenuView extends ViewManager implements IView {
 		});
 		menuButtons.add(loadBtn);
 		SudokuButton scannerBtn = new SudokuButton("SCANNER");
+		scannerBtn.setOnAction(new EventHandler<ActionEvent>() {
+			
+			public void handle(ActionEvent event) 
+			{
+				scannerSubScene.moveSubScene();
+			}
+		});
 		menuButtons.add(scannerBtn);
 		SudokuButton exitBtn = new SudokuButton("EXIT");
 		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -104,10 +112,11 @@ public class MenuView extends ViewManager implements IView {
 		}
 	}
 
-	private void createSubScene() 
+	private void createSubScenes() 
 	{
 		difficultySubScene = new SudokuSubScene();
 		difficultySubScene.setLabel("CHOOSE DIFFICULTY");
+		difficultySubScene.getLabel().setStyle("-fx-text-fill : Gold;");
 		
 		ArrayList<SudokuButton> buttons = new ArrayList<SudokuButton>();
 		final SudokuButton easy = new SudokuButton("EASY");
@@ -155,6 +164,42 @@ public class MenuView extends ViewManager implements IView {
 		
 		difficultySubScene.getPane().getChildren().add(difficultySubScene.getLabel());
 		difficultySubScene.getPane().getChildren().add(buttonsBox);
+		
+		//scanner
+		scannerSubScene = new SudokuSubScene();
+		scannerSubScene.setLabel("SCANSIONE SUDOKU DA IMMAGINE");
+		scannerSubScene.getLabel().setStyle("-fx-text-fill : Gold;");
+		
+		ArrayList<SudokuButton> buttons2 = new ArrayList<SudokuButton>();
+		SudokuButton cameraBtn = new SudokuButton("CAMERA");
+		cameraBtn.setOnAction(new EventHandler<ActionEvent>() {
+			
+			public void handle(ActionEvent event) {
+				//azioni per scansione da camera
+			}
+		});
+		buttons2.add(cameraBtn);
+		SudokuButton galleryBtn = new SudokuButton("GALLERIA");
+		galleryBtn.setOnAction(new EventHandler<ActionEvent>() {
+			
+			public void handle(ActionEvent event) {
+				
+			}
+		});
+		buttons2.add(galleryBtn);
+		scannerSubScene.addButtons(buttons2);
+		
+		VBox buttonsBox2 = new VBox();
+		buttonsBox2.setSpacing(20);
+		buttonsBox2.setAlignment(Pos.CENTER_RIGHT);
+		buttonsBox2.getChildren().addAll(scannerSubScene.getButtons());
+		buttonsBox2.setLayoutX(130);
+		buttonsBox2.setLayoutY(130);
+		scannerSubScene.setLayout(30,30);
+		scannerSubScene.getPane().getChildren().add(scannerSubScene.getLabel());
+		scannerSubScene.getPane().getChildren().add(buttonsBox2);
+		
+		pane.getChildren().add(scannerSubScene);
 	}
 
 	private void playSudoku(SudokuButton button) 
