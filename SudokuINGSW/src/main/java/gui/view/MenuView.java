@@ -335,7 +335,7 @@ public class MenuView extends ViewManager implements IView {
 		        result.setCanvasSize(200, 200);
 		        result.setLocation(0, 440);
 //		        result.setVisible(false);
-		        boolean continua=false;
+
 		        while (!scanComplete) 
 		        {
 		            while (start.get() && capture.get().read(colorimg)) 
@@ -464,18 +464,7 @@ public class MenuView extends ViewManager implements IView {
 		                                INDArray pd = Nd4j.create(puzzle);
 		                                INDArray puz = pd.reshape(new int[]{9, 9});
 		                                INDArray solvedpuz = puz.dup();
-		                                if(puz!=null) {
-		                                	ArrayList<SudokuCell> sudokuCell=new ArrayList<SudokuCell>();
-		                                	for(int i=0;i<9;i++) {
-		                                		for(int k=0;k<9;k++) {
-		                                			System.out.println(i+" "+k+" "+(int)puz.getDouble(i,k));
-		                                			sudokuCell.add(new SudokuCell(i,k,(int)puz.getDouble(i,k)));
-		                                		}
-		                                	}
-		                                	playSudoku(sudokuCell);
-		                                	start.set(false);
-		                                	continua=false;
-		                                }
+		                                
 		                                if (Sudoku.isValid(puzzle)) 
 		                                {
 		                                    //this code section is reponsible for if the solution of sudoku takes more than 5 second, break it.
@@ -515,7 +504,7 @@ public class MenuView extends ViewManager implements IView {
 											
 											@Override
 											public void actionPerformed(java.awt.event.ActionEvent e) {
-												createCellFromImage(puzzle);
+												playSudokuFromImage(createSudokuCellFromImage(puzzle));
 											}
 										});
 		                                JButton playBtn = new JButton("GIOCA");
@@ -525,8 +514,9 @@ public class MenuView extends ViewManager implements IView {
 											
 											@Override
 											public void actionPerformed(java.awt.event.ActionEvent e) {
-												createCellFromImage(puzzle);
+												playSudokuFromImage(createSudokuCellFromImage(puzzle));
 											}
+
 										});
 		                		        panel.add(solutionBtn);
 		                		        panel.add(playBtn);
@@ -557,8 +547,6 @@ public class MenuView extends ViewManager implements IView {
 		            } catch (InterruptedException ex) {
 		                log.error(ex.getMessage());
 		            }
-
-		            if(!continua) break;
 		        }//End While !Continue
 		    }
 		});
@@ -586,14 +574,15 @@ public class MenuView extends ViewManager implements IView {
 		pane.getChildren().add(scannerSubScene);
 	}
 
-	public void createCellFromImage(double[] puzzle) 
+	public ArrayList<SudokuCell> createSudokuCellFromImage(double[] puzzle) 
 	{
-		ArrayList<Cell> cells = new ArrayList<Cell>();
+		ArrayList<SudokuCell> cells = new ArrayList<SudokuCell>();
 		int r = 0, c = 0;
 		for(int i = 0; i < puzzle.length; i++) 
 		{
 			if(puzzle[i] != 0) {
-				Cell cell = new Cell(r,c,(int)puzzle[i]);
+				SudokuCell cell = new SudokuCell(r,c,(int)puzzle[i]);
+				cell.showContent();
 				cells.add(cell);
 			}
 			c++;
@@ -604,6 +593,8 @@ public class MenuView extends ViewManager implements IView {
         }
 		if(cells.size() > 0)
 	        scanComplete = true;
+
+		return cells;
 	}
 
 	private boolean isMultiple(int i) 
@@ -620,9 +611,8 @@ public class MenuView extends ViewManager implements IView {
 		game.hideStage(stage);
 	}
 	
-	private void playSudoku(ArrayList<SudokuCell> sudokucell) 
-	{
-		GameView game = new GameView(sudokucell);
+	private void playSudokuFromImage(ArrayList<SudokuCell> cells) {
+		GameView game = new GameView(cells);
 		game.hideStage(stage);
 	}
 	

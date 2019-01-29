@@ -64,13 +64,14 @@ public class GameView extends ViewManager implements IView {
 	//costruttore da utilizzare per caricare la partita
 	public GameView(ArrayList<SudokuCell> sudokuCells) 
 	{
+		System.out.println("A");
 		stage = new Stage();
-
+		System.out.println("A");
 		gameManager = new GameManager();
-
+		System.out.println("A");
 		this.sudokuCells = new ArrayList<SudokuCell>();
 		this.sudokuCells = sudokuCells;
-
+		System.out.println("A");
 		this.gameButtons = new ArrayList<SudokuButton>();
 		this.numberButtons = new ArrayList<NumberButton>();
 
