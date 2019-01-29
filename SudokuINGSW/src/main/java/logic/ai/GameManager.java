@@ -279,4 +279,23 @@ public class GameManager {
 	public void clearStartGrid() {
 		startGrid = new ArrayList<SudokuCell>();
 	}
+
+	public void getSolution(ArrayList<Cell> cells) 
+	{
+		grid = cells;
+		if(generator.solveSudoku(grid)) 
+		{
+			generator.getGrid();
+		}
+	}
+
+	public ArrayList<SudokuCell> parseToSudokuCells(ArrayList<Cell> cells) {
+		ArrayList<SudokuCell> sudokuCells = new ArrayList<SudokuCell>();
+		for(Cell cell : cells) {
+			SudokuCell sudokuCell = new SudokuCell(cell.getRow(), cell.getColumn(), cell.getValue());
+			sudokuCell.showContent();
+			sudokuCells.add(sudokuCell);
+		}
+		return sudokuCells;
+	}
 }

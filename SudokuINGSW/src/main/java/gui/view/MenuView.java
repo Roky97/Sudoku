@@ -94,6 +94,10 @@ public class MenuView extends ViewManager implements IView {
 	private boolean scanComplete = false;
 	private SudokuSubScene loadSubScene;
 	
+	//Campi da usare per lo scanner
+	private ArrayList<SudokuCell> sudokuCells;
+	private ArrayList<Cell> cells;
+	private String action;
 	
 	public MenuView() 
 	{
@@ -504,7 +508,7 @@ public class MenuView extends ViewManager implements IView {
 											
 											@Override
 											public void actionPerformed(java.awt.event.ActionEvent e) {
-												playSudokuFromImage(createSudokuCellFromImage(puzzle));
+												createSudokuCellFromImage(puzzle,"SOLUTION");
 											}
 										});
 		                                JButton playBtn = new JButton("GIOCA");
@@ -514,7 +518,7 @@ public class MenuView extends ViewManager implements IView {
 											
 											@Override
 											public void actionPerformed(java.awt.event.ActionEvent e) {
-												playSudokuFromImage(createSudokuCellFromImage(puzzle));
+												createSudokuCellFromImage(puzzle,"PLAY");
 											}
 
 										});
@@ -548,6 +552,7 @@ public class MenuView extends ViewManager implements IView {
 		                log.error(ex.getMessage());
 		            }
 		        }//End While !Continue
+		        playSudokuFromImage();
 		    }
 		});
 		buttons2.add(cameraBtn);
@@ -574,15 +579,36 @@ public class MenuView extends ViewManager implements IView {
 		pane.getChildren().add(scannerSubScene);
 	}
 
-	public ArrayList<SudokuCell> createSudokuCellFromImage(double[] puzzle) 
+	public void createSudokuCellFromImage(double[] puzzle, String action) 
 	{
-		ArrayList<SudokuCell> cells = new ArrayList<SudokuCell>();
+		sudokuCells = new ArrayList<SudokuCell>();
+		int r = 0, c = 0;
+		for(int i = 0; i < puzzle.length; i++) 
+		{
+			SudokuCell cell = new SudokuCell(r,c,(int)puzzle[i]);
+			if(puzzle[i] != 0) {
+				cell.showContent();
+			}
+			sudokuCells.add(cell);
+			c++;
+        	if(isMultiple(i+1)) {
+        		r++;
+        		c = 0;
+        	}
+        }
+		this.action = action;
+		if(sudokuCells.size() > 0)
+	        scanComplete = true;
+	}
+
+	public void createCellFromImage(double[] puzzle, String action) 
+	{
+		cells = new ArrayList<Cell>();
 		int r = 0, c = 0;
 		for(int i = 0; i < puzzle.length; i++) 
 		{
 			if(puzzle[i] != 0) {
-				SudokuCell cell = new SudokuCell(r,c,(int)puzzle[i]);
-				cell.showContent();
+				Cell cell = new Cell(r,c,(int)puzzle[i]);
 				cells.add(cell);
 			}
 			c++;
@@ -591,12 +617,11 @@ public class MenuView extends ViewManager implements IView {
         		c = 0;
         	}
         }
+		this.action = action;
 		if(cells.size() > 0)
 	        scanComplete = true;
-
-		return cells;
 	}
-
+	
 	private boolean isMultiple(int i) 
 	{
 		for(int j = 1; j <= 81; j++)
@@ -611,9 +636,16 @@ public class MenuView extends ViewManager implements IView {
 		game.hideStage(stage);
 	}
 	
-	private void playSudokuFromImage(ArrayList<SudokuCell> cells) {
-		GameView game = new GameView(cells);
-		game.hideStage(stage);
+	private void playSudokuFromImage() {
+		if(this.action.equals("PLAY")) {
+			GameView gameView = new GameView(sudokuCells);
+			gameView.hideStage(stage);
+		}else {
+//			GameManager gameManager = new GameManager();
+//			gameManager.getSolution(cells);
+//			GameView gameView = new GameView(gameManager.parseToSudokuCells(gameManager.getGrid()));
+//			gameView.hideStage(stage);
+		}
 	}
 	
 	public Stage getStage() { return stage; }

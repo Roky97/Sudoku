@@ -125,4 +125,62 @@ public class SudokuGenerator {
 	}
 
 	public ArrayList<Cell> getGrid() { return cells; }
+
+	public boolean solveSudoku(ArrayList<Cell> grid) 
+	{
+		handler = new DesktopHandler(new DLVDesktopService(executable));
+		
+		InputProgram encoding = new ASPInputProgram();
+		encoding.addFilesPath(encodingResource);
+		handler.addProgram(encoding);
+		
+		InputProgram facts = new ASPInputProgram();
+				
+		try {
+			for(Cell cell : grid)
+				facts.addObjectInput(cell);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		handler.addProgram(facts);
+		OptionDescriptor filter = new OptionDescriptor("-n=1 ");
+		handler.addOption(filter);
+		Output out = handler.startSync();
+		AnswerSets answer = (DLVAnswerSets) out;
+
+		if(answer.getAnswersets().size() > 0) 
+		{
+			cells.clear();
+			System.out.println("Answer set find");
+			AnswerSet firstAs = answer.getAnswersets().get(0);
+
+			try {
+				for (Object obj : firstAs.getAtoms()) 
+				{
+					if((obj instanceof Cell)) 
+					{
+						Cell cell = (Cell) obj;
+						cells.add(cell);
+					}
+				}
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			}
+			return true;
+		} else {
+			System.out.println("No answer set");
+		}
+		return false;
+	}
 }
