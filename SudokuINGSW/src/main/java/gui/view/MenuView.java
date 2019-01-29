@@ -335,7 +335,7 @@ public class MenuView extends ViewManager implements IView {
 		        result.setCanvasSize(200, 200);
 		        result.setLocation(0, 440);
 //		        result.setVisible(false);
-		        
+		        boolean continua=false;
 		        while (!scanComplete) 
 		        {
 		            while (start.get() && capture.get().read(colorimg)) 
@@ -464,6 +464,18 @@ public class MenuView extends ViewManager implements IView {
 		                                INDArray pd = Nd4j.create(puzzle);
 		                                INDArray puz = pd.reshape(new int[]{9, 9});
 		                                INDArray solvedpuz = puz.dup();
+		                                if(puz!=null) {
+		                                	ArrayList<SudokuCell> sudokuCell=new ArrayList<SudokuCell>();
+		                                	for(int i=0;i<9;i++) {
+		                                		for(int k=0;k<9;k++) {
+		                                			System.out.println(i+" "+k+" "+(int)puz.getDouble(i,k));
+		                                			sudokuCell.add(new SudokuCell(i,k,(int)puz.getDouble(i,k)));
+		                                		}
+		                                	}
+		                                	playSudoku(sudokuCell);
+		                                	start.set(false);
+		                                	continua=false;
+		                                }
 		                                if (Sudoku.isValid(puzzle)) 
 		                                {
 		                                    //this code section is reponsible for if the solution of sudoku takes more than 5 second, break it.
@@ -545,6 +557,8 @@ public class MenuView extends ViewManager implements IView {
 		            } catch (InterruptedException ex) {
 		                log.error(ex.getMessage());
 		            }
+
+		            if(!continua) break;
 		        }//End While !Continue
 		    }
 		});
@@ -603,6 +617,12 @@ public class MenuView extends ViewManager implements IView {
 	private void playSudoku(SudokuButton button) 
 	{
 		GameView game = new GameView(button.getDifficulty());
+		game.hideStage(stage);
+	}
+	
+	private void playSudoku(ArrayList<SudokuCell> sudokucell) 
+	{
+		GameView game = new GameView(sudokucell);
 		game.hideStage(stage);
 	}
 	
