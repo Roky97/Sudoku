@@ -28,7 +28,7 @@ public class GameManager {
 	
 	private int value;//Rappresenta uno dei numeri da 1 a 9 che vogliamo porre in una cella.
 	private ArrayList<Point> sameValue; //ArrayList di punti che contiene le coord delle celle che hanno lo stesso valore di un numero che immettiamo e si trovano nella stessa riga,colonna o sottomatrice.
-	private SudokuCell selectedCell; //Rappresente la cella sulla quale clicchiamo.
+	private SudokuCell selectedCell; //Rappresente la cella sulla quale clicchiamoo.
 	
 	public GameManager() 
 	{
