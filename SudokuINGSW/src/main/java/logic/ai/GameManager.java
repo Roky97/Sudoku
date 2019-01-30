@@ -15,17 +15,20 @@ import gui.model.SudokuCell;
 
 public class GameManager {
 
-	//Solver per la creazione di livelli
-	private SudokuGenerator generator;
 
-	private ArrayList<Cell> grid;
+	private SudokuGenerator generator; //Mediante un suo metodo interno viene creata una matrice sudoku che rispecchia la difficoltà passata.
+
+	private ArrayList<Cell> grid; //ArrayList di celle che rappresentano le istanze sulle quali viene applicata la logica DLV.
 	
-	private DIFFICULTY difficulty;
-	private ArrayList<SudokuCell> sudokuCells;
-	private ArrayList<SudokuCell> startGrid;
-	private int value;
-	private ArrayList<Point> sameValue;
-	private SudokuCell selectedCell;
+	private DIFFICULTY difficulty; //In base ad essa il generator genera una matrice su cui giocare
+	
+	private ArrayList<SudokuCell> sudokuCells; //ArrayList di bottoni che possiedono delle coordinate(X,Y) ed un valore.
+	
+	private ArrayList<SudokuCell> startGrid; //Presumo sia la griglia appena generata che utilizziamo per ricominciare la stessa partita.
+	
+	private int value;//Rappresenta uno dei numeri da 1 a 9 che vogliamo porre in una cella.
+	private ArrayList<Point> sameValue; //ArrayList di punti che contiene le coord delle celle che hanno lo stesso valore di un numero che immettiamo e si trovano nella stessa riga,colonna o sottomatrice.
+	private SudokuCell selectedCell; //Rappresente la cella sulla quale clicchiamo.
 	
 	public GameManager() 
 	{
@@ -38,36 +41,35 @@ public class GameManager {
 		selectedCell = new SudokuCell();
 	}
 	
-	//generazione automatic di livelli con DLV
-	public void generateSudoku()
+	
+	public void generateSudoku() //Funzione che genera lo schema sudoku su cui giocare.
 	{
 		if(generator.generateSudoku()) 
 		{
 			sudokuCells.clear();
 			grid.clear();
-			grid = generator.getGrid();
+			grid = generator.getGrid(); //Imposta la griglia di celle dalla quale poi impostiamo la griglia di gioco.
 		}
 	}
 	
-	public void selectedValue(int value) { this.setValue(value); }
-	public void setValue(int value) { this.value = value; }
-	public int getValue() { return this.value; }
+	public void selectedValue(int value) { this.setValue(value);}
+	public void setValue(int value) { this.value = value;}
+	public int getValue() { return this.value;}
 	
-	public boolean setSudokuCellValue(SudokuCell sudokuCell, int value)
+	public boolean setSudokuCellValue(SudokuCell sudokuCell, int value)//Con questo metodo proviamo a porre un valore in una determinata cella.
 	{
 		if(sudokuCell.isHide() && value != 0) 
 		{
 			sameValue.clear();
 			int index = sudokuCells.indexOf(sudokuCell);
-			//restituisco il valore booleano delle funzioni di controllo
-			return (checkValue(sudokuCells.get(index), value));
+			return (checkValue(sudokuCells.get(index), value)); //Controlliamo se è possibile porre il valore all'interno di una determinata cella.
 		}
 		return false;
 	}
 	
-	//controllo che il valore inserito nella cella rispetti le regole del gioco
 
-	private boolean checkValue(SudokuCell sudokuCell, int value) 
+
+	private boolean checkValue(SudokuCell sudokuCell, int value)//Controlliamo che il valore inserito nella cella rispetti le regole del gioco
 	{
 		int x = sudokuCell.getRow();
 		int y = sudokuCell.getColumn();
@@ -85,13 +87,13 @@ public class GameManager {
 		else if(x >= 6)
 			r = 6;
 		
-		boolean subMatrix = checkOnSubMatrix(r,c,x,y,value);
-		boolean rowAndColumn = checkOnRowAndColumn(x,y,value);
+		boolean subMatrix = checkOnSubMatrix(r,c,x,y,value); 
+		boolean rowAndColumn = checkOnRowAndColumn(x,y,value); 
 		
 		return subMatrix && rowAndColumn;
 	}
 
-	private boolean checkOnRowAndColumn(int x, int y, int value) 
+	private boolean checkOnRowAndColumn(int x, int y, int value) //Controlliamo che il valore che vogliamo immettere non sia presente nella stessa riga e colonna.
 	{
 		boolean insert = true;
 
@@ -101,8 +103,7 @@ public class GameManager {
 			{
 				if(cell.getRow() != x && cell.getAssignedValue() == value && !cell.isHide())
 				{
-					//aggiungo alla struttura dati le coordinate in cui ho valori uguali a quello selezionato
-					sameValue.add(new Point(cell.getRow(),y));
+					sameValue.add(new Point(cell.getRow(),y)); //Aggiungiamo a sameValue le coord che possiedono gli stessi valori nella stessa colonna.
 					insert = false;
 				}
 			}
@@ -110,8 +111,7 @@ public class GameManager {
 			{
 				if(cell.getColumn() != y && cell.getAssignedValue() == value && !cell.isHide())
 				{
-					//aggiungo alla struttura dati le coordinate in cui ho valori uguali a quello selezionato
-					sameValue.add(new Point(x,cell.getColumn()));
+					sameValue.add(new Point(x,cell.getColumn())); //Aggiungiamo a sameValue le coord che possiedono gli stessi valori nella stessa riga.
 					insert = false;
 				}
 			}
@@ -119,7 +119,7 @@ public class GameManager {
 		return insert;
 	}
 
-	private boolean checkOnSubMatrix(int r, int c, int x, int y, int value) 
+	private boolean checkOnSubMatrix(int r, int c, int x, int y, int value) //Controlliamo che il valore che vogliamo immettere non sia presente nella sottomatrice.
 	{
 		boolean insert = true;
 
@@ -135,8 +135,7 @@ public class GameManager {
 						{
 							if(cell.getAssignedValue() == value) 
 							{
-								//aggiungo alla struttura dati le coordinate in cui ho valori uguali a quello selezionato
-								this.sameValue.add(new Point(cell.getRow(), cell.getColumn()));
+								this.sameValue.add(new Point(cell.getRow(), cell.getColumn()));//Aggiungiamo a sameValue le coord che possiedono gli stessi valori nella stessa sottomatrice.
 								insert = false;
 							}
 						}
@@ -147,11 +146,11 @@ public class GameManager {
 		return insert;
 	}
 		
-	public ArrayList<Point> getCellWithSameValue() {
+	public ArrayList<Point> getCellWithSameValue() { //Restituiamo i punti con lo stesso valore per poterli colorare
 		return sameValue;
 	}
 
-	public void saveGame(DIFFICULTY difficulty, ArrayList<SudokuCell> sudokuCells) 
+	public void saveGame(DIFFICULTY difficulty, ArrayList<SudokuCell> sudokuCells) //Salviamo il gioco (per poterlo ripristinare forse)
 	{
 	      try {
 	          FileOutputStream fileOut = new FileOutputStream("saves/game.ser");
@@ -166,7 +165,7 @@ public class GameManager {
 	}
 
 	@SuppressWarnings({ "unchecked", "resource" })
-	public boolean loadGame() 
+	public boolean loadGame()  //Carichiamo il gioco salvato in precedenza
 	{
 		try {
 			FileInputStream fileIn;
@@ -192,6 +191,11 @@ public class GameManager {
 		return false;
 	}
 
+	
+	/////////////
+	//SET E GET//
+	/////////////
+	
 	public DIFFICULTY getDifficulty() { return this.difficulty; }
 	public void setDifficulty(DIFFICULTY diff) { this.difficulty = diff; }
 
@@ -213,7 +217,7 @@ public class GameManager {
 		startGrid = grid;
 	}
 
-	public int getHideCells() {
+	public int getHideCells() { //Restituisce il numero di celle nascoste 
 		int cont = 0;
 		for (SudokuCell c : sudokuCells) {
 			if(c.isHide())
@@ -233,7 +237,7 @@ public class GameManager {
 		this.selectedCell.setAssignedValue(cell.getAssignedValue());
 	}
 
-	public boolean removeContent(SudokuCell selectedCell) 
+	public boolean removeContent(SudokuCell selectedCell) //Rimuove il contenuto da una cella selezionata nel caso in cui premiamo su delete
 	{
 		if(!selectedCell.isHide()) 
 		{
@@ -259,7 +263,7 @@ public class GameManager {
 		return false;
 	}
 	
-	public int computeVisibleCells() 
+	public int computeVisibleCells() //In base alla difficoltà decidiamo il numero di celle non nascoste nella griglia di gioco
 	{
 		Random rand = new Random();
 		switch (difficulty)
@@ -276,7 +280,7 @@ public class GameManager {
 		}
 	}
 
-	public void clearStartGrid() {
+	public void clearStartGrid() { 
 		startGrid = new ArrayList<SudokuCell>();
 	}
 
@@ -289,7 +293,7 @@ public class GameManager {
 		}
 	}
 
-	public ArrayList<SudokuCell> parseToSudokuCells(ArrayList<Cell> cells) {
+	public ArrayList<SudokuCell> parseToSudokuCells(ArrayList<Cell> cells) { //Dalle istanze cell ricavate dal generator ci formiamo la griglia di bottoni sudokuCells.
 		ArrayList<SudokuCell> sudokuCells = new ArrayList<SudokuCell>();
 		for(Cell cell : cells) {
 			SudokuCell sudokuCell = new SudokuCell(cell.getRow(), cell.getColumn(), cell.getValue());
