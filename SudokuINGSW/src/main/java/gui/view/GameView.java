@@ -103,7 +103,7 @@ public class GameView extends ViewManager implements IView {
 	
 	public void createButtons() 
 	{
-		SudokuButton backBtn = new SudokuButton("< back");
+		SudokuButton backBtn = new SudokuButton("MENU'");
 		backBtn.setLayoutX(20);
 		backBtn.setLayoutY(20);
 		gameButtons.add(backBtn);
@@ -128,12 +128,12 @@ public class GameView extends ViewManager implements IView {
 		redoBtn.setLayoutY(60);		
 		gameButtons.add(redoBtn);		
 
-		SudokuButton infoBtn = new SudokuButton("info");
+		SudokuButton infoBtn = new SudokuButton("INFO");
 		infoBtn.setLayoutX(590);
 		infoBtn.setLayoutY(20);		
 		gameButtons.add(infoBtn);
 
-		final SudokuButton newGameBtn = new SudokuButton("new game");
+		final SudokuButton newGameBtn = new SudokuButton("NEW GAME");
 		newGameBtn.setLayoutX(590);
 		newGameBtn.setLayoutY(120);		
 		gameButtons.add(newGameBtn);
@@ -148,7 +148,7 @@ public class GameView extends ViewManager implements IView {
 			}
 		});
 
-		final SudokuButton restartBtn = new SudokuButton("restart");
+		final SudokuButton restartBtn = new SudokuButton("RESTART");
 		restartBtn.setLayoutX(590);
 		restartBtn.setLayoutY(170);		
 		gameButtons.add(restartBtn);
@@ -164,7 +164,7 @@ public class GameView extends ViewManager implements IView {
 			}
 		});
 
-		SudokuButton hintBtn = new SudokuButton("hint");
+		SudokuButton hintBtn = new SudokuButton("HINT");
 		hintBtn.setLayoutX(590);
 		hintBtn.setLayoutY(220);		
 		gameButtons.add(hintBtn);	
@@ -178,9 +178,9 @@ public class GameView extends ViewManager implements IView {
 			}
 		});
 		
-		SudokuButton deleteBtn = new SudokuButton("delete");
+		SudokuButton deleteBtn = new SudokuButton("DELETE");
 		deleteBtn.setLayoutX(590);
-		deleteBtn.setLayoutY(480);		
+		deleteBtn.setLayoutY(270);		
 		gameButtons.add(deleteBtn);
 		deleteBtn.setOnAction(new EventHandler<ActionEvent>() 
 		{
@@ -202,17 +202,17 @@ public class GameView extends ViewManager implements IView {
 			}
 		});
 				
-		SudokuButton stopBtn = new SudokuButton("stop");
+		SudokuButton stopBtn = new SudokuButton("STOP");
 		stopBtn.setLayoutX(200);
 		stopBtn.setLayoutY(530);		
 		gameButtons.add(stopBtn);	
 
-		SudokuButton playBtn = new SudokuButton("play");
+		SudokuButton playBtn = new SudokuButton("PLAY");
 		playBtn.setLayoutX(350);
 		playBtn.setLayoutY(530);		
 		gameButtons.add(playBtn);
 
-		final SudokuButton saveBtn = new SudokuButton("save");
+		final SudokuButton saveBtn = new SudokuButton("SAVE");
 		saveBtn.setLayoutX(590);
 		saveBtn.setLayoutY(530);		
 		gameButtons.add(saveBtn);
