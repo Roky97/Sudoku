@@ -37,7 +37,6 @@ public class GameView extends ViewManager implements IView {
 	private DIFFICULTY difficulty;
 	private ArrayList<SudokuCell> sudokuCells;
 	
-	
 	public GameView(DIFFICULTY difficulty) 
 	{
 		this.stage = new Stage();
@@ -139,8 +138,8 @@ public class GameView extends ViewManager implements IView {
 			public void handle(MouseEvent event) {
 				if(event.getButton().equals(MouseButton.PRIMARY)) 
 				{
-					createSubScene();
 					newGameBtn.setLayoutY(123.0 );
+					createSubScene();
 				}
 			}
 		});
@@ -290,6 +289,7 @@ public class GameView extends ViewManager implements IView {
 				for(NumberButton number : numberButtons)
 					number.setCont(9);
 				createGrid(gameManager.getGrid());
+				newGameSubScene.moveSubScene();
 			}
 		});
 		buttons.add(okBtn);
@@ -306,7 +306,6 @@ public class GameView extends ViewManager implements IView {
 		newGameSubScene.getPane().getChildren().add(buttonsBox);
 		
 		pane.getChildren().add(newGameSubScene);
-		
 		newGameSubScene.moveSubScene();
 	}
 
@@ -559,10 +558,52 @@ public class GameView extends ViewManager implements IView {
 
 		ArrayList<SudokuButton> buttons = new ArrayList<SudokuButton>();
 		SudokuButton restart = new SudokuButton("RESTART");
+		restart.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				restart.setLayoutY(173.0);
+				gameManager.selectedValue(0);
+				gameManager.getCellWithSameValue().clear();
+				removeHighlight();
+				pane.getChildren().removeAll(sudokuCells);
+				sudokuCells = new ArrayList<SudokuCell>();
+				sudokuCells = gameManager.getStartGrid();
+				gameManager.clearStartGrid();
+				for(NumberButton number : numberButtons)
+					number.setCont(9);
+				loadGrid();
+				winSubScene.moveSubScene();
+			}
+		});
 		buttons.add(restart);
 		SudokuButton newGame = new SudokuButton("NEW GAME");
+		newGame.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				gameManager.selectedValue(0);
+				gameManager.getCellWithSameValue().clear();
+				pane.getChildren().removeAll(sudokuCells);
+				sudokuCells = new ArrayList<SudokuCell>();
+				gameManager.generateSudoku();
+				gameManager.clearStartGrid();
+				for(NumberButton number : numberButtons)
+					number.setCont(9);
+				createGrid(gameManager.getGrid());
+				winSubScene.moveSubScene();
+			}
+		});
 		buttons.add(newGame);
 		SudokuButton menu = new SudokuButton("BACK TO MENU");
+		menu.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				hiddenStage.show();
+				stage.close();
+			}
+		});
 		buttons.add(menu);
 		winSubScene.addButtons(buttons);
 		
