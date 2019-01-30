@@ -284,13 +284,12 @@ public class GameManager {
 		startGrid = new ArrayList<SudokuCell>();
 	}
 
-	public void getSolution(ArrayList<Cell> cells) 
+	public boolean getSolution(ArrayList<Cell> cells) 
 	{
 		grid = cells;
-		if(generator.solveSudoku(grid)) 
-		{
-			generator.getGrid();
-		}
+		boolean hasSolution = generator.solveSudoku(grid); 
+		grid = generator.getGrid();
+		return hasSolution;
 	}
 
 	public ArrayList<SudokuCell> parseToSudokuCells(ArrayList<Cell> cells) { //Dalle istanze cell ricavate dal generator ci formiamo la griglia di bottoni sudokuCells.
@@ -301,5 +300,18 @@ public class GameManager {
 			sudokuCells.add(sudokuCell);
 		}
 		return sudokuCells;
+	}
+
+	public ArrayList<Cell> parseToCell(ArrayList<SudokuCell> sudokuCells)
+	{
+		ArrayList<Cell> cells = new ArrayList<Cell>();
+		for(SudokuCell sudokuCell : sudokuCells) 
+		{
+			if(sudokuCell.getValue() != 0) {
+				Cell cell = new Cell(sudokuCell.getRow(), sudokuCell.getColumn(), sudokuCell.getValue());
+				cells.add(cell);
+			}
+		}
+		return cells;
 	}
 }

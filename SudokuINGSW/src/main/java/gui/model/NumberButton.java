@@ -26,7 +26,8 @@ public class NumberButton extends Button {
 		return cont;
 	}
 
-	public void setCont(int cont) {
+	public void setCont(int cont) 
+	{
 		this.cont = cont;
 		if(this.cont == 0)
 			emptyColor();

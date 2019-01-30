@@ -588,8 +588,8 @@ public class MenuView extends ViewManager implements IView {
 			SudokuCell cell = new SudokuCell(r,c,(int)puzzle[i]);
 			if(puzzle[i] != 0) {
 				cell.showContent();
+				sudokuCells.add(cell);
 			}
-			sudokuCells.add(cell);
 			c++;
         	if(isMultiple(i+1)) {
         		r++;
@@ -636,8 +636,10 @@ public class MenuView extends ViewManager implements IView {
 		game.hideStage(stage);
 	}
 	
-	private void playSudokuFromImage() {
-		if(this.action.equals("PLAY")) {
+	private void playSudokuFromImage() 
+	{
+		if(this.action.equals("PLAY")) 
+		{
 			GameView gameView = new GameView(sudokuCells);
 			gameView.hideStage(stage);
 		}else {

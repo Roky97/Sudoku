@@ -137,8 +137,10 @@ public class SudokuGenerator {
 		InputProgram facts = new ASPInputProgram();
 				
 		try {
-			for(Cell cell : grid)
+			for(Cell cell : grid) {
+				System.out.println("cell(" + cell.getRow() + "," + cell.getColumn() + "," + cell.getValue() + ")");
 				facts.addObjectInput(cell);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
