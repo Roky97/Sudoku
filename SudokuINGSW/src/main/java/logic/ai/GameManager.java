@@ -69,7 +69,7 @@ public class GameManager {
 	
 
 
-	private boolean checkValue(SudokuCell sudokuCell, int value)//Controlliamo che il valore inserito nella cella rispetti le regole del gioco
+	public boolean checkValue(SudokuCell sudokuCell, int value)//Controlliamo che il valore inserito nella cella rispetti le regole del gioco
 	{
 		int x = sudokuCell.getRow();
 		int y = sudokuCell.getColumn();

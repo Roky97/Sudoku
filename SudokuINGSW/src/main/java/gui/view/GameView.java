@@ -34,7 +34,7 @@ public class GameView extends ViewManager implements IView {
 	private ArrayList<SudokuButton> gameButtons;
 	private ArrayList<NumberButton> numberButtons;
 	private SudokuSubScene newGameSubScene;
-	private SudokuSubScene restartSubScene;
+//	private SudokuSubScene restartSubScene;
 	
 	
 	private DIFFICULTY difficulty;
@@ -118,7 +118,7 @@ public class GameView extends ViewManager implements IView {
 	
 	public void createButtons() 
 	{
-		SudokuButton backBtn = new SudokuButton("MENU'");
+		SudokuButton backBtn = new SudokuButton("BACK");
 		backBtn.setLayoutX(20);
 		backBtn.setLayoutY(20);
 		gameButtons.add(backBtn);
@@ -174,7 +174,17 @@ public class GameView extends ViewManager implements IView {
 				if(event.getButton().equals(MouseButton.PRIMARY)) 
 				{
 					restartBtn.setLayoutY(173.0);
-					restartSubScene.moveSubScene();
+//					restartSubScene.moveSubScene();
+					gameManager.selectedValue(0);
+					gameManager.getCellWithSameValue().clear();
+					removeHighlight();
+					pane.getChildren().removeAll(sudokuCells);
+					sudokuCells = new ArrayList<SudokuCell>();
+					sudokuCells = gameManager.getStartGrid();
+					gameManager.clearStartGrid();
+					for(NumberButton number : numberButtons)
+						number.setCont(9);
+					loadGrid();
 				}
 			}
 		});
@@ -195,7 +205,7 @@ public class GameView extends ViewManager implements IView {
 		
 		SudokuButton deleteBtn = new SudokuButton("DELETE");
 		deleteBtn.setLayoutX(590);
-		deleteBtn.setLayoutY(270);		
+		deleteBtn.setLayoutY(492);		
 		gameButtons.add(deleteBtn);
 		deleteBtn.setOnAction(new EventHandler<ActionEvent>() 
 		{
@@ -283,7 +293,6 @@ public class GameView extends ViewManager implements IView {
 		newGameSubScene.backgroundSettings(400,200);
 		newGameSubScene.setTransitionCoordinate(-1329,0);
 		
-		
 		ArrayList<SudokuButton> buttons = new ArrayList<SudokuButton>();
 		SudokuButton yesButton = new SudokuButton("YES");
 		SudokuButton noButton = new SudokuButton("NO");
@@ -291,18 +300,18 @@ public class GameView extends ViewManager implements IView {
 		{
 			public void handle(ActionEvent event) 
 			{
-					removeHighlight();
-					gameManager.selectedValue(0);
-					gameManager.getCellWithSameValue().clear();
-					pane.getChildren().removeAll(sudokuCells);
-					sudokuCells = new ArrayList<SudokuCell>();
-					gameManager.generateSudoku();
-					gameManager.clearStartGrid();
-					for(NumberButton number : numberButtons)
-						number.setCont(9);
-					createGrid(gameManager.getGrid());
-					newGameSubScene.moveSubScene();
-					createSubScene();
+				removeHighlight();
+				gameManager.selectedValue(0);
+				gameManager.getCellWithSameValue().clear();
+				pane.getChildren().removeAll(sudokuCells);
+				sudokuCells = new ArrayList<SudokuCell>();
+				gameManager.generateSudoku();
+				gameManager.clearStartGrid();
+				for(NumberButton number : numberButtons)
+					number.setCont(9);
+				createGrid(gameManager.getGrid());
+				newGameSubScene.moveSubScene();
+				createSubScene();
 			}
 		});
 		
@@ -310,7 +319,7 @@ public class GameView extends ViewManager implements IView {
 		{
 			public void handle(ActionEvent event) 
 			{
-					newGameSubScene.moveSubScene();
+				newGameSubScene.moveSubScene();
 			}
 		});
 		
@@ -330,64 +339,60 @@ public class GameView extends ViewManager implements IView {
 		newGameSubScene.getPane().getChildren().add(newGameSubScene.getLabel());
 		newGameSubScene.getPane().getChildren().add(buttonsBox);
 	
-		
-		
-		restartSubScene=new SudokuSubScene();
-		restartSubScene.setLabel("DO YOU WANT TO RESTART?");
-		restartSubScene.getLabel().setStyle("-fx-text-fill : Gold;");
-		restartSubScene.backgroundSettings(400,200);
-		restartSubScene.setTransitionCoordinate(-1329,0);
-		
-		
-		
-		
-		ArrayList<SudokuButton> restartButtons = new ArrayList<SudokuButton>();
-		SudokuButton yesRestartButton = new SudokuButton("YES");
-		SudokuButton noRestartButton = new SudokuButton("NO");
-		yesRestartButton.setOnAction(new EventHandler<ActionEvent>() 
-		{
-			public void handle(ActionEvent event) 
-			{
-					restartSubScene.moveSubScene();
-					gameManager.selectedValue(0);
-					gameManager.getCellWithSameValue().clear();
-					removeHighlight();
-					pane.getChildren().removeAll(sudokuCells);
-					sudokuCells = new ArrayList<SudokuCell>();
-					sudokuCells = gameManager.getStartGrid();
-					gameManager.clearStartGrid();
-					for(NumberButton number : numberButtons)
-						number.setCont(9);
-					loadGrid();
-					createSubScene();
-			}
-		});
-		
-		noRestartButton.setOnAction(new EventHandler<ActionEvent>() 
-		{
-			public void handle(ActionEvent event) 
-			{
-				
-					restartSubScene.moveSubScene();
-			}
-		});
-		
-		restartButtons.add(yesRestartButton);
-		restartButtons.add(noRestartButton);
-		restartSubScene.addButtons(restartButtons);
-		
-		VBox restartButtonsBox = new VBox();
-		restartButtonsBox.setSpacing(10);
-		restartButtonsBox.setAlignment(Pos.CENTER);
-		restartButtonsBox.getChildren().addAll(restartSubScene.getButtons());
-		restartButtonsBox.setLayoutX(100);
-		restartButtonsBox.setLayoutY(70);
-		
-		restartSubScene.setLabelLayout(25,30);
-		restartSubScene.getPane().getChildren().add(restartSubScene.getLabel());
-		restartSubScene.getPane().getChildren().add(restartButtonsBox);
 		pane.getChildren().add(newGameSubScene);
-		pane.getChildren().add(restartSubScene);
+
+//		restartSubScene=new SudokuSubScene();
+//		restartSubScene.setLabel("DO YOU WANT TO RESTART?");
+//		restartSubScene.getLabel().setStyle("-fx-text-fill : Gold;");
+//		restartSubScene.backgroundSettings(400,200);
+//		restartSubScene.setTransitionCoordinate(-1329,0);
+//		
+//		ArrayList<SudokuButton> restartButtons = new ArrayList<SudokuButton>();
+//		SudokuButton yesRestartButton = new SudokuButton("YES");
+//		SudokuButton noRestartButton = new SudokuButton("NO");
+//		yesRestartButton.setOnAction(new EventHandler<ActionEvent>() 
+//		{
+//			public void handle(ActionEvent event) 
+//			{
+//					restartSubScene.moveSubScene();
+//					gameManager.selectedValue(0);
+//					gameManager.getCellWithSameValue().clear();
+//					removeHighlight();
+//					pane.getChildren().removeAll(sudokuCells);
+//					sudokuCells = new ArrayList<SudokuCell>();
+//					sudokuCells = gameManager.getStartGrid();
+//					gameManager.clearStartGrid();
+//					for(NumberButton number : numberButtons)
+//						number.setCont(9);
+//					loadGrid();
+//					createSubScene();
+//			}
+//		});
+//		
+//		noRestartButton.setOnAction(new EventHandler<ActionEvent>() 
+//		{
+//			public void handle(ActionEvent event) 
+//			{
+//				
+//					restartSubScene.moveSubScene();
+//			}
+//		});
+//		
+//		restartButtons.add(yesRestartButton);
+//		restartButtons.add(noRestartButton);
+//		restartSubScene.addButtons(restartButtons);
+//		
+//		VBox restartButtonsBox = new VBox();
+//		restartButtonsBox.setSpacing(10);
+//		restartButtonsBox.setAlignment(Pos.CENTER);
+//		restartButtonsBox.getChildren().addAll(restartSubScene.getButtons());
+//		restartButtonsBox.setLayoutX(100);
+//		restartButtonsBox.setLayoutY(70);
+//		
+//		restartSubScene.setLabelLayout(25,30);
+//		restartSubScene.getPane().getChildren().add(restartSubScene.getLabel());
+//		restartSubScene.getPane().getChildren().add(restartButtonsBox);
+//		pane.getChildren().add(restartSubScene);
 	}
 
 	private void createGrid(ArrayList<Cell> cells) 
@@ -672,10 +677,17 @@ public class GameView extends ViewManager implements IView {
 	
 	private void showValue(SudokuCell selectedCell) 
 	{
+		gameManager.getCellWithSameValue().clear();
 		for(SudokuCell cell : sudokuCells) 
 		{
 			if(cell.checkPosition(selectedCell.getRow(), selectedCell.getColumn()) && cell.isHide())
 			{
+				if(!gameManager.checkValue(selectedCell,cell.getValue())) 
+				{
+					removeHighlight();
+					highlightCell(gameManager.getCellWithSameValue());
+					return;
+				}
 				cell.showContent();
 				for(NumberButton number : numberButtons) 
 				{

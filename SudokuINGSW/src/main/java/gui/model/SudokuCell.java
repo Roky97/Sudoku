@@ -31,6 +31,11 @@ public class SudokuCell extends Button implements java.io.Serializable {
 		hide = false;
 	}
 	
+	private void showContent(int assignedValue) {
+		setText(Integer.toString(assignedValue));
+		hide = false;
+	}
+	
 	public void hideContent() {
 		setText("  ");
 		hide = true;
@@ -78,11 +83,6 @@ public class SudokuCell extends Button implements java.io.Serializable {
 		{
 			showContent(assignedValue);
 		}
-	}
-
-	private void showContent(int assignedValue) {
-		setText(Integer.toString(assignedValue));
-		hide = false;
 	}
 	
 	public void highlightCell() {
