@@ -162,11 +162,8 @@ public class GameView extends ViewManager implements IView {
 				}
 			}
 		});
-
-		if(needSolution())
-			newGameBtn.setDisable(true);
 		
-		final SudokuButton restartBtn = new SudokuButton("restart");
+		final SudokuButton restartBtn = new SudokuButton("RESTART");
 		restartBtn.setLayoutX(590);
 		restartBtn.setLayoutY(170);		
 		gameButtons.add(restartBtn);
@@ -294,7 +291,6 @@ public class GameView extends ViewManager implements IView {
 		{
 			public void handle(ActionEvent event) 
 			{
-				
 					removeHighlight();
 					gameManager.selectedValue(0);
 					gameManager.getCellWithSameValue().clear();
@@ -307,8 +303,6 @@ public class GameView extends ViewManager implements IView {
 					createGrid(gameManager.getGrid());
 					newGameSubScene.moveSubScene();
 					createSubScene();
-				
-				
 			}
 		});
 		
