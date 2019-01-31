@@ -26,6 +26,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -63,7 +64,8 @@ import com.emaraic.utils.LinesComparator;
 import com.emaraic.utils.Sudoku;
 
 import gui.model.*;
-
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import logic.ai.Cell;
 import logic.ai.GameManager;
@@ -104,7 +106,6 @@ public class MenuView extends ViewManager implements IView {
 		stage = new Stage();
 		
 		setMenuButtons(new ArrayList<SudokuButton>());
-
 		createBackground();
 		createSubScenes();
 		createButtons();
@@ -112,6 +113,7 @@ public class MenuView extends ViewManager implements IView {
 		stage.setScene(scene);
 	}
 	
+
 	public void createBackground() 
 	{
 		Image backgroundImg = new Image("/gui/resources/texture.png");
@@ -560,7 +562,14 @@ public class MenuView extends ViewManager implements IView {
 		galleryBtn.setOnAction(new EventHandler<ActionEvent>() {
 			
 			public void handle(ActionEvent event) {
-				
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setTitle("Open Resource File");
+				fileChooser.getExtensionFilters().addAll(
+				         new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"));
+			
+				File selectedFile = fileChooser.showOpenDialog(stage);
+				if(!(selectedFile == null))
+					System.out.println("Questo e' il file da scannerizzare: " + selectedFile.getName());
 			}
 		});
 		buttons2.add(galleryBtn);
