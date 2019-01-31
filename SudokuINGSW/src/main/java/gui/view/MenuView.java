@@ -340,7 +340,7 @@ public class MenuView extends ViewManager implements IView {
 		        result.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		        result.setCanvasSize(200, 200);
 		        result.setLocation(0, 440);
-//		        result.setVisible(false);
+		        result.setVisible(false);
 
 		        while (!scanComplete) 
 		        {
@@ -510,7 +510,9 @@ public class MenuView extends ViewManager implements IView {
 											
 											@Override
 											public void actionPerformed(java.awt.event.ActionEvent e) {
-												createSudokuCellFromImage(puzzle,"SOLUTION");
+												result.setVisible(true);
+												procframe.setVisible(false);
+												//createSudokuCellFromImage(puzzle,"SOLUTION");
 											}
 										});
 		                                JButton playBtn = new JButton("GIOCA");
