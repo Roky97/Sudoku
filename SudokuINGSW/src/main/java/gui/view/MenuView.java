@@ -24,11 +24,9 @@ import static org.bytedeco.javacpp.opencv_videoio.CV_CAP_PROP_FRAME_WIDTH;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +64,8 @@ import com.emaraic.utils.LinesComparator;
 import com.emaraic.utils.Sudoku;
 
 import gui.model.*;
-
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import logic.ai.Cell;
 import logic.ai.GameManager;
@@ -107,7 +106,6 @@ public class MenuView extends ViewManager implements IView {
 		stage = new Stage();
 		
 		setMenuButtons(new ArrayList<SudokuButton>());
-
 		createBackground();
 		createSubScenes();
 		createButtons();
@@ -115,6 +113,7 @@ public class MenuView extends ViewManager implements IView {
 		stage.setScene(scene);
 	}
 	
+
 	public void createBackground() 
 	{
 		Image backgroundImg = new Image("/gui/resources/texture.png");
@@ -341,7 +340,7 @@ public class MenuView extends ViewManager implements IView {
 		        result.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		        result.setCanvasSize(200, 200);
 		        result.setLocation(0, 440);
-//		        result.setVisible(false);
+		        result.setVisible(false);
 
 		        while (!scanComplete) 
 		        {
@@ -511,7 +510,9 @@ public class MenuView extends ViewManager implements IView {
 											
 											@Override
 											public void actionPerformed(java.awt.event.ActionEvent e) {
-												createSudokuCellFromImage(puzzle,"SOLUTION");
+												result.setVisible(true);
+												procframe.setVisible(false);
+												//createSudokuCellFromImage(puzzle,"SOLUTION");
 											}
 										});
 		                                JButton playBtn = new JButton("GIOCA");
@@ -563,7 +564,14 @@ public class MenuView extends ViewManager implements IView {
 		galleryBtn.setOnAction(new EventHandler<ActionEvent>() {
 			
 			public void handle(ActionEvent event) {
-				
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setTitle("Open Resource File");
+				fileChooser.getExtensionFilters().addAll(
+				         new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"));
+			
+				File selectedFile = fileChooser.showOpenDialog(stage);
+				if(!(selectedFile == null))
+					System.out.println("Questo e' il file da scannerizzare: " + selectedFile.getName());
 			}
 		});
 		buttons2.add(galleryBtn);
