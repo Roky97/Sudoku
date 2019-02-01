@@ -606,6 +606,7 @@ public class MenuView extends ViewManager implements IView {
 								@Override
 								public void actionPerformed(java.awt.event.ActionEvent e) {
 									if (control.getText().equals("RIPETI")) {
+										System.out.println();
 										gioca = true;
 										scanComplete=true;
 										start.set(false);
