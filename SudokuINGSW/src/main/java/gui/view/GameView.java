@@ -36,10 +36,9 @@ public class GameView extends ViewManager implements IView {
 	private SudokuSubScene newGameSubScene;
 //	private SudokuSubScene restartSubScene;
 	
-	
 	private DIFFICULTY difficulty;
 	private ArrayList<SudokuCell> sudokuCells;
-	
+
 	public GameView(DIFFICULTY difficulty) 
 	{
 		this.stage = new Stage();
@@ -82,7 +81,6 @@ public class GameView extends ViewManager implements IView {
 		if(!needSolution())
 			loadGrid();
 		else {
-			System.out.println("Sudoku need a solution");
 			if(gameManager.getSolution(gameManager.parseToCell(sudokuCells)))
 				createGrid(gameManager.getGrid());
 			else
@@ -135,12 +133,26 @@ public class GameView extends ViewManager implements IView {
 				
 		SudokuButton undoBtn = new SudokuButton("undo");
 		undoBtn.setLayoutX(200);
-		undoBtn.setLayoutY(60);		
+		undoBtn.setLayoutY(60);
+		undoBtn.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+
+			}
+		});
 		gameButtons.add(undoBtn);
 		
 		SudokuButton redoBtn = new SudokuButton("redo");
 		redoBtn.setLayoutX(350);
-		redoBtn.setLayoutY(60);		
+		redoBtn.setLayoutY(60);	
+		redoBtn.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				
+			}
+		});
 		gameButtons.add(redoBtn);		
 
 		SudokuButton infoBtn = new SudokuButton("INFO");
@@ -205,7 +217,7 @@ public class GameView extends ViewManager implements IView {
 		
 		SudokuButton deleteBtn = new SudokuButton("DELETE");
 		deleteBtn.setLayoutX(590);
-		deleteBtn.setLayoutY(492);		
+		deleteBtn.setLayoutY(480);		
 		gameButtons.add(deleteBtn);
 		deleteBtn.setOnAction(new EventHandler<ActionEvent>() 
 		{
@@ -262,14 +274,14 @@ public class GameView extends ViewManager implements IView {
 		int pos = 170;
 		for(int i = 1; i < 10; i++) 
 		{
-			final NumberButton b = new NumberButton(i);
-			b.setOnAction(new EventHandler<ActionEvent>() 
+			final NumberButton numBtn = new NumberButton(i);
+			numBtn.setOnAction(new EventHandler<ActionEvent>() 
 			{
 				public void handle(ActionEvent event) 
 				{
 					removeHighlight();
-					if(!b.isEmpty()) {
-						gameManager.selectedValue(b.getValue());
+					if(!numBtn.isEmpty()) {
+						gameManager.selectedValue(numBtn.getValue());
 					}
 					else {
 						gameManager.setValue(0);
@@ -277,10 +289,10 @@ public class GameView extends ViewManager implements IView {
 					
 				}
 			});
-			b.setLayoutX(pos);
-			b.setLayoutY(492);
+			numBtn.setLayoutX(pos);
+			numBtn.setLayoutY(492);
 			pos += 47;
-			numberButtons.add(b);
+			numberButtons.add(numBtn);
 		}
 		pane.getChildren().addAll(numberButtons);
 	}
@@ -622,8 +634,9 @@ public class GameView extends ViewManager implements IView {
 					}
 					else {
 						removeHighlight();
+//**********************/System.out.println("Set memento game view");//******************************************/
 						sudokuCell.setAssignedValue(gameManager.getValue());
-							
+						
 						for(NumberButton number : numberButtons) 
 						{
 							if(!number.isEmpty()) 
