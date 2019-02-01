@@ -562,8 +562,7 @@ public class MenuView extends ViewManager implements IView {
 				fileChooser.setTitle("Open Resource File");
 				fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"));
 				gioca = true;
-				while (true) {
-					while (gioca) {
+					while(gioca) {
 						gioca = false;
 						File selectedFile = fileChooser.showOpenDialog(stage);
 						if (!(selectedFile == null)) {
@@ -606,8 +605,6 @@ public class MenuView extends ViewManager implements IView {
 							control.addActionListener(new ActionListener() {
 								@Override
 								public void actionPerformed(java.awt.event.ActionEvent e) {
-									System.out.println(control.getText());
-									System.out.println(scanComplete);
 									if (control.getText().equals("RIPETI")) {
 										gioca = true;
 										scanComplete=true;
@@ -860,7 +857,7 @@ public class MenuView extends ViewManager implements IView {
 						}
 					}
 				}
-			}
+			
 		});
 		buttons2.add(galleryBtn);
 		scannerSubScene.addButtons(buttons2);
