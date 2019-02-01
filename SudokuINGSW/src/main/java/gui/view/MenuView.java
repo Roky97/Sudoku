@@ -267,6 +267,9 @@ public class MenuView extends ViewManager implements IView {
 		cameraBtn.setOnAction(new EventHandler<ActionEvent>() {
 
 			public void handle(ActionEvent event) {
+				gioca=true;
+				while(gioca) {
+			    gioca = false;
 				/* Load Pre-trained Network */
 				final Logger log = LoggerFactory.getLogger(SudokuSolver.class);
 				SudokuSolver.NETWORK = SudokuSolver.loadNetwork();
@@ -294,13 +297,35 @@ public class MenuView extends ViewManager implements IView {
 				panel.setBackground(Color.WHITE);
 				control.setBackground(new Color(55, 135, 255));
 				control.setForeground(Color.WHITE);
+				
+				panel.add(control);
+				mainframe.add(panel, BorderLayout.SOUTH);
+				mainframe.pack();
+				mainframe.setVisible(true);
+
+				CanvasFrame procframe = new CanvasFrame("Processed Frames");
+				procframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				procframe.setCanvasSize(200, 200);
+				procframe.setLocation(0, 0);
+				// procframe.setVisible(false);
+				CanvasFrame result = new CanvasFrame("Result ");
+				result.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				result.setCanvasSize(200, 200);
+				result.setLocation(0, 440);
+				result.setVisible(false);
 				control.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(java.awt.event.ActionEvent e) {
-						if (control.getText() == "RIPETI") {
-							panel.removeAll();
-							panel.add(control);
-							panel.repaint();
+						if (control.getText().equals("RIPETI")) {
+							gioca = true;
+							scanComplete=true;
+							start.set(false);
+							procframe.setVisible(false);
+							mainframe.setVisible(false);
+							result.setVisible(false);
+							//panel.removeAll();
+							//panel.add(control);
+							//panel.repaint();
 						}
 						if (start.get() == true && capture.get().isOpened()) {
 							start.set(false);
@@ -314,23 +339,9 @@ public class MenuView extends ViewManager implements IView {
 						}
 					}
 				});
-				panel.add(control);
-				mainframe.add(panel, BorderLayout.SOUTH);
-				mainframe.pack();
-				mainframe.setVisible(true);
-
-				CanvasFrame procframe = new CanvasFrame("Processed Frames");
-				procframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				procframe.setCanvasSize(200, 200);
-				procframe.setLocation(0, 0);
-				// procframe.setVisible(false);
-
-				CanvasFrame result = new CanvasFrame("Result ");
-				result.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				result.setCanvasSize(200, 200);
-				result.setLocation(0, 440);
-				result.setVisible(false);
-
+			    gioca=false;
+			    scanComplete=false;
+			    start.set(true);
 				while (!scanComplete) {
 					while (start.get() && capture.get().read(colorimg)) {
 						if (mainframe.isVisible()) {
@@ -550,7 +561,8 @@ public class MenuView extends ViewManager implements IView {
 						log.error(ex.getMessage());
 					}
 				} // End While !Continue
-				playSudokuFromImage();
+				//playSudokuFromImage();
+			}
 			}
 		});
 		buttons2.add(cameraBtn);
@@ -606,12 +618,12 @@ public class MenuView extends ViewManager implements IView {
 								@Override
 								public void actionPerformed(java.awt.event.ActionEvent e) {
 									if (control.getText().equals("RIPETI")) {
-										System.out.println();
 										gioca = true;
 										scanComplete=true;
 										start.set(false);
 										procframe.setVisible(false);
 										mainframe.setVisible(false);
+										result.setVisible(false);
 										
 									} else if (start.get() == true) {
 										start.set(false);
