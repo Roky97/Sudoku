@@ -377,6 +377,8 @@ public class GameView extends ViewManager implements IView {
 
 	public void createSubScene() 
 	{
+		if(difficulty == null)
+			difficulty = DIFFICULTY.NORMAL;
 		//NEW GAME SUBSCENE
 		newGameSubScene = new SudokuSubScene();
 		newGameSubScene.setLabel("DO YOU WANT A NEW SUDOKU?");
