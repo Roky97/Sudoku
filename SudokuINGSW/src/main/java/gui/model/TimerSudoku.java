@@ -1,7 +1,5 @@
 package gui.model;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.lang3.time.StopWatch;
 
 
