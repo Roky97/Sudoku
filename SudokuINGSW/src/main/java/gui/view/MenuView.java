@@ -25,11 +25,8 @@ import static org.bytedeco.javacpp.opencv_videoio.CV_CAP_PROP_FRAME_WIDTH;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +37,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -55,7 +51,6 @@ import org.bytedeco.javacpp.opencv_core.Scalar;
 import org.bytedeco.javacpp.opencv_core.Size;
 import org.bytedeco.javacpp.opencv_videoio.VideoCapture;
 import org.bytedeco.javacv.CanvasFrame;
-import org.bytedeco.javacv.Java2DFrameUtils;
 import org.deeplearning4j.clustering.cluster.Cluster;
 import org.deeplearning4j.clustering.cluster.ClusterSet;
 import org.deeplearning4j.clustering.kmeans.KMeansClustering;
@@ -132,7 +127,8 @@ public class MenuView extends ViewManager implements IView {
 		pane.getChildren().add(logo);
 	}
 
-	public void createButtons() {
+	public void createButtons() 
+	{
 		SudokuButton playBtn = new SudokuButton("PLAY");
 		playBtn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -146,12 +142,16 @@ public class MenuView extends ViewManager implements IView {
 			}
 		});
 		menuButtons.add(playBtn);
+		
 		SudokuButton loadBtn = new SudokuButton("LOAD GAME");
 		loadBtn.setOnAction(new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent event) {
-				if (gameManager.loadGame()) {
+			public void handle(ActionEvent event) 
+			{
+				if (gameManager.loadGame()) 
+				{
 					GameView game = new GameView(gameManager.getSudokuCells());
 					game.setDifficulty(gameManager.getDifficulty());
+					game.createSubScene();
 					game.hideStage(stage);
 				} else {
 					for (SudokuButton btn : menuButtons) {
@@ -164,6 +164,7 @@ public class MenuView extends ViewManager implements IView {
 			}
 		});
 		menuButtons.add(loadBtn);
+		
 		SudokuButton scannerBtn = new SudokuButton("SCANNER");
 		scannerBtn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -177,6 +178,7 @@ public class MenuView extends ViewManager implements IView {
 			}
 		});
 		menuButtons.add(scannerBtn);
+		
 		SudokuButton exitBtn = new SudokuButton("EXIT");
 		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -185,18 +187,22 @@ public class MenuView extends ViewManager implements IView {
 			}
 		});
 		menuButtons.add(exitBtn);
+		
 		addButtons();
 	}
 
-	private void addButtons() {
-		for (SudokuButton button : menuButtons) {
+	private void addButtons() 
+	{
+		for (SudokuButton button : menuButtons) 
+		{
 			button.setLayoutX(MENU_BUTTON_X);
 			button.setLayoutY(MENU_BUTTON_Y + menuButtons.indexOf(button) * 100);
 			pane.getChildren().add(button);
 		}
 	}
 
-	private void createSubScenes() {
+	private void createSubScenes() 
+	{
 		difficultySubScene = new SudokuSubScene();
 		difficultySubScene.setLabel("CHOOSE DIFFICULTY");
 		difficultySubScene.getLabel().setStyle("-fx-text-fill : Gold;");
@@ -264,9 +270,10 @@ public class MenuView extends ViewManager implements IView {
 
 		ArrayList<SudokuButton> buttons2 = new ArrayList<SudokuButton>();
 		SudokuButton cameraBtn = new SudokuButton("CAMERA");
-		cameraBtn.setOnAction(new EventHandler<ActionEvent>() {
-
-			public void handle(ActionEvent event) {
+		cameraBtn.setOnAction(new EventHandler<ActionEvent>() 
+		{
+			public void handle(ActionEvent event) 
+			{
 				gioca=true;
 				while(gioca) {
 			    gioca = false;
@@ -566,10 +573,12 @@ public class MenuView extends ViewManager implements IView {
 			}
 		});
 		buttons2.add(cameraBtn);
+
 		SudokuButton galleryBtn = new SudokuButton("GALLERIA");
 		galleryBtn.setOnAction(new EventHandler<ActionEvent>() {
 
-			public void handle(ActionEvent event) {
+			public void handle(ActionEvent event) 
+			{
 				FileChooser fileChooser = new FileChooser();
 				fileChooser.setTitle("Open Resource File");
 				fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"));
@@ -865,8 +874,7 @@ public class MenuView extends ViewManager implements IView {
 									log.error(ex.getMessage());
 								}
 							} // End While !Continue
-							//playSudokuFromImage();
-
+//							playSudokuFromImage();
 						}
 					}
 				}
@@ -966,6 +974,10 @@ public class MenuView extends ViewManager implements IView {
 
 	public void setGameManager(GameManager gameManager) {
 		this.gameManager = gameManager;
+	}
+	
+	public SudokuSubScene getSubscene() {
+		return difficultySubScene;
 	}
 
 }
