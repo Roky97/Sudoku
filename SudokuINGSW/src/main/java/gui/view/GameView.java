@@ -14,6 +14,7 @@ import gui.model.NumberButton;
 import gui.model.SudokuButton;
 import gui.model.SudokuCell;
 import gui.model.SudokuSubScene;
+import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -44,6 +45,7 @@ public class GameView extends ViewManager implements IView {
 	private SudokuSubScene newGameSubScene;
 	private SudokuSubScene restartSubScene;
 	private SudokuSubScene infoSubScene;
+	private AnimationTimer animationTimer;
 	
 	private DIFFICULTY difficulty;
 	private ArrayList<SudokuCell> sudokuCells;
@@ -67,6 +69,7 @@ public class GameView extends ViewManager implements IView {
 //creazione del sudoku con lista di Cell passate dal GameManager
 		createGrid(this.gameManager.getGrid());
 		createSubScene();
+		animationTimer.start();
 
 		this.stage.setScene(scene);
 		this.stage.show();
@@ -136,34 +139,67 @@ public class GameView extends ViewManager implements IView {
 				if(event.getButton().equals(MouseButton.PRIMARY)) {
 					hiddenStage.show();
 					stage.close();
+					animationTimer.stop();
+					gameManager.restartTimer();
+					gameManager.stopTimer();
 				}
 			}
 			
 		});
 				
-		SudokuButton undoBtn = new SudokuButton("undo");
-		undoBtn.setLayoutX(200);
-		undoBtn.setLayoutY(60);
-		undoBtn.setOnAction(new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-
-			}
-		});
-		gameButtons.add(undoBtn);
+//		SudokuButton undoBtn = new SudokuButton("undo");
+//		undoBtn.setLayoutX(200);
+//		undoBtn.setLayoutY(60);
+//		undoBtn.setOnAction(new EventHandler<ActionEvent>() {
+//			
+//			@Override
+//			public void handle(ActionEvent event) {
+//
+//			}
+//		});
+//		gameButtons.add(undoBtn);
+//		
+//		SudokuButton redoBtn = new SudokuButton("redo");
+//		redoBtn.setLayoutX(350);
+//		redoBtn.setLayoutY(60);	
+//		redoBtn.setOnAction(new EventHandler<ActionEvent>() {
+//			
+//			@Override
+//			public void handle(ActionEvent event) {
+//				
+//			}
+//		});
+//		gameButtons.add(redoBtn);		
 		
-		SudokuButton redoBtn = new SudokuButton("redo");
-		redoBtn.setLayoutX(350);
-		redoBtn.setLayoutY(60);	
-		redoBtn.setOnAction(new EventHandler<ActionEvent>() {
+		SudokuButton timerButton = new SudokuButton("0:0:0");
+		timerButton.setLayoutX(275);
+		timerButton.setLayoutY(60);
+//		gameManager.startTimer();
+		
+		animationTimer=new AnimationTimer() {
 			
 			@Override
-			public void handle(ActionEvent event) {
-				
+			public void handle(long now) {
+				// TODO Auto-generated method stub
+				gameManager.upgradeTimer();
+				String text=gameManager.getTimerString();
+				System.out.println(text);
+				timerButton.setText(text);
 			}
-		});
-		gameButtons.add(redoBtn);		
+		};
+		
+		
+//		timerButton.setOnAction(new EventHandler<ActionEvent>() {
+//			
+//			@Override
+//			public void handle(ActionEvent event) {
+//				
+//			}
+//		});
+		
+		gameButtons.add(timerButton);
+		
+		
 
 		SudokuButton infoBtn = new SudokuButton("INFO");
 		infoBtn.setLayoutX(590);
@@ -180,6 +216,8 @@ public class GameView extends ViewManager implements IView {
 						n.setDisable(true);
 				}
 				infoSubScene.moveSubScene();
+				gameManager.stopTimer();
+				animationTimer.stop();
 			}
 		});
 		gameButtons.add(infoBtn);
@@ -204,6 +242,10 @@ public class GameView extends ViewManager implements IView {
 						if(!n.isEmpty())
 							n.setDisable(!n.isDisable());
 					}
+					
+					gameManager.stopTimer();
+					animationTimer.stop();
+					
 				}
 			}
 		});
@@ -229,6 +271,9 @@ public class GameView extends ViewManager implements IView {
 						if(!n.isEmpty())
 							n.setDisable(!n.isDisable());
 					}
+					
+					gameManager.stopTimer();
+					animationTimer.stop();
 				}
 			}
 		});
@@ -363,7 +408,11 @@ public class GameView extends ViewManager implements IView {
 					if(b.isDisable())
 						b.setDisable(false);
 				}
+				
+
 				createSubScene();
+				gameManager.restartTimer();
+				animationTimer.start();
 			}
 		});
 		
@@ -384,6 +433,9 @@ public class GameView extends ViewManager implements IView {
 					if(!n.isEmpty())
 						n.setDisable(false);
 				}
+				
+				gameManager.startTimer();
+				animationTimer.start();
 			}
 		});
 		
@@ -441,6 +493,8 @@ public class GameView extends ViewManager implements IView {
 					b.setDisable(false);
 				}
 				createSubScene();
+				gameManager.restartTimer();
+				animationTimer.start();
 			}
 		});
 		
@@ -458,6 +512,8 @@ public class GameView extends ViewManager implements IView {
 					if(!n.isEmpty())
 						n.setDisable(!n.isDisable());
 				}
+				gameManager.startTimer();
+				animationTimer.start();
 			}
 		});
 
@@ -529,6 +585,9 @@ public class GameView extends ViewManager implements IView {
 					if(!n.isEmpty())
 						n.setDisable(false);
 				}
+				
+				gameManager.startTimer();
+				animationTimer.start();
 			}
 		});
 		infoButtons.add(okInfo);
@@ -923,6 +982,7 @@ public class GameView extends ViewManager implements IView {
 			public void handle(ActionEvent event) {
 				hiddenStage.show();
 				stage.close();
+
 			}
 		});
 		buttons.add(menu);

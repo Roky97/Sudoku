@@ -12,6 +12,7 @@ import java.util.Random;
 
 import gui.model.DIFFICULTY;
 import gui.model.SudokuCell;
+import gui.model.TimerSudoku;
 
 public class GameManager {
 
@@ -29,6 +30,9 @@ public class GameManager {
 	private int value;//Rappresenta uno dei numeri da 1 a 9 che vogliamo porre in una cella.
 	private ArrayList<Point> sameValue; //ArrayList di punti che contiene le coord delle celle che hanno lo stesso valore di un numero che immettiamo e si trovano nella stessa riga,colonna o sottomatrice.
 	private SudokuCell selectedCell; //Rappresente la cella sulla quale clicchiamoo.
+	private TimerSudoku timer;
+	private boolean stopTimer;
+	private String timerString;
 	
 	public GameManager() 
 	{
@@ -39,6 +43,10 @@ public class GameManager {
 		sameValue = new ArrayList<Point>();
 		startGrid = new ArrayList<SudokuCell>();
 		selectedCell = new SudokuCell();
+		stopTimer=false;
+		timer=new TimerSudoku();
+		timerString="00:00:00";
+		timer.start();
 	}
 	
 	
@@ -50,6 +58,52 @@ public class GameManager {
 			grid.clear();
 			grid = generator.getGrid(); //Imposta la griglia di celle dalla quale poi impostiamo la griglia di gioco.
 		}
+	}
+	
+	public void upgradeTimer() {
+		if(stopTimer==false) {
+			timer.aggiornaTimer();
+			String timerHours=""+timer.getHours();
+			String timerMinutes=""+timer.getMinutes();
+			String timerSecond=""+timer.getSeconds();
+			
+			if(timer.getHours()<10) {
+				 timerHours=("0"+timer.getHours());
+			}
+			if(timer.getMinutes()<10) {
+				timerMinutes=("0"+timer.getMinutes());
+			}
+			if(timer.getSeconds()<10) {
+				timerSecond=("0"+timer.getSeconds());
+			}
+			
+			timerString=(timerHours+":"+timerMinutes+":"+timerSecond);
+		}
+	}
+	
+	public String getTimerString() {
+		return timerString;
+	}
+	
+	public void  stopTimer() {
+		timer.stop();
+		stopTimer=true;
+	}
+	
+	public void startTimer() {
+		timer.resume();
+		stopTimer=false;
+	}
+	
+	public boolean getStopTimer() {
+		return stopTimer;
+	}
+	
+	public void restartTimer() {
+		timer=new TimerSudoku();
+		timerString="00:00:00";
+		stopTimer=false;
+		timer.start();
 	}
 	
 	public void selectedValue(int value) { this.setValue(value);}

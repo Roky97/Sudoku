@@ -15,9 +15,9 @@ public class TimerSudoku{
 	
 	public TimerSudoku() {
 		tempSeconds = 0;
-		hours = 0;
-		seconds = 0;
-		minutes = 0;
+		hours = 00;
+		seconds = 00;
+		minutes = 00;
 		stopwatch = new StopWatch();
 	}
 	
@@ -26,10 +26,14 @@ public class TimerSudoku{
 		stopwatch.start();
 	}
 	
+	public void resume()
+	{
+		stopwatch.resume();
+	}
+	
 	public void stop()
 	{
-//		stopwatch.suspend();
-		stopwatch.stop();
+		stopwatch.suspend();
 	}
 	
 	
@@ -53,9 +57,6 @@ public class TimerSudoku{
 		}
 		
 		return tempSeconds;
-			
-		
-		
 	}
 
 	public int getTotalMinutes() {
@@ -81,6 +82,13 @@ public class TimerSudoku{
 		hours = getTotalHours();
 	}
 	
+	public void restart() {
+		
+		tempSeconds = 0;
+		hours = 00;
+		seconds = 00;
+		minutes = 00;
+	}
 	
 	public int getHours() {
 		return hours;
@@ -94,26 +102,21 @@ public class TimerSudoku{
 		return minutes;
 	}
 
-	public static void main(String ... args) {
-		TimerSudoku ciao = new TimerSudoku();
-		ciao.start();
-		int i = 0;
-		while(i<3)
-		{
-			ciao.aggiornaTimer();
-			System.out.println("tempo: "+ ciao.getMinutes() +":" + ciao.getSeconds());
-			if(ciao.getTotalSeconds() > 2)
-				ciao.stop();
-			 i = ciao.getSeconds();
-		}
-		
-		System.out.println(ciao.getMinutes());
-		
-		
-		
-
-	}
-
-
+//	public static void main(String ... args) {
+//		TimerSudoku ciao = new TimerSudoku();
+//		ciao.start();
+//		int i = 0;
+//		while(i<3)
+//		{
+//			ciao.aggiornaTimer();
+//			System.out.println("tempo: "+ ciao.getMinutes() +":" + ciao.getSeconds());
+//			if(ciao.getTotalSeconds() > 2)
+//				ciao.stop();
+//			 i = ciao.getSeconds();
+//		}
+//		
+//		System.out.println(ciao.getMinutes());
+//		
+//	}
 
 }
