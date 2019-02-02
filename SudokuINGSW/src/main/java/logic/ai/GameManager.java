@@ -31,8 +31,8 @@ public class GameManager {
 	private ArrayList<Point> sameValue; //ArrayList di punti che contiene le coord delle celle che hanno lo stesso valore di un numero che immettiamo e si trovano nella stessa riga,colonna o sottomatrice.
 	private SudokuCell selectedCell; //Rappresente la cella sulla quale clicchiamoo.
 	private TimerSudoku timer;
-	private boolean stopTimer;
-	private String timerString;
+	private boolean stopTimer; //Boolean che gestisce l'aggiornamento del timer
+	private String timerString;//Stringa del timer che viene settata al label rappresentante il timer
 	
 	public GameManager() 
 	{
@@ -60,14 +60,14 @@ public class GameManager {
 		}
 	}
 	
-	public void upgradeTimer() {
+	public void upgradeTimer() { //Aggiorna il timer se il timer non è stoppato
 		if(stopTimer==false) {
 			timer.aggiornaTimer();
 			String timerHours=""+timer.getHours();
 			String timerMinutes=""+timer.getMinutes();
 			String timerSecond=""+timer.getSeconds();
 			
-			if(timer.getHours()<10) {
+			if(timer.getHours()<10) { //Vengono aggiunte gli zeri alla stringa del timer per rendere possibile il formato HH:MM:SS
 				 timerHours=("0"+timer.getHours());
 			}
 			if(timer.getMinutes()<10) {
@@ -99,7 +99,7 @@ public class GameManager {
 		return stopTimer;
 	}
 	
-	public void restartTimer() {
+	public void restartTimer() { //Funzione richiamata nel caso in cui venisse scelto di avviare una nuova partita, restart o se torniamo al menu.
 		timer=new TimerSudoku();
 		timerString="00:00:00";
 		stopTimer=false;

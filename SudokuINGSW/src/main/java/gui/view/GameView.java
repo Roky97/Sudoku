@@ -1,5 +1,6 @@
 package gui.view;
 
+import java.awt.Font;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -31,21 +32,23 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import logic.ai.Cell;
 import logic.ai.GameManager;
+import views.html.helper.textarea;
 
 @SuppressWarnings({ "restriction" })
 public class GameView extends ViewManager implements IView {
-	//ogni classe ha un proprio stage. Altri campi comuni a più classi sono nel ViewManager
+	
 	private Stage stage;
-
 	private ArrayList<SudokuButton> gameButtons;
 	private ArrayList<NumberButton> numberButtons;
 	private SudokuSubScene newGameSubScene;
 	private SudokuSubScene restartSubScene;
 	private SudokuSubScene infoSubScene;
 	private AnimationTimer animationTimer;
+	private Label timerLabel;
 	
 	private DIFFICULTY difficulty;
 	private ArrayList<SudokuCell> sudokuCells;
@@ -59,24 +62,58 @@ public class GameView extends ViewManager implements IView {
 		this.sudokuCells = new ArrayList<SudokuCell>();
 		this.gameButtons = new ArrayList<SudokuButton>();
 		this.numberButtons = new ArrayList<NumberButton>();
-//GameManager contenuto in ViewManager per comunicazione tra grafica e logica
 		this.gameManager = new GameManager();
-//funzione di GameManager per la generazione del sudoku con DLV
-		this.gameManager.generateSudoku();
+		this.gameManager.generateSudoku();//FUNZIONE DI GAMEMANAGER MEDIANTE LA QUALE VIENE GENERATO IL SUDOKU (DLV)
 		this.gameManager.setDifficulty(this.difficulty);
 		createBackground();
 		createButtons();
-//creazione del sudoku con lista di Cell passate dal GameManager
-		createGrid(this.gameManager.getGrid());
+		createTimerLabel();//INIZIALIZZA ED IMPOSTA IL LABEL RAPPRESENTANTE IL TIMER
+		createGrid(this.gameManager.getGrid());//CREAZIONE DEL SUDOKU CON LISTA DI CELL PASSATE DAL GAMEMANAGER
 		createSubScene();
 		animationTimer.start();
-
 		this.stage.setScene(scene);
 		this.stage.show();
 	}
+	
+	
+	/////////
+	//TIMER//
+	/////////
+	public void createTimerLabel() {
+		
+		
+		timerLabel=new Label(gameManager.getTimerString());
+		
+		timerLabel.setLayoutX(300);
+		timerLabel.setLayoutY(60);
+	
+		
+		animationTimer=new AnimationTimer() { //AGGIORNA CONTINUAMENTE IL TESTO DEL LABEL BASANDOSI SUL TIMER PRESENTE NEL GAMEMANAGER.
+			
+			@Override
+			public void handle(long now) {
+				// TODO Auto-generated method stub
+				gameManager.upgradeTimer();
+				String text=gameManager.getTimerString();
+				System.out.println(text);
+				timerLabel.setText(text);
+			}
+		};
+		
+		timerLabel.setFont(javafx.scene.text.Font.font("Cambria", 32));
+		timerLabel.setTextFill(Color.RED);
+		
+		
+//		  String LABEL_STYLE= "-fx-font: 100px Tahoma;"+
+//		    "-fx-fill: linear-gradient(from 0% 0% to 100% 200%, repeat, aqua 0%, red 50%);"+
+//		    "-fx-stroke: black;"+
+//		    "-fx-stroke-width: 1;";
+		
+		pane.getChildren().add(timerLabel);
+	}
 
-	//costruttore da utilizzare per caricare la partita
-	public GameView(ArrayList<SudokuCell> sudokuCells) 
+
+	public GameView(ArrayList<SudokuCell> sudokuCells) 	//COSTRUTTORE DA UTILIZZARE PER CARICARE LA PARTITA
 	{
 		stage = new Stage();
 
@@ -97,14 +134,13 @@ public class GameView extends ViewManager implements IView {
 			if(gameManager.getSolution(gameManager.parseToCell(sudokuCells)))
 				createGrid(gameManager.getGrid());
 			else
-				System.out.println("NO SOLUTION");
-				//comunicare che non c'è soluzione
+				System.out.println("NO SOLUTION"); //COMUNICARE CHE NON FUNZIONA
 		}
 
 		stage.setScene(scene);
 		stage.show();
 	}
-
+	
 	private boolean needSolution() {
 		if(sudokuCells.size() != 81)
 			return true;
@@ -170,34 +206,6 @@ public class GameView extends ViewManager implements IView {
 //			}
 //		});
 //		gameButtons.add(redoBtn);		
-		
-		SudokuButton timerButton = new SudokuButton("0:0:0");
-		timerButton.setLayoutX(275);
-		timerButton.setLayoutY(60);
-//		gameManager.startTimer();
-		
-		animationTimer=new AnimationTimer() {
-			
-			@Override
-			public void handle(long now) {
-				// TODO Auto-generated method stub
-				gameManager.upgradeTimer();
-				String text=gameManager.getTimerString();
-				System.out.println(text);
-				timerButton.setText(text);
-			}
-		};
-		
-		
-//		timerButton.setOnAction(new EventHandler<ActionEvent>() {
-//			
-//			@Override
-//			public void handle(ActionEvent event) {
-//				
-//			}
-//		});
-		
-		gameButtons.add(timerButton);
 		
 		
 
@@ -1024,12 +1032,15 @@ public class GameView extends ViewManager implements IView {
 		for(SudokuButton button : gameButtons) {
 			button.setDisable(true);
 		}
+		
 		for(SudokuCell c : sudokuCells) {
 			c.setDisable(true);
 		}
+		
 		for(NumberButton n : numberButtons) {
 			n.setDisable(true);
 		}
+		
 		saveSubScene.moveSubScene();
 		//wait
 		hiddenStage.show();
