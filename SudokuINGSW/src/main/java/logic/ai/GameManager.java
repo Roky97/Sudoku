@@ -103,6 +103,7 @@ public class GameManager {
 	public void addPenality() {
 		if(alreadyStarted) {
 			timer.addPenality();
+			upgradeTimer();
 		}
 	}
 	
