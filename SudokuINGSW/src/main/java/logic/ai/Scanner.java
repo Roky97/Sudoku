@@ -1015,13 +1015,14 @@ class ChooserHelper extends Thread{
 	
 	FileChooser fc;
 	
+	
 	public ChooserHelper(FileChooser fc) {
 		this.fc=fc;
 	}
 	
 	@Override
 	public void run() {
-		fc.showOpenDialog(arg0)
+		fc.showOpenDialog(null);
 	}
 	
 }
