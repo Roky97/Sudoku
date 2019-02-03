@@ -32,6 +32,8 @@ public class GameManager {
 	private SudokuCell selectedCell; //Rappresente la cella sulla quale clicchiamoo.
 	private TimerSudoku timer;
 	private boolean stopTimer; //Boolean che gestisce l'aggiornamento del timer
+	private boolean alreadyStarted;
+	private int timerPenality;
 	private String timerString;//Stringa del timer che viene settata al label rappresentante il timer
 	
 	public GameManager() 
@@ -43,10 +45,11 @@ public class GameManager {
 		sameValue = new ArrayList<Point>();
 		startGrid = new ArrayList<SudokuCell>();
 		selectedCell = new SudokuCell();
-		stopTimer=false;
+		stopTimer=true;
+		alreadyStarted=false;
 		timer=new TimerSudoku();
+		timerPenality=0;
 		timerString="00:00:00";
-		timer.start();
 	}
 	
 	
@@ -73,11 +76,25 @@ public class GameManager {
 			if(timer.getMinutes()<10) {
 				timerMinutes=("0"+timer.getMinutes());
 			}
-			if(timer.getSeconds()<10) {
+			if(timer.getSeconds()+timerPenality<10) {
 				timerSecond=("0"+timer.getSeconds());
 			}
-			
 			timerString=(timerHours+":"+timerMinutes+":"+timerSecond);
+		}
+	}
+	
+	public void StartTimerFromZero() {
+		if(stopTimer==true && !alreadyStarted) {
+			timer.start();
+			stopTimer=false;
+			alreadyStarted=true;
+			timerPenality=0;
+		}
+	}
+	
+	public void addPenality() {
+		if(alreadyStarted) {
+			timer.addPenality();
 		}
 	}
 	
@@ -86,13 +103,17 @@ public class GameManager {
 	}
 	
 	public void  stopTimer() {
+		if(stopTimer==false) {
 		timer.stop();
 		stopTimer=true;
+		}
 	}
 	
 	public void startTimer() {
+		if(stopTimer==true && alreadyStarted) {
 		timer.resume();
 		stopTimer=false;
+		}
 	}
 	
 	public boolean getStopTimer() {
@@ -102,8 +123,8 @@ public class GameManager {
 	public void restartTimer() { //Funzione richiamata nel caso in cui venisse scelto di avviare una nuova partita, restart o se torniamo al menu.
 		timer=new TimerSudoku();
 		timerString="00:00:00";
-		stopTimer=false;
-		timer.start();
+		stopTimer=true;
+		alreadyStarted=false;
 	}
 	
 	public void selectedValue(int value) { this.setValue(value);}
