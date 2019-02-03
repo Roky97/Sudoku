@@ -100,21 +100,4 @@ public class TimerSudoku{
 		return minutes;
 	}
 
-//	public static void main(String ... args) {
-//		TimerSudoku ciao = new TimerSudoku();
-//		ciao.start();
-//		int i = 0;
-//		while(i<3)
-//		{
-//			ciao.aggiornaTimer();
-//			System.out.println("tempo: "+ ciao.getMinutes() +":" + ciao.getSeconds());
-//			if(ciao.getTotalSeconds() > 2)
-//				ciao.stop();
-//			 i = ciao.getSeconds();
-//		}
-//		
-//		System.out.println(ciao.getMinutes());
-//		
-//	}
-
 }

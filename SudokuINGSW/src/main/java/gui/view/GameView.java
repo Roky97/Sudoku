@@ -1,6 +1,5 @@
 package gui.view;
 
-import java.awt.Font;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -14,6 +13,7 @@ import gui.model.DIFFICULTY;
 import gui.model.NumberButton;
 import gui.model.SudokuButton;
 import gui.model.SudokuCell;
+import gui.model.SudokuGrid;
 import gui.model.SudokuSubScene;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
@@ -32,16 +32,15 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import logic.ai.Cell;
 import logic.ai.GameManager;
-import views.html.helper.textarea;
 
 @SuppressWarnings({ "restriction" })
 public class GameView extends ViewManager implements IView {
 	
 	private Stage stage;
+	
 	private ArrayList<SudokuButton> gameButtons;
 	private ArrayList<NumberButton> numberButtons;
 	private SudokuSubScene newGameSubScene;
@@ -51,77 +50,47 @@ public class GameView extends ViewManager implements IView {
 	private Label timerLabel;
 	
 	private DIFFICULTY difficulty;
-	private ArrayList<SudokuCell> sudokuCells;
-
+	private SudokuGrid grid;
+//	private ArrayList<SudokuCell> sudokuCells;
+	
+	
 	public GameView(DIFFICULTY difficulty) 
 	{
 		this.stage = new Stage();
 
 		this.difficulty = difficulty;
 
-		this.sudokuCells = new ArrayList<SudokuCell>();
+//		this.sudokuCells = new ArrayList<SudokuCell>();
+		this.grid = new SudokuGrid();
+		
 		this.gameButtons = new ArrayList<SudokuButton>();
 		this.numberButtons = new ArrayList<NumberButton>();
 		this.gameManager = new GameManager();
 		this.gameManager.generateSudoku();//FUNZIONE DI GAMEMANAGER MEDIANTE LA QUALE VIENE GENERATO IL SUDOKU (DLV)
 		this.gameManager.setDifficulty(this.difficulty);
+		
 		createBackground();
 		createButtons();
 		createTimerLabel();//INIZIALIZZA ED IMPOSTA IL LABEL RAPPRESENTANTE IL TIMER
 		createGrid(this.gameManager.getGrid());//CREAZIONE DEL SUDOKU CON LISTA DI CELL PASSATE DAL GAMEMANAGER
 		createSubScene();
+		
 		animationTimer.start();
+		
 		this.stage.setScene(scene);
 		this.stage.show();
 	}
 	
-	
-	/////////
-	//TIMER//
-	/////////
-	public void createTimerLabel() {
-		
-		
-		timerLabel=new Label(gameManager.getTimerString());
-		
-		timerLabel.setLayoutX(300);
-		timerLabel.setLayoutY(60);
-	
-		
-		animationTimer=new AnimationTimer() { //AGGIORNA CONTINUAMENTE IL TESTO DEL LABEL BASANDOSI SUL TIMER PRESENTE NEL GAMEMANAGER.
-			
-			@Override
-			public void handle(long now) {
-				// TODO Auto-generated method stub
-				gameManager.upgradeTimer();
-				String text=gameManager.getTimerString();
-				System.out.println(text);
-				timerLabel.setText(text);
-			}
-		};
-		
-		timerLabel.setFont(javafx.scene.text.Font.font("Cambria", 32));
-		timerLabel.setTextFill(Color.RED);
-		
-		
-//		  String LABEL_STYLE= "-fx-font: 100px Tahoma;"+
-//		    "-fx-fill: linear-gradient(from 0% 0% to 100% 200%, repeat, aqua 0%, red 50%);"+
-//		    "-fx-stroke: black;"+
-//		    "-fx-stroke-width: 1;";
-		
-		pane.getChildren().add(timerLabel);
-	}
-
-
 	public GameView(ArrayList<SudokuCell> sudokuCells) 	//COSTRUTTORE DA UTILIZZARE PER CARICARE LA PARTITA
 	{
 		stage = new Stage();
 
 		gameManager = new GameManager();
 		
-		this.sudokuCells = new ArrayList<SudokuCell>();
-		this.sudokuCells = sudokuCells;
-
+//		this.sudokuCells = new ArrayList<SudokuCell>();
+//		this.sudokuCells = sudokuCells;
+		this.grid = new SudokuGrid(sudokuCells);
+		
 		this.gameButtons = new ArrayList<SudokuButton>();
 		this.numberButtons = new ArrayList<NumberButton>();
 
@@ -141,11 +110,37 @@ public class GameView extends ViewManager implements IView {
 		stage.show();
 	}
 	
-	private boolean needSolution() {
-		if(sudokuCells.size() != 81)
+
+	public void createTimerLabel() 
+	{
+		timerLabel = new Label(gameManager.getTimerString());
+		timerLabel.setFont(javafx.scene.text.Font.font("Arial", 25));
+		timerLabel.setTextFill(Color.RED);
+		timerLabel.setLayoutX(320);
+		timerLabel.setLayoutY(27);
+		//AGGIORNA CONTINUAMENTE IL TESTO DEL LABEL BASANDOSI SUL TIMER PRESENTE NEL GAMEMANAGER.
+		animationTimer = new AnimationTimer(){
+			@Override
+			public void handle(long now) 
+			{
+				gameManager.upgradeTimer();
+				String text = gameManager.getTimerString();
+				timerLabel.setText(text);
+			}
+		};
+		pane.getChildren().add(timerLabel);
+	}
+
+	
+	
+	private boolean needSolution() 
+	{
+//		if(sudokuCells.size() != 81)
+		if(grid.size() != 81)
 			return true;
 		return false;
 	}
+
 
 	public void createBackground() 
 	{
@@ -163,6 +158,7 @@ public class GameView extends ViewManager implements IView {
 		pane.getChildren().add(rectangle2);
 	}
 	
+
 	public void createButtons() 
 	{
 		SudokuButton backBtn = new SudokuButton("BACK");
@@ -183,31 +179,30 @@ public class GameView extends ViewManager implements IView {
 			
 		});
 				
-//		SudokuButton undoBtn = new SudokuButton("undo");
-//		undoBtn.setLayoutX(200);
-//		undoBtn.setLayoutY(60);
-//		undoBtn.setOnAction(new EventHandler<ActionEvent>() {
-//			
-//			@Override
-//			public void handle(ActionEvent event) {
-//
-//			}
-//		});
-//		gameButtons.add(undoBtn);
-//		
-//		SudokuButton redoBtn = new SudokuButton("redo");
-//		redoBtn.setLayoutX(350);
-//		redoBtn.setLayoutY(60);	
-//		redoBtn.setOnAction(new EventHandler<ActionEvent>() {
-//			
-//			@Override
-//			public void handle(ActionEvent event) {
-//				
-//			}
-//		});
-//		gameButtons.add(redoBtn);		
+		SudokuButton undoBtn = new SudokuButton("undo");
+		undoBtn.setLayoutX(200);
+		undoBtn.setLayoutY(60);
+		undoBtn.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.println("undo");
+				grid = gameManager.getCareTaker().get(gameManager.getIteration());
+			}
+		});
+		gameButtons.add(undoBtn);
 		
-		
+		SudokuButton redoBtn = new SudokuButton("redo");
+		redoBtn.setLayoutX(350);
+		redoBtn.setLayoutY(60);	
+		redoBtn.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				System.out.println("redo");
+			}
+		});
+		gameButtons.add(redoBtn);		
 
 		SudokuButton infoBtn = new SudokuButton("INFO");
 		infoBtn.setLayoutX(590);
@@ -215,10 +210,10 @@ public class GameView extends ViewManager implements IView {
 		infoBtn.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
-			public void handle(ActionEvent event) {
-				for(SudokuButton b : gameButtons) {
+			public void handle(ActionEvent event) 
+			{
+				for(SudokuButton b : gameButtons)
 					b.setDisable(true);
-				}
 				for(NumberButton n : numberButtons) {
 					if(!n.isDisable())
 						n.setDisable(true);
@@ -236,24 +231,26 @@ public class GameView extends ViewManager implements IView {
 		gameButtons.add(newGameBtn);
 		newGameBtn.setOnMousePressed(new EventHandler<MouseEvent>() 
 		{
-			public void handle(MouseEvent event) {
+			public void handle(MouseEvent event) 
+			{
 				if(event.getButton().equals(MouseButton.PRIMARY)) 
 				{
 					newGameBtn.setLayoutY(123.0 );
 					newGameSubScene.moveSubScene();
-					for(SudokuCell c : sudokuCells)
+//					for(SudokuCell c : sudokuCells)
+//						c.setDisable(!c.isDisable());
+///////////////////////////////////////////////////////
+					for(SudokuCell c : grid.getCells())
 						c.setDisable(!c.isDisable());
-					for(SudokuButton b : gameButtons) {
+///////////////////////////////////////////////////////
+					for(SudokuButton b : gameButtons)
 						b.setDisable(!b.isDisable());
-					}
 					for(NumberButton n : numberButtons) {
 						if(!n.isEmpty())
 							n.setDisable(!n.isDisable());
 					}
-					
 					gameManager.stopTimer();
 					animationTimer.stop();
-					
 				}
 			}
 		});
@@ -270,8 +267,12 @@ public class GameView extends ViewManager implements IView {
 				{
 					restartBtn.setLayoutY(173.0);
 					restartSubScene.moveSubScene();
-					for(SudokuCell c : sudokuCells)
-						c.setDisable(!c.isDisable());
+//					for(SudokuCell c : sudokuCells)
+//						c.setDisable(!c.isDisable());
+///////////////////////////////////////////////////////
+					for(SudokuCell c : grid.getCells())
+					c.setDisable(!c.isDisable());
+///////////////////////////////////////////////////////
 					for(SudokuButton b : gameButtons) {
 						b.setDisable(!b.isDisable());
 					}
@@ -279,7 +280,6 @@ public class GameView extends ViewManager implements IView {
 						if(!n.isEmpty())
 							n.setDisable(!n.isDisable());
 					}
-					
 					gameManager.stopTimer();
 					animationTimer.stop();
 				}
@@ -292,7 +292,8 @@ public class GameView extends ViewManager implements IView {
 		gameButtons.add(hintBtn);	
 		hintBtn.setOnAction(new EventHandler<ActionEvent>() {
 			
-			public void handle(ActionEvent event) {
+			public void handle(ActionEvent event) 
+			{
 				removeHighlight();
 				showValue(gameManager.getSelectedCell());
 				gameManager.setValue(0);
@@ -345,7 +346,10 @@ public class GameView extends ViewManager implements IView {
 				if(event.getButton().equals(MouseButton.PRIMARY)) 
 				{
 					saveBtn.setLayoutY(533.0);
-					gameManager.saveGame(difficulty, sudokuCells);
+//					gameManager.saveGame(difficulty, sudokuCells);
+//////////////////////////////////////////////////////////////////////
+					gameManager.saveGame(difficulty, grid.getCells());
+////////////////////////////////////////////////////////////////////
 					saveNotification();
 				}
 			}
@@ -372,7 +376,6 @@ public class GameView extends ViewManager implements IView {
 					else {
 						gameManager.setValue(0);
 					}
-					
 				}
 			});
 			numBtn.setLayoutX(pos);
@@ -387,6 +390,7 @@ public class GameView extends ViewManager implements IView {
 	{
 		if(difficulty == null)
 			difficulty = DIFFICULTY.NORMAL;
+		
 		//NEW GAME SUBSCENE
 		newGameSubScene = new SudokuSubScene();
 		newGameSubScene.setLabel("DO YOU WANT A NEW SUDOKU?");
@@ -406,8 +410,12 @@ public class GameView extends ViewManager implements IView {
 				removeHighlight();
 				gameManager.selectedValue(0);
 				gameManager.getCellWithSameValue().clear();
-				pane.getChildren().removeAll(sudokuCells);
-				sudokuCells = new ArrayList<SudokuCell>();
+//				pane.getChildren().removeAll(sudokuCells);
+//				sudokuCells = new ArrayList<SudokuCell>();
+////////////////////////////////////////////////////////////////
+				pane.getChildren().removeAll(grid.getCells());
+				grid = new SudokuGrid();
+////////////////////////////////////////////////////////////////
 				gameManager.generateSudoku();
 				gameManager.clearStartGrid();
 				for(NumberButton number : numberButtons)
@@ -419,7 +427,6 @@ public class GameView extends ViewManager implements IView {
 						b.setDisable(false);
 				}
 				
-
 				createSubScene();
 				gameManager.restartTimer();
 				animationTimer.start();
@@ -434,8 +441,12 @@ public class GameView extends ViewManager implements IView {
 			public void handle(ActionEvent event) 
 			{
 				newGameSubScene.moveSubScene();
-				for(SudokuCell c : sudokuCells)
+//				for(SudokuCell c : sudokuCells)
+//					c.setDisable(false);
+////////////////////////////////////////////////////////////////
+				for(SudokuCell c : grid.getCells())
 					c.setDisable(false);
+////////////////////////////////////////////////////////////////
 				for(SudokuButton b : gameButtons) {
 					b.setDisable(false);
 				}
@@ -466,7 +477,6 @@ public class GameView extends ViewManager implements IView {
 	
 		pane.getChildren().add(newGameSubScene);
 
-		
 		//RESTART SUBSCENE
 		restartSubScene = new SudokuSubScene();
 		restartSubScene.setLabel("DO YOU WANT TO RESTART?");
@@ -491,9 +501,14 @@ public class GameView extends ViewManager implements IView {
 				gameManager.selectedValue(0);
 				gameManager.getCellWithSameValue().clear();
 				removeHighlight();
-				pane.getChildren().removeAll(sudokuCells);
-				sudokuCells = new ArrayList<SudokuCell>();
-				sudokuCells = gameManager.getStartGrid();
+//				pane.getChildren().removeAll(sudokuCells);
+//				sudokuCells = new ArrayList<SudokuCell>();
+//				sudokuCells = gameManager.getStartGrid();
+/////////////////////////////////////////////////////////////////
+				pane.getChildren().removeAll(grid.getCells());
+				grid = new SudokuGrid();
+				grid.setCells(gameManager.getStartGrid());
+/////////////////////////////////////////////////////////////////
 				gameManager.clearStartGrid();
 				for(NumberButton number : numberButtons)
 					number.setCont(9);
@@ -513,8 +528,12 @@ public class GameView extends ViewManager implements IView {
 			public void handle(ActionEvent event) 
 			{
 				restartSubScene.moveSubScene();
-				for(SudokuCell c : sudokuCells)
+//				for(SudokuCell c : sudokuCells)
+//					c.setDisable(!c.isDisable());
+///////////////////////////////////////////////////////////////
+				for(SudokuCell c : grid.getCells())
 					c.setDisable(!c.isDisable());
+//////////////////////////////////////////////////////////////
 				for(SudokuButton b : gameButtons) {
 					b.setDisable(false);
 				}
@@ -617,9 +636,13 @@ public class GameView extends ViewManager implements IView {
 		pane.getChildren().add(infoSubScene);
 	}
 
+	
 	private void createGrid(ArrayList<Cell> cells) 
 	{
-		if(!sudokuCells.isEmpty()) 
+//		if(!sudokuCells.isEmpty()) 
+///////////////////////////////////////////
+		if(!grid.getCells().isEmpty())
+///////////////////////////////////////////
 		{
 			int x;
 			int y = 130;
@@ -637,7 +660,10 @@ public class GameView extends ViewManager implements IView {
 							/* dovendo rendere la cella final per poterle assegnare il listener 
 							** le celle di GameView e quelle di GameManager sono le stesse come se fossero statiche*/
 							boolean startGrid = false;
-							for(SudokuCell sudokuCell : sudokuCells) 
+//							for(SudokuCell sudokuCell : sudokuCells) 
+////////////////////////////////////////////////////////////////////////
+							for(SudokuCell sudokuCell : grid.getCells())
+////////////////////////////////////////////////////////////////////////
 							{
 								if(sudokuCell.checkPosition(r,c)) 
 								{
@@ -651,7 +677,10 @@ public class GameView extends ViewManager implements IView {
 							if(!startGrid) {
 								final SudokuCell sudokuCell = new SudokuCell(r,c, cell.getValue());
 								sudokuCell.setLayout(x,y);
-								sudokuCells.add(sudokuCell);
+//								sudokuCells.add(sudokuCell);
+//////////////////////////////////////////////////////////////////////////
+								grid.add(sudokuCell);
+//////////////////////////////////////////////////////////////////////////
 							}
 						}
 					}
@@ -666,7 +695,10 @@ public class GameView extends ViewManager implements IView {
 					y += 38;
 			}
 			//aggiungo le funzioni da richiamare alla selezione della cella
-			for(SudokuCell sudokuCell : sudokuCells) 
+//			for(SudokuCell sudokuCell : sudokuCells)
+//////////////////////////////////////////////////////////////////////////
+			for(SudokuCell sudokuCell : grid.getCells())
+//////////////////////////////////////////////////////////////////////////
 			{
 				addCellListener(sudokuCell);
 				SudokuCell cell = new SudokuCell(sudokuCell.getRow(), sudokuCell.getColumn(), sudokuCell.getValue());
@@ -684,8 +716,12 @@ public class GameView extends ViewManager implements IView {
 				gameManager.addToStartGrid(cell);
 			}
 			
-			pane.getChildren().addAll(sudokuCells);
-			gameManager.setSudokuCells(sudokuCells);
+//			pane.getChildren().addAll(sudokuCells);
+//			gameManager.setSudokuCells(sudokuCells);
+/////////////////////////////////////////////////////////////////
+			pane.getChildren().addAll(grid.getCells());
+			gameManager.setSudokuCells(grid.getCells());
+/////////////////////////////////////////////////////////////////
 		}
 		else {
 			//in base alla difficoltà decido il numero di celle in cui è visibile il valore
@@ -715,7 +751,10 @@ public class GameView extends ViewManager implements IView {
 		
 							//aggiungo le funzioni da richiamare alla selezione della cella
 							addCellListener(sudokuCell);
-							sudokuCells.add(sudokuCell);
+//							sudokuCells.add(sudokuCell);
+/////////////////////////////////////////////////////////////////
+							grid.add(sudokuCell);
+/////////////////////////////////////////////////////////////////
 						}
 					}
 				}
@@ -727,7 +766,10 @@ public class GameView extends ViewManager implements IView {
 			//funzione per determinare quale cella è visibile e quale no
 			setVisibleCell(cellToShow);
 	
-			for(SudokuCell cell : sudokuCells) 
+//			for(SudokuCell cell : sudokuCells) 
+/////////////////////////////////////////////////////////////////
+			for(SudokuCell cell : grid.getCells())
+/////////////////////////////////////////////////////////////////
 			{
 				/* creo una sudokuCell per poterla assegnare alla griglia di partenza del GameManager
 				** non posso passare direttamente sudokuCells perchè altrimenti modificherei anche la griglia
@@ -747,14 +789,22 @@ public class GameView extends ViewManager implements IView {
 				}
 				gameManager.addToStartGrid(sudokuCell);
 			}
-			pane.getChildren().addAll(sudokuCells);
-			gameManager.setSudokuCells(sudokuCells);
+//			pane.getChildren().addAll(sudokuCells);
+//			gameManager.setSudokuCells(sudokuCells);
+/////////////////////////////////////////////////////////////////
+			pane.getChildren().addAll(grid.getCells());
+			gameManager.setSudokuCells(grid.getCells());
+/////////////////////////////////////////////////////////////////
 		}
 	}	
 	
+	
 	private void loadGrid() 
 	{
-		gameManager.setSudokuCells(sudokuCells);
+//		gameManager.setSudokuCells(sudokuCells);
+//////////////////////////////////////////////////////
+		gameManager.setSudokuCells(grid.getCells());
+//////////////////////////////////////////////////////
 
 		int x;
 		int y = 130;
@@ -765,7 +815,10 @@ public class GameView extends ViewManager implements IView {
 			x = 190;
 			for (int c = 0; c < 9; c++) 
 			{
-				for(SudokuCell cell : sudokuCells) 
+//				for(SudokuCell cell : sudokuCells)
+/////////////////////////////////////////////////////////////
+				for(SudokuCell cell : grid.getCells())
+/////////////////////////////////////////////////////////////
 				{
 					if(cell.getRow() == r && cell.getColumn() == c)
 					{
@@ -805,14 +858,19 @@ public class GameView extends ViewManager implements IView {
 			else
 				y += 38;
 		}
-		pane.getChildren().addAll(sudokuCells);
+//		pane.getChildren().addAll(sudokuCells);
+		pane.getChildren().addAll(grid.getCells());
 	}
 	
+
 	private void setVisibleCell(int cellToShow) 
 	{
 		while(cellToShow > 0) 
 		{
-			for(SudokuCell cell : sudokuCells) 
+//			for(SudokuCell cell : sudokuCells) 
+///////////////////////////////////////////////////////
+			for(SudokuCell cell : grid.getCells())
+///////////////////////////////////////////////////////
 			{
 				boolean bool = new Random().nextBoolean();
 				if(cellToShow > 0 && cell.isHide()) 
@@ -827,6 +885,7 @@ public class GameView extends ViewManager implements IView {
 		}
 	}
 
+
 	private void addCellListener(final SudokuCell sudokuCell) 
 	{
 		sudokuCell.setOnAction(new EventHandler<ActionEvent>() 
@@ -834,7 +893,7 @@ public class GameView extends ViewManager implements IView {
 			public void handle(ActionEvent event) 
 			{
 				removeHighlight();
-				if(sudokuCell.isHide()) 
+				if(sudokuCell.isHide())
 				{
 					gameManager.setSelectedCell(sudokuCell);
 					//richiamo una funzione di GameManager per controllare che il valore selezionato possa essere inserito
@@ -844,8 +903,11 @@ public class GameView extends ViewManager implements IView {
 					}
 					else {
 						removeHighlight();
-//**********************/System.out.println("Set memento game view");//******************************************/
-						sudokuCell.setAssignedValue(gameManager.getValue());
+//**********************/GESTIONE MEMENTO/******************************************/
+//						grid.setState(sudokuCells);
+//						gameManager.getCareTaker().add(grid.getState());
+//						grid.setAssignedValue(gameManager.getValue());
+//						gameManager.setIteration(gameManager.getIteration()+1);
 						
 						for(NumberButton number : numberButtons) 
 						{
@@ -866,6 +928,9 @@ public class GameView extends ViewManager implements IView {
 							}
 						}
 					}
+//////////////////////////////////////////////////////////////////////////////
+/******************AVVIARE IL TIMER QUI!!!***********************************/
+//////////////////////////////////////////////////////////////////////////////
 				}
 				else {
 					gameManager.setSelectedCell(sudokuCell);
@@ -880,7 +945,10 @@ public class GameView extends ViewManager implements IView {
 		{
 			for(Point coordinate : sameValue) 
 			{
-				for(SudokuCell cell : sudokuCells) 
+//				for(SudokuCell cell : sudokuCells) 
+///////////////////////////////////////////////////////////
+				for(SudokuCell cell : grid.getCells())
+///////////////////////////////////////////////////////////
 				{
 					if(cell.checkPosition(coordinate.getX(),coordinate.getY())) 
 						cell.highlightCell();
@@ -891,7 +959,10 @@ public class GameView extends ViewManager implements IView {
 	
 	private void removeHighlight() 
 	{
-		for(SudokuCell cell : sudokuCells) 
+//		for(SudokuCell cell : sudokuCells) 
+///////////////////////////////////////////////////////////
+		for(SudokuCell cell : grid.getCells())
+///////////////////////////////////////////////////////////
 		{
 			if(cell.isHighlighted())
 				cell.removeHiglight();
@@ -901,7 +972,10 @@ public class GameView extends ViewManager implements IView {
 	private void showValue(SudokuCell selectedCell) 
 	{
 		gameManager.getCellWithSameValue().clear();
-		for(SudokuCell cell : sudokuCells) 
+//		for(SudokuCell cell : sudokuCells) 
+///////////////////////////////////////////////////////////
+		for(SudokuCell cell : grid.getCells())
+///////////////////////////////////////////////////////////
 		{
 			if(cell.checkPosition(selectedCell.getRow(), selectedCell.getColumn()) && cell.isHide())
 			{
@@ -909,9 +983,15 @@ public class GameView extends ViewManager implements IView {
 				{
 					removeHighlight();
 					highlightCell(gameManager.getCellWithSameValue());
+//////////////////////////////////////////////////////////////////////////////
+/******************INCREMENTARE DI 7 IL TIMER QUI!!!***********************************/
+//////////////////////////////////////////////////////////////////////////////
 					return;
 				}
 				cell.showContent();
+//////////////////////////////////////////////////////////////////////////////
+/******************INCREMENTARE DI 7 IL TIMER QUI!!!***********************************/
+//////////////////////////////////////////////////////////////////////////////
 				for(NumberButton number : numberButtons) 
 				{
 					if(number.getValue() == cell.getAssignedValue())
@@ -953,9 +1033,14 @@ public class GameView extends ViewManager implements IView {
 				gameManager.selectedValue(0);
 				gameManager.getCellWithSameValue().clear();
 				removeHighlight();
-				pane.getChildren().removeAll(sudokuCells);
-				sudokuCells = new ArrayList<SudokuCell>();
-				sudokuCells = gameManager.getStartGrid();
+//				pane.getChildren().removeAll(sudokuCells);
+//				sudokuCells = new ArrayList<SudokuCell>();
+//				sudokuCells = gameManager.getStartGrid();
+//////////////////////////////////////////////////////////////////////////
+				pane.getChildren().removeAll(grid.getCells());
+				grid = new SudokuGrid();
+				grid.setCells(gameManager.getStartGrid());
+//////////////////////////////////////////////////////////////////////////
 				gameManager.clearStartGrid();
 				for(NumberButton number : numberButtons)
 					number.setCont(9);
@@ -974,8 +1059,12 @@ public class GameView extends ViewManager implements IView {
 				}
 				gameManager.selectedValue(0);
 				gameManager.getCellWithSameValue().clear();
-				pane.getChildren().removeAll(sudokuCells);
-				sudokuCells = new ArrayList<SudokuCell>();
+//				pane.getChildren().removeAll(sudokuCells);
+//				sudokuCells = new ArrayList<SudokuCell>();
+////////////////////////////////////////////////////////////////
+				pane.getChildren().removeAll(grid.getCells());
+				grid = new SudokuGrid();
+////////////////////////////////////////////////////////////////
 				gameManager.generateSudoku();
 				gameManager.clearStartGrid();
 				for(NumberButton number : numberButtons)
@@ -1033,9 +1122,14 @@ public class GameView extends ViewManager implements IView {
 			button.setDisable(true);
 		}
 		
-		for(SudokuCell c : sudokuCells) {
+//		for(SudokuCell c : sudokuCells) {
+//			c.setDisable(true);
+//		}
+///////////////////////////////////////////////////////////////
+		for(SudokuCell c : grid.getCells()) {
 			c.setDisable(true);
 		}
+///////////////////////////////////////////////////////////////
 		
 		for(NumberButton n : numberButtons) {
 			n.setDisable(true);

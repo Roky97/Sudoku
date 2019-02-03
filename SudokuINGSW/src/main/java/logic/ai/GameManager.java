@@ -10,12 +10,13 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
+import gui.model.CareTaker;
 import gui.model.DIFFICULTY;
+import gui.model.SudokuButton;
 import gui.model.SudokuCell;
 import gui.model.TimerSudoku;
 
 public class GameManager {
-
 
 	private SudokuGenerator generator; //Mediante un suo metodo interno viene creata una matrice sudoku che rispecchia la difficoltà passata.
 
@@ -30,9 +31,13 @@ public class GameManager {
 	private int value;//Rappresenta uno dei numeri da 1 a 9 che vogliamo porre in una cella.
 	private ArrayList<Point> sameValue; //ArrayList di punti che contiene le coord delle celle che hanno lo stesso valore di un numero che immettiamo e si trovano nella stessa riga,colonna o sottomatrice.
 	private SudokuCell selectedCell; //Rappresente la cella sulla quale clicchiamoo.
+
 	private TimerSudoku timer;
 	private boolean stopTimer; //Boolean che gestisce l'aggiornamento del timer
 	private String timerString;//Stringa del timer che viene settata al label rappresentante il timer
+	
+	private int iteration = 0;
+	private CareTaker caretaker = new CareTaker();
 	
 	public GameManager() 
 	{
@@ -43,9 +48,10 @@ public class GameManager {
 		sameValue = new ArrayList<Point>();
 		startGrid = new ArrayList<SudokuCell>();
 		selectedCell = new SudokuCell();
-		stopTimer=false;
-		timer=new TimerSudoku();
-		timerString="00:00:00";
+		
+		stopTimer = false;
+		timer = new TimerSudoku();
+		timerString = "00:00:00";
 		timer.start();
 	}
 	
@@ -60,8 +66,11 @@ public class GameManager {
 		}
 	}
 	
-	public void upgradeTimer() { //Aggiorna il timer se il timer non è stoppato
-		if(stopTimer==false) {
+	//Aggiorna il timer se il timer non è stoppato
+	public void upgradeTimer() 
+	{
+		if(stopTimer == false) 
+		{
 			timer.aggiornaTimer();
 			String timerHours=""+timer.getHours();
 			String timerMinutes=""+timer.getMinutes();
@@ -121,8 +130,6 @@ public class GameManager {
 		return false;
 	}
 	
-
-
 	public boolean checkValue(SudokuCell sudokuCell, int value)//Controlliamo che il valore inserito nella cella rispetti le regole del gioco
 	{
 		int x = sudokuCell.getRow();
@@ -367,5 +374,19 @@ public class GameManager {
 			}
 		}
 		return cells;
+	}
+
+
+	public CareTaker getCareTaker() {
+		return caretaker;
+	}
+
+
+	public int getIteration() {
+		return iteration;
+	}
+	public void setIteration(int i) {
+		iteration += i;
+		System.out.println("iteration : " + iteration);
 	}
 }
