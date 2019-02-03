@@ -15,6 +15,7 @@ import gui.model.SudokuButton;
 import gui.model.SudokuCell;
 import gui.model.SudokuGrid;
 import gui.model.SudokuSubScene;
+import javafx.scene.text.Text;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -39,6 +40,8 @@ import logic.ai.GameManager;
 @SuppressWarnings({ "restriction" })
 public class GameView extends ViewManager implements IView {
 	
+	private String TEXT_TIMER_STYLE;
+	
 	private Stage stage;
 	
 	private ArrayList<SudokuButton> gameButtons;
@@ -47,7 +50,6 @@ public class GameView extends ViewManager implements IView {
 	private SudokuSubScene restartSubScene;
 	private SudokuSubScene infoSubScene;
 	private AnimationTimer animationTimer;
-	private Label timerLabel;
 	
 	private DIFFICULTY difficulty;
 	private SudokuGrid grid;
@@ -74,9 +76,7 @@ public class GameView extends ViewManager implements IView {
 		createTimerLabel();//INIZIALIZZA ED IMPOSTA IL LABEL RAPPRESENTANTE IL TIMER
 		createGrid(this.gameManager.getGrid());//CREAZIONE DEL SUDOKU CON LISTA DI CELL PASSATE DAL GAMEMANAGER
 		createSubScene();
-		
-		animationTimer.start();
-		
+
 		this.stage.setScene(scene);
 		this.stage.show();
 	}
@@ -110,28 +110,26 @@ public class GameView extends ViewManager implements IView {
 		stage.show();
 	}
 	
-
+	//TIMER//
 	public void createTimerLabel() 
 	{
-		timerLabel = new Label(gameManager.getTimerString());
-		timerLabel.setFont(javafx.scene.text.Font.font("Arial", 25));
-		timerLabel.setTextFill(Color.RED);
-		timerLabel.setLayoutX(320);
-		timerLabel.setLayoutY(27);
-		//AGGIORNA CONTINUAMENTE IL TESTO DEL LABEL BASANDOSI SUL TIMER PRESENTE NEL GAMEMANAGER.
-		animationTimer = new AnimationTimer(){
+		Text t = new Text (gameManager.getTimerString());
+		TEXT_TIMER_STYLE="-fx-font: 32px Tahoma;"+" -fx-fill: linear-gradient(from 0% 0% to 100% 200%, repeat, aqua 0%, red 50%);"+"-fx-stroke: black;"+"-fx-stroke-width: 1;";
+		t.setStyle(TEXT_TIMER_STYLE);
+	    t.setLayoutX(306);
+	    t.setLayoutY(50);
+		
+		animationTimer=new AnimationTimer() { //AGGIORNA CONTINUAMENTE IL TESTO DEL LABEL BASANDOSI SUL TIMER PRESENTE NEL GAMEMANAGER.
 			@Override
 			public void handle(long now) 
 			{
 				gameManager.upgradeTimer();
-				String text = gameManager.getTimerString();
-				timerLabel.setText(text);
+				String text=gameManager.getTimerString();
+				t.setText(text);
 			}
 		};
-		pane.getChildren().add(timerLabel);
+		pane.getChildren().add(t);
 	}
-
-	
 	
 	private boolean needSolution() 
 	{
@@ -140,7 +138,6 @@ public class GameView extends ViewManager implements IView {
 			return true;
 		return false;
 	}
-
 
 	public void createBackground() 
 	{
@@ -158,7 +155,6 @@ public class GameView extends ViewManager implements IView {
 		pane.getChildren().add(rectangle2);
 	}
 	
-
 	public void createButtons() 
 	{
 		SudokuButton backBtn = new SudokuButton("BACK");
@@ -173,7 +169,6 @@ public class GameView extends ViewManager implements IView {
 					stage.close();
 					animationTimer.stop();
 					gameManager.restartTimer();
-					gameManager.stopTimer();
 				}
 			}
 			
@@ -325,15 +320,39 @@ public class GameView extends ViewManager implements IView {
 			}
 		});
 				
-		SudokuButton stopBtn = new SudokuButton("STOP");
+		final SudokuButton stopBtn = new SudokuButton("STOP");
 		stopBtn.setLayoutX(200);
 		stopBtn.setLayoutY(530);		
 		gameButtons.add(stopBtn);	
+		stopBtn.setOnMousePressed(new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent event) 
+			{
+				if(event.getButton().equals(MouseButton.PRIMARY)) 
+				{
+					stopBtn.setLayoutY(533.0);
+					gameManager.stopTimer();
+					animationTimer.stop();
+				}
+			}
+		});
 
-		SudokuButton playBtn = new SudokuButton("PLAY");
+		final SudokuButton playBtn = new SudokuButton("PLAY");
 		playBtn.setLayoutX(350);
 		playBtn.setLayoutY(530);		
 		gameButtons.add(playBtn);
+		playBtn.setOnMousePressed(new EventHandler<MouseEvent>() {
+			
+			public void handle(MouseEvent event) 
+			{
+				if(event.getButton().equals(MouseButton.PRIMARY)) 
+				{
+					playBtn.setLayoutY(533.0);
+					gameManager.startTimer();
+					animationTimer.start();
+				}
+			}
+		});
 
 		final SudokuButton saveBtn = new SudokuButton("SAVE");
 		saveBtn.setLayoutX(590);
@@ -390,7 +409,7 @@ public class GameView extends ViewManager implements IView {
 	{
 		if(difficulty == null)
 			difficulty = DIFFICULTY.NORMAL;
-		
+////////////////////////////////////////////////////////////////////////////////		
 		//NEW GAME SUBSCENE
 		newGameSubScene = new SudokuSubScene();
 		newGameSubScene.setLabel("DO YOU WANT A NEW SUDOKU?");
@@ -476,7 +495,8 @@ public class GameView extends ViewManager implements IView {
 		newGameSubScene.getPane().getChildren().add(newGameBox);
 	
 		pane.getChildren().add(newGameSubScene);
-
+/////////////////////////////////////////////////////////////////////////////////////
+		
 		//RESTART SUBSCENE
 		restartSubScene = new SudokuSubScene();
 		restartSubScene.setLabel("DO YOU WANT TO RESTART?");
@@ -636,7 +656,6 @@ public class GameView extends ViewManager implements IView {
 		pane.getChildren().add(infoSubScene);
 	}
 
-	
 	private void createGrid(ArrayList<Cell> cells) 
 	{
 //		if(!sudokuCells.isEmpty()) 
@@ -798,7 +817,6 @@ public class GameView extends ViewManager implements IView {
 		}
 	}	
 	
-	
 	private void loadGrid() 
 	{
 //		gameManager.setSudokuCells(sudokuCells);
@@ -862,7 +880,6 @@ public class GameView extends ViewManager implements IView {
 		pane.getChildren().addAll(grid.getCells());
 	}
 	
-
 	private void setVisibleCell(int cellToShow) 
 	{
 		while(cellToShow > 0) 
@@ -909,6 +926,8 @@ public class GameView extends ViewManager implements IView {
 //						grid.setAssignedValue(gameManager.getValue());
 //						gameManager.setIteration(gameManager.getIteration()+1);
 						
+						sudokuCell.setAssignedValue(gameManager.getValue());
+						
 						for(NumberButton number : numberButtons) 
 						{
 							if(!number.isEmpty()) 
@@ -928,9 +947,8 @@ public class GameView extends ViewManager implements IView {
 							}
 						}
 					}
-//////////////////////////////////////////////////////////////////////////////
-/******************AVVIARE IL TIMER QUI!!!***********************************/
-//////////////////////////////////////////////////////////////////////////////
+					animationTimer.start();
+					gameManager.StartTimerFromZero();
 				}
 				else {
 					gameManager.setSelectedCell(sudokuCell);
@@ -983,15 +1001,11 @@ public class GameView extends ViewManager implements IView {
 				{
 					removeHighlight();
 					highlightCell(gameManager.getCellWithSameValue());
-//////////////////////////////////////////////////////////////////////////////
-/******************INCREMENTARE DI 7 IL TIMER QUI!!!***********************************/
-//////////////////////////////////////////////////////////////////////////////
+					gameManager.addPenality();
 					return;
 				}
 				cell.showContent();
-//////////////////////////////////////////////////////////////////////////////
-/******************INCREMENTARE DI 7 IL TIMER QUI!!!***********************************/
-//////////////////////////////////////////////////////////////////////////////
+				gameManager.addPenality();
 				for(NumberButton number : numberButtons) 
 				{
 					if(number.getValue() == cell.getAssignedValue())
@@ -1045,6 +1059,7 @@ public class GameView extends ViewManager implements IView {
 				for(NumberButton number : numberButtons)
 					number.setCont(9);
 				loadGrid();
+				createSubScene();
 				winSubScene.moveSubScene();
 			}
 		});
@@ -1070,6 +1085,7 @@ public class GameView extends ViewManager implements IView {
 				for(NumberButton number : numberButtons)
 					number.setCont(9);
 				createGrid(gameManager.getGrid());
+				createSubScene();
 				winSubScene.moveSubScene();
 			}
 		});
@@ -1081,7 +1097,6 @@ public class GameView extends ViewManager implements IView {
 			public void handle(ActionEvent event) {
 				hiddenStage.show();
 				stage.close();
-
 			}
 		});
 		buttons.add(menu);

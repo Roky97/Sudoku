@@ -31,7 +31,15 @@ public class SudokuGrid {
 	public ArrayList<SudokuCell> getCells() {
 		return grid;
 	}
+
+	public void setCells(ArrayList<SudokuCell> startGrid) {
+		this.grid = startGrid;
+	}
 	
+	public void add(SudokuCell sudokuCell) {
+		this.grid.add(sudokuCell);
+	}
+
 	//MEMENTO
 	public void setState(SudokuGrid cells) 
 	{
@@ -47,13 +55,4 @@ public class SudokuGrid {
 		state = cells.getState();
 	}
 
-	public void setCells(ArrayList<SudokuCell> startGrid) {
-		this.grid = startGrid;
-	}
-
-	public void add(SudokuCell sudokuCell) {
-		this.grid.add(sudokuCell);
-	}
-
-	
 }

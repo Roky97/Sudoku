@@ -3,13 +3,14 @@ package gui.model;
 import org.apache.commons.lang3.time.StopWatch;
 
 
-public class TimerSudoku{
+public class TimerSudoku {
 	
 	private StopWatch stopwatch;
 	private int hours;
 	private int seconds;
 	private int minutes;
 	private int tempSeconds;
+	private int penality;
 	
 	public TimerSudoku() {
 		tempSeconds = 0;
@@ -50,12 +51,17 @@ public class TimerSudoku{
 		{
 			
 			totSeconds = (int) (stopwatch.getTime()/1000);
-			tempSeconds = totSeconds;
-			return totSeconds;
+			tempSeconds = totSeconds+penality;
+			return totSeconds+penality;
 		}
 		
 		return tempSeconds;
 	}
+	
+	public void addPenality() {
+		penality+=7;
+	}
+	
 
 	public int getTotalMinutes() {
 		int totMinutes = 0;
@@ -98,6 +104,10 @@ public class TimerSudoku{
 
 	public int getMinutes() {
 		return minutes;
+	}
+	
+	public void penality() {
+		this.seconds=this.seconds+7;
 	}
 
 }
