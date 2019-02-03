@@ -188,9 +188,10 @@ public class Scanner {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(control.getText() == "REPEAT") 
+				if(control.getText().equals("REPEAT")) 
 				{
-					chooser.showOpenDialog(null);
+					//chooser.showOpenDialog(null);
+					
 					scanComplete=true;
 					start.set(false);
 					control.setText("STOP");
@@ -1011,18 +1012,4 @@ public class Scanner {
 //}*/
 
 
-class ChooserHelper extends Thread{
-	
-	FileChooser fc;
-	
-	
-	public ChooserHelper(FileChooser fc) {
-		this.fc=fc;
-	}
-	
-	@Override
-	public void run() {
-		fc.showOpenDialog(null);
-	}
-	
-}
+
