@@ -638,8 +638,8 @@ public class Scanner {
 				log.error(ex.getMessage());
 			}
 		} // End While !scanComplete
-		//playSudokuFromImage();
-		//mainframe.setVisible(false);
+		playSudokuFromImage();
+		mainframe.setVisible(false);
 	}
 
 	private void modifyPanel(double[] puzzle) 
@@ -1009,3 +1009,19 @@ public class Scanner {
 //	}
 //}
 //}*/
+
+
+class ChooserHelper extends Thread{
+	
+	FileChooser fc;
+	
+	public ChooserHelper(FileChooser fc) {
+		this.fc=fc;
+	}
+	
+	@Override
+	public void run() {
+		fc.showOpenDialog(arg0)
+	}
+	
+}
