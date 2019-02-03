@@ -10,12 +10,12 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
+import gui.model.CareTaker;
 import gui.model.DIFFICULTY;
 import gui.model.SudokuCell;
 import gui.model.TimerSudoku;
 
 public class GameManager {
-
 
 	private SudokuGenerator generator; //Mediante un suo metodo interno viene creata una matrice sudoku che rispecchia la difficoltà passata.
 
@@ -30,9 +30,15 @@ public class GameManager {
 	private int value;//Rappresenta uno dei numeri da 1 a 9 che vogliamo porre in una cella.
 	private ArrayList<Point> sameValue; //ArrayList di punti che contiene le coord delle celle che hanno lo stesso valore di un numero che immettiamo e si trovano nella stessa riga,colonna o sottomatrice.
 	private SudokuCell selectedCell; //Rappresente la cella sulla quale clicchiamoo.
+
 	private TimerSudoku timer;
 	private boolean stopTimer; //Boolean che gestisce l'aggiornamento del timer
+	private boolean alreadyStarted;
+	private int timerPenality;
 	private String timerString;//Stringa del timer che viene settata al label rappresentante il timer
+	
+	private int iteration = 0;
+	private CareTaker caretaker = new CareTaker();
 	
 	public GameManager() 
 	{
@@ -43,10 +49,12 @@ public class GameManager {
 		sameValue = new ArrayList<Point>();
 		startGrid = new ArrayList<SudokuCell>();
 		selectedCell = new SudokuCell();
-		stopTimer=false;
-		timer=new TimerSudoku();
-		timerString="00:00:00";
-		timer.start();
+
+		stopTimer = true;
+		alreadyStarted = false;
+		timer = new TimerSudoku();
+		timerPenality = 0;
+		timerString = "00:00:00";
 	}
 	
 	
@@ -60,8 +68,11 @@ public class GameManager {
 		}
 	}
 	
-	public void upgradeTimer() { //Aggiorna il timer se il timer non è stoppato
-		if(stopTimer==false) {
+	//Aggiorna il timer se il timer non è stoppato
+	public void upgradeTimer() 
+	{
+		if(stopTimer == false) 
+		{
 			timer.aggiornaTimer();
 			String timerHours=""+timer.getHours();
 			String timerMinutes=""+timer.getMinutes();
@@ -73,11 +84,25 @@ public class GameManager {
 			if(timer.getMinutes()<10) {
 				timerMinutes=("0"+timer.getMinutes());
 			}
-			if(timer.getSeconds()<10) {
+			if(timer.getSeconds()+timerPenality<10) {
 				timerSecond=("0"+timer.getSeconds());
 			}
-			
 			timerString=(timerHours+":"+timerMinutes+":"+timerSecond);
+		}
+	}
+	
+	public void StartTimerFromZero() {
+		if(stopTimer==true && !alreadyStarted) {
+			timer.start();
+			stopTimer=false;
+			alreadyStarted=true;
+			timerPenality=0;
+		}
+	}
+	
+	public void addPenality() {
+		if(alreadyStarted) {
+			timer.addPenality();
 		}
 	}
 	
@@ -86,13 +111,17 @@ public class GameManager {
 	}
 	
 	public void  stopTimer() {
+		if(stopTimer==false) {
 		timer.stop();
 		stopTimer=true;
+		}
 	}
 	
 	public void startTimer() {
+		if(stopTimer==true && alreadyStarted) {
 		timer.resume();
 		stopTimer=false;
+		}
 	}
 	
 	public boolean getStopTimer() {
@@ -102,8 +131,8 @@ public class GameManager {
 	public void restartTimer() { //Funzione richiamata nel caso in cui venisse scelto di avviare una nuova partita, restart o se torniamo al menu.
 		timer=new TimerSudoku();
 		timerString="00:00:00";
-		stopTimer=false;
-		timer.start();
+		stopTimer=true;
+		alreadyStarted=false;
 	}
 	
 	public void selectedValue(int value) { this.setValue(value);}
@@ -121,8 +150,6 @@ public class GameManager {
 		return false;
 	}
 	
-
-
 	public boolean checkValue(SudokuCell sudokuCell, int value)//Controlliamo che il valore inserito nella cella rispetti le regole del gioco
 	{
 		int x = sudokuCell.getRow();
@@ -211,6 +238,7 @@ public class GameManager {
 	          ObjectOutputStream out = new ObjectOutputStream(fileOut);
 	          out.writeObject(difficulty);
 	          out.writeObject(sudokuCells);
+	          out.writeObject(timerString);
 	          out.close();
 	          fileOut.close();
 	       } catch (IOException i) {
@@ -229,6 +257,8 @@ public class GameManager {
 				ObjectInputStream in = new ObjectInputStream(fileIn);
 				this.difficulty = (DIFFICULTY) in.readObject();
 				this.sudokuCells = (ArrayList<SudokuCell>) in.readObject();
+				this.timerString = (String) in.readObject();
+				System.out.println(timerString);
 				in.close();
 				fileIn.close();
 	
@@ -367,5 +397,19 @@ public class GameManager {
 			}
 		}
 		return cells;
+	}
+
+
+	public CareTaker getCareTaker() {
+		return caretaker;
+	}
+
+
+	public int getIteration() {
+		return iteration;
+	}
+	public void setIteration(int i) {
+		iteration += i;
+		System.out.println("iteration : " + iteration);
 	}
 }

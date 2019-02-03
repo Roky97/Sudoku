@@ -7,7 +7,9 @@ public class SudokuCell extends Button implements java.io.Serializable {
 
 	private int row;
 	private int column;
+	
 	private int value;
+	
 	private boolean hide;
 	
 	private int assignedValue;
@@ -125,5 +127,21 @@ public class SudokuCell extends Button implements java.io.Serializable {
 	public String toString() {
 		return "(" + row + "," + column + "," + value + ")";
 	}
-
+	
+//////////////////MEMENTO/////////////////////////
+//	private SudokuCell state;
+//
+//	public void setState(SudokuCell cell) {
+//		System.out.println("internal state of cell is changed");
+//		this.state = new SudokuCell(cell.getColumn(), cell.getRow(), cell.getAssignedValue());
+//	}
+//	
+//	public SudokuCell getState() {
+//		return new SudokuCell(state);
+//	}
+//	
+//	public void getStateFromMemento(SudokuCell cell) {
+//		state = cell.getState();
+//	}
+/////////////////////////////////////////////////
 }
