@@ -1,0 +1,24 @@
+L obiettivo del Sudoku è riempire le celle vuote con
+numeri tra l’1 ed il 9 in base a queste direttive:
+
+1. Il numero può apparire solo una volta per riga;
+
+2. Il numero può apparire solo una volta per colonna;
+
+3. Il numero può apparire solo una volta per riquadro;
+
+Per i primi numeri si può anche tirare a indovinare, 
+ma è molto più divertente usare il ragionamento e la 
+logica per trovare le giuste posizioni dei numeri. 
+Ogni numero inserito correttamente è un’informazione 
+in più per trovare gli altri!
+
+Consigli:
+
+1. Riduci lo spazio di gioco a tre righe o colonne
+   scegliendo quelle dove ci sono più numeri;
+   
+2. Comincia riempiendo l'unica cella vuota presente
+   su una certa riga, colonna o riquadro, se esiste.
+   
+Buon divertimento!

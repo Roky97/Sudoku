@@ -25,14 +25,22 @@ public class SudokuCell extends Button implements java.io.Serializable {
 		hideContent();
 	}
 
+	public SudokuCell(SudokuCell sudokuCell) {
+		this.assignedValue = sudokuCell.getAssignedValue();
+		this.column = sudokuCell.getColumn();
+		this.row = sudokuCell.getRow();
+		this.value = sudokuCell.getValue();
+		if(sudokuCell.isHide()) {
+			this.hide = true;
+			hideContent();
+		}else {
+			setAssignedValue(assignedValue);
+		}
+	}
+
 	public void showContent() {
 		setText(Integer.toString(value));
 		assignedValue = value;
-		hide = false;
-	}
-	
-	private void showContent(int assignedValue) {
-		setText(Integer.toString(assignedValue));
 		hide = false;
 	}
 	
@@ -41,41 +49,17 @@ public class SudokuCell extends Button implements java.io.Serializable {
 		hide = true;
 	}
 
-	public int getRow() {
-		return row;
-	}
+	public int getRow() { return row; }
+	public void setRow(int row) { this.row = row; }
 
-	public void setRow(int row) {
-		this.row = row;
-	}
+	public int getColumn() { return column; }
+	public void setColumn(int column) { this.column = column; }
 
-	public int getColumn() {
-		return column;
-	}
-
-	public void setColumn(int column) {
-		this.column = column;
-	}
-
-	public void setValue(int value) {
-		this.value = value;
-	}
-	
-	public int getValue() {
-		return value;
-	}
+	public void setValue(int value) { this.value = value; }
+	public int getValue() { return value; }
 
 	public boolean isHide() {return hide;}
 	
-	@Override
-	public String toString() {
-		return "(" + row + "," + column + "," + value + ")";
-	}
-
-	public int getAssignedValue() {
-		return assignedValue;
-	}
-
 	public void setAssignedValue(int assignedValue) 
 	{
 		this.assignedValue = assignedValue;
@@ -84,6 +68,14 @@ public class SudokuCell extends Button implements java.io.Serializable {
 			showContent(assignedValue);
 		}
 	}
+
+	private void showContent(int assignedValue) {
+		setText(Integer.toString(assignedValue));
+		hide = false;
+	}
+
+	public int getAssignedValue() { return assignedValue; }
+	
 	
 	public void highlightCell() {
 		setStyle(getStyle() + "\n-fx-background-color: Red;");
@@ -128,4 +120,10 @@ public class SudokuCell extends Button implements java.io.Serializable {
 	public void setStartFont() {
 		setStyle("-fx-font-weight: bold;");
 	}
+	
+	@Override
+	public String toString() {
+		return "(" + row + "," + column + "," + value + ")";
+	}
+
 }
