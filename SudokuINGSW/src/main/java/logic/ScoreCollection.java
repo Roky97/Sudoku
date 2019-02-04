@@ -33,6 +33,10 @@ public class ScoreCollection {
 		scores.sort(null);
 	}
 	
+	public boolean isEmpty() {
+		return scores.isEmpty();
+	}
+	
 	@Override
 	public String toString() {
 		String text = "";
