@@ -37,6 +37,7 @@ import javafx.stage.Stage;
 import logic.ai.Cell;
 import logic.ai.GameManager;
 
+@SuppressWarnings("restriction")
 public class GameView extends ViewManager implements IView {
 	
 	private String TEXT_TIMER_STYLE;
