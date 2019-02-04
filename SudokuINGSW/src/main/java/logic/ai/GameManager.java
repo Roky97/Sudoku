@@ -37,6 +37,8 @@ public class GameManager {
 	private int timerPenality;
 	private String timerString;//Stringa del timer che viene settata al label rappresentante il timer
 	
+	private int minIteration = 0;
+	private int maxIteration = 0;
 	private int iteration = 0;
 	private CareTaker caretaker = new CareTaker();
 	
@@ -404,12 +406,45 @@ public class GameManager {
 		return caretaker;
 	}
 
+	public void updateCaretaker() {
+		caretaker = new CareTaker();
+		iteration = maxIteration = 0;
+	}
 
+	public void increaseIteration() {
+		maxIteration++;
+		iteration++;
+	}
+	
+	public boolean undoIteration(int it) {
+		if(it >= 0) {
+			iteration = it;
+			return true;
+		}
+		return false;
+	}
+	public boolean redoIteration(int it) {
+		if(it <= maxIteration) {
+			iteration = it;
+			return true;
+		}
+		return false;
+	}
 	public int getIteration() {
+		System.out.println("it:"+iteration);
 		return iteration;
 	}
-	public void setIteration(int i) {
-		iteration += i;
-		System.out.println("iteration : " + iteration);
+	
+	public void updateCells(ArrayList<SudokuCell> cells) {
+		this.sudokuCells = cells;
+	}
+
+
+	public void checkCareTaker() {
+		if(maxIteration != iteration) {
+			caretaker = new CareTaker();
+			maxIteration = 0;
+			iteration = 0;
+		}
 	}
 }

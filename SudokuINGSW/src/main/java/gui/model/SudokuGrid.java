@@ -11,7 +11,8 @@ public class SudokuGrid {
 		grid = new ArrayList<SudokuCell>();
 	}
 	
-	public SudokuGrid(ArrayList<SudokuCell> cells) {
+	public SudokuGrid(ArrayList<SudokuCell> cells) 
+	{
 		grid = new ArrayList<SudokuCell>();
 		grid = cells;
 	}
@@ -43,8 +44,17 @@ public class SudokuGrid {
 	//MEMENTO
 	public void setState(SudokuGrid cells) 
 	{
-		System.out.println("internal state of grid is changed");
-		this.state = new SudokuGrid(cells);
+		System.out.println("internal state of grid has changed");
+		ArrayList<SudokuCell> sudokuCells = new ArrayList<>();
+		for(SudokuCell cell : cells.getGrid()) 
+		{
+			SudokuCell tmp = new SudokuCell(cell.getRow(), cell.getColumn(), cell.getValue());
+			if(!cell.isHide())
+				tmp.setAssignedValue(cell.getAssignedValue());
+			sudokuCells.add(tmp);
+		}
+		state = new SudokuGrid(sudokuCells);
+		System.out.println(state.toString());
 	}
 
 	public SudokuGrid getState() {
@@ -55,4 +65,17 @@ public class SudokuGrid {
 		state = cells.getState();
 	}
 
+	@Override
+	public String toString() {
+		String s = "";
+		int cont = 0;
+		for(SudokuCell c : grid) {
+			if(cont == 9 || cont == 18 || cont == 27 || cont == 36 || cont == 45 || cont == 54 || cont == 63 || cont == 72)
+				s += "\n";
+			s += " " + String.valueOf(c.getAssignedValue());
+			cont++;
+		}
+		return s;
+	}
+	
 }

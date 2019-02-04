@@ -125,7 +125,7 @@ public class SudokuCell extends Button implements java.io.Serializable {
 	
 	@Override
 	public String toString() {
-		return "(" + row + "," + column + "," + value + ")";
+		return "(" + row + "," + column + "," + assignedValue + ") " + "value:" + value;
 	}
 	
 //////////////////MEMENTO/////////////////////////
