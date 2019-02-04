@@ -44,7 +44,7 @@ public class SudokuGrid {
 	//MEMENTO
 	public void setState(SudokuGrid cells) 
 	{
-		System.out.println("internal state of grid has changed");
+//		System.out.println("internal state of grid has changed");
 		ArrayList<SudokuCell> sudokuCells = new ArrayList<>();
 		for(SudokuCell cell : cells.getGrid()) 
 		{
@@ -54,7 +54,6 @@ public class SudokuGrid {
 			sudokuCells.add(tmp);
 		}
 		state = new SudokuGrid(sudokuCells);
-		System.out.println(state.toString());
 	}
 
 	public SudokuGrid getState() {
