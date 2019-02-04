@@ -2,8 +2,6 @@ package logic;
 
 import java.util.ArrayList;
 
-import gui.model.DIFFICULTY;
-
 public class ScoreCollection {
 	private ArrayList<Score> scores;
 	
