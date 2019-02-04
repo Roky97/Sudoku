@@ -25,6 +25,7 @@ import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.VBox;
 
+@SuppressWarnings("restriction")
 public class MenuView extends ViewManager implements IView {
 
 	private Stage stage;
@@ -36,9 +37,7 @@ public class MenuView extends ViewManager implements IView {
 
 	private SudokuSubScene difficultySubScene;
 	private SudokuSubScene scannerSubScene;
-	private boolean scanComplete = false;
 	private SudokuSubScene loadSubScene;
-	private boolean gioca;
 
 	// Campi da usare per lo scanner
 	private ArrayList<SudokuCell> sudokuCells;
@@ -89,7 +88,8 @@ public class MenuView extends ViewManager implements IView {
 		loadBtn.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				if (gameManager.loadGame()) {
-					GameView game = new GameView(gameManager.getSudokuCells());
+//					GameView game = new GameView(gameManager.getSudokuCells());
+					GameView game = new GameView(gameManager.getStartGrid());
 					game.setDifficulty(gameManager.getDifficulty());
 					game.loadTimer(gameManager.getTimerString());
 					game.createSubScene();
@@ -222,25 +222,20 @@ public class MenuView extends ViewManager implements IView {
 		SudokuButton galleryBtn = new SudokuButton("GALLERIA");
 		galleryBtn.setOnAction(new EventHandler<ActionEvent>() {
 
-			public void handle(ActionEvent event) {
-
-				
-				//if (scanner.enableCamera()) {
-//				while(true) {
-					FileChooser fileChooser = new FileChooser();
-					fileChooser.setTitle("Open Resource File");
-					fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"));
-					File selectedFile = fileChooser.showOpenDialog(stage);
+			public void handle(ActionEvent event) 
+			{
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setTitle("Open Resource File");
+				fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"));
+				File selectedFile = fileChooser.showOpenDialog(null);
+				if(selectedFile != null) {
 					Mat colorimg = OpenCVUtilsJava.loadOrExit(selectedFile);
 					Scanner scanner = new Scanner();
 				    scanner.initGallery(fileChooser);
 					scanner.manageDisplayTransition(stage);
 					scanner.startScanning(colorimg);
-					fileChooser.showOpenDialog(null);
-//				}
-				//}
+				}
 			}
-
 		});
 		buttons2.add(galleryBtn);
 		scannerSubScene.addButtons(buttons2);
@@ -257,69 +252,10 @@ public class MenuView extends ViewManager implements IView {
 
 		pane.getChildren().add(scannerSubScene);
 	}
-
-	public void createSudokuCellFromImage(double[] puzzle, String action) {
-		sudokuCells = new ArrayList<SudokuCell>();
-		int r = 0, c = 0;
-		for (int i = 0; i < puzzle.length; i++) {
-			SudokuCell cell = new SudokuCell(r, c, (int) puzzle[i]);
-			if (puzzle[i] != 0) {
-				cell.showContent();
-				sudokuCells.add(cell);
-			}
-			c++;
-			if (isMultiple(i + 1)) {
-				r++;
-				c = 0;
-			}
-		}
-		this.action = action;
-		if (sudokuCells.size() > 0)
-			scanComplete = true;
-	}
-
-	public void createCellFromImage(double[] puzzle, String action) {
-		cells = new ArrayList<Cell>();
-		int r = 0, c = 0;
-		for (int i = 0; i < puzzle.length; i++) {
-			if (puzzle[i] != 0) {
-				Cell cell = new Cell(r, c, (int) puzzle[i]);
-				cells.add(cell);
-			}
-			c++;
-			if (isMultiple(i + 1)) {
-				r++;
-				c = 0;
-			}
-		}
-		this.action = action;
-		if (cells.size() > 0)
-			scanComplete = true;
-	}
-
-	private boolean isMultiple(int i) {
-		for (int j = 1; j <= 81; j++)
-			if (9 * j == i)
-				return true;
-		return false;
-	}
-
+	
 	private void playSudoku(SudokuButton button) {
 		GameView game = new GameView(button.getDifficulty());
 		game.hideStage(stage);
-	}
-
-	private void playSudokuFromImage() {
-		if (this.action.equals("PLAY")) {
-			GameView gameView = new GameView(sudokuCells);
-			gameView.hideStage(stage);
-		} else {
-			// GameManager gameManager = new GameManager();
-			// gameManager.getSolution(cells);
-			// GameView gameView = new
-			// GameView(gameManager.parseToSudokuCells(gameManager.getGrid()));
-			// gameView.hideStage(stage);
-		}
 	}
 
 	public Stage getStage() {

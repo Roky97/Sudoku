@@ -10,7 +10,7 @@ public class CareTaker {
 	{
 		System.out.println("adding grid to the caretaker");
 		listMemento.add(memento);
-		
+	
 		for(SudokuGrid g : listMemento) {
 			System.out.print("#" + listMemento.indexOf(g) + " ");
 			System.out.println(g.getCells().toString());
@@ -18,9 +18,9 @@ public class CareTaker {
 	}
 	
 	public SudokuGrid get(int index) {
-		System.out.println("restituisco");
+		System.out.println("restituisco #" + index);
 		System.out.println(listMemento.get(index).getCells().toString());
 		return listMemento.get(index);
 	}
-	
+
 }

@@ -37,7 +37,6 @@ public class GameManager {
 	private int timerPenality;
 	private String timerString;//Stringa del timer che viene settata al label rappresentante il timer
 	
-	private int minIteration = 0;
 	private int maxIteration = 0;
 	private int iteration = 0;
 	private CareTaker caretaker = new CareTaker();
@@ -240,6 +239,7 @@ public class GameManager {
 	          FileOutputStream fileOut = new FileOutputStream("saves/game.ser");
 	          ObjectOutputStream out = new ObjectOutputStream(fileOut);
 	          out.writeObject(difficulty);
+	          out.writeObject(startGrid);
 	          out.writeObject(sudokuCells);
 	          out.writeObject(timerString);
 	          out.close();
@@ -259,9 +259,9 @@ public class GameManager {
 			{
 				ObjectInputStream in = new ObjectInputStream(fileIn);
 				this.difficulty = (DIFFICULTY) in.readObject();
+				this.startGrid = (ArrayList<SudokuCell>) in.readObject();
 				this.sudokuCells = (ArrayList<SudokuCell>) in.readObject();
 				this.timerString = (String) in.readObject();
-				System.out.println(timerString);
 				in.close();
 				fileIn.close();
 	
@@ -394,8 +394,9 @@ public class GameManager {
 		ArrayList<Cell> cells = new ArrayList<Cell>();
 		for(SudokuCell sudokuCell : sudokuCells) 
 		{
-			if(sudokuCell.getValue() != 0) {
-				Cell cell = new Cell(sudokuCell.getRow(), sudokuCell.getColumn(), sudokuCell.getValue());
+			if(sudokuCell.getValue() != 0) 
+			{
+				Cell cell = new Cell(sudokuCell.getRow(), sudokuCell.getColumn(), sudokuCell.getAssignedValue());
 				cells.add(cell);
 			}
 		}
@@ -406,17 +407,14 @@ public class GameManager {
 	public CareTaker getCareTaker() {
 		return caretaker;
 	}
-
-	public void updateCaretaker() {
-		caretaker = new CareTaker();
-		iteration = maxIteration = 0;
-	}
-
 	public void increaseIteration() {
 		maxIteration++;
 		iteration++;
+		if(iteration != maxIteration) {
+			maxIteration = iteration;
+			clearCaretaker();
+		}
 	}
-	
 	public boolean undoIteration(int it) {
 		if(it >= 0) {
 			iteration = it;
@@ -432,21 +430,11 @@ public class GameManager {
 		return false;
 	}
 	public int getIteration() {
-		System.out.println("it:"+iteration);
 		return iteration;
 	}
-	
-	public void updateCells(ArrayList<SudokuCell> cells) {
-		this.sudokuCells = cells;
-	}
-
-
-	public void checkCareTaker() {
-		if(maxIteration != iteration) {
-			caretaker = new CareTaker();
-			maxIteration = 0;
-			iteration = 0;
-		}
+	public void clearCaretaker() {
+		caretaker = new CareTaker();
+		iteration = maxIteration = 0;
 	}
 
 

@@ -54,7 +54,6 @@ public class SudokuGrid {
 			sudokuCells.add(tmp);
 		}
 		state = new SudokuGrid(sudokuCells);
-		System.out.println(state.toString());
 	}
 
 	public SudokuGrid getState() {

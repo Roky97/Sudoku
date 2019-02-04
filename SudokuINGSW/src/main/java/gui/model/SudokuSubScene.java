@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-
 import javafx.animation.TranslateTransition;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
