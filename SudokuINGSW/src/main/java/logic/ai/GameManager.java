@@ -452,5 +452,6 @@ public class GameManager {
 
 	public void setTimer(String timer) {
 		this.timerString = timer;
+		this.timer.set(timerString);
 	}
 }

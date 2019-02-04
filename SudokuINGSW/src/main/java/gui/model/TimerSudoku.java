@@ -9,6 +9,9 @@ public class TimerSudoku {
 	private int hours;
 	private int seconds;
 	private int minutes;
+	private int savedHours;
+	private int savedMinutes;
+	private int savedSeconds;
 	private int tempSeconds;
 	private int penality;
 	
@@ -17,6 +20,9 @@ public class TimerSudoku {
 		hours = 00;
 		seconds = 00;
 		minutes = 00;
+//		savedHours=00;
+//		savedMinutes=00;
+//		savedSeconds=00;
 		stopwatch = new StopWatch();
 	}
 	
@@ -35,39 +41,41 @@ public class TimerSudoku {
 		stopwatch.suspend();
 	}
 	
+	public void addPenality() {
+		penality+=7;
+	}
+	
 	
 	public int getTotalHours() {
 		int  totHours = 0;
 		if(getTotalMinutes() > 59)
 			totHours = getTotalMinutes()/60;
 		
-		
-		return totHours;
+
+		return totHours+savedHours;
 	}
 
 	public int getTotalSeconds() {
-		int totSeconds = 0;
+		int totSeconds = 0 ;
 		if (!stopwatch.isStopped()) //Da errore qua
 		{
 			
 			totSeconds = (int) (stopwatch.getTime()/1000);
-			tempSeconds = totSeconds+penality;
-			return totSeconds+penality;
+			tempSeconds = totSeconds+penality+savedSeconds;
+			return tempSeconds;
 		}
 		
+		tempSeconds = totSeconds+penality+savedSeconds;
 		return tempSeconds;
 	}
 	
-	public void addPenality() {
-		penality+=7;
-	}
 	
 
 	public int getTotalMinutes() {
 		int totMinutes = 0;
 		if(getTotalSeconds() > 59)
 			totMinutes = getTotalSeconds()/60;
-		return totMinutes;
+		return totMinutes+savedMinutes;
 	}
 
 	public void aggiornaTimer()
@@ -108,6 +116,13 @@ public class TimerSudoku {
 	
 	public void penality() {
 		this.seconds=this.seconds+7;
+	}
+	
+	public void set(String timer){
+		String[] array = timer.split("\\:",-1);
+		savedHours=Integer.parseInt(array[0]);	
+		savedMinutes=Integer.parseInt(array[1]);	
+		savedSeconds=Integer.parseInt(array[2]);	
 	}
 
 }
