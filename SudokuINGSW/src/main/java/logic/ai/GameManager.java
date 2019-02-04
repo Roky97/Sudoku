@@ -105,6 +105,7 @@ public class GameManager {
 	public void addPenality() {
 		if(alreadyStarted) {
 			timer.addPenality();
+			upgradeTimer();
 		}
 	}
 	
@@ -355,7 +356,7 @@ public class GameManager {
 		switch (difficulty)
 		{
 			case EASY:
-				return (rand.nextInt(80-79)+79);
+				return (rand.nextInt(80-75)+75);
 			case NORMAL:
 				return (rand.nextInt(40-35)+35);
 			case HARD:
@@ -446,5 +447,10 @@ public class GameManager {
 			maxIteration = 0;
 			iteration = 0;
 		}
+	}
+
+
+	public void setTimer(String timer) {
+		this.timerString = timer;
 	}
 }
