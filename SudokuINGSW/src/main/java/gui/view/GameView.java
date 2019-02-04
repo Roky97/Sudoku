@@ -1090,8 +1090,9 @@ public class GameView extends ViewManager implements IView {
 				gameManager.clearStartGrid();
 				for(NumberButton number : numberButtons)
 					number.setCont(9);
-				loadGrid();
 				winSubScene.moveSubScene();
+				loadGrid();
+				createSubScene();
 				gameManager.restartTimer();
 				animationTimer.start();
 			}
@@ -1123,6 +1124,7 @@ public class GameView extends ViewManager implements IView {
 					number.setCont(9);
 				createGrid(gameManager.getGrid());
 				winSubScene.moveSubScene();
+				createSubScene();
 				gameManager.restartTimer();
 				animationTimer.start();
 			}
