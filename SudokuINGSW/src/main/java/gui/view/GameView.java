@@ -37,6 +37,7 @@ import javafx.stage.Stage;
 import logic.ai.Cell;
 import logic.ai.GameManager;
 
+
 public class GameView extends ViewManager implements IView {
 	
 	private String TEXT_TIMER_STYLE;
@@ -48,7 +49,7 @@ public class GameView extends ViewManager implements IView {
 	private SudokuSubScene restartSubScene;
 	private SudokuSubScene infoSubScene;
 	private AnimationTimer animationTimer;
-	private boolean youWon;
+	private boolean loadedGame;
 	private Text text;
 	
 	private DIFFICULTY difficulty;
@@ -68,6 +69,7 @@ public class GameView extends ViewManager implements IView {
 		this.gameManager.generateSudoku();//FUNZIONE DI GAMEMANAGER MEDIANTE LA QUALE VIENE GENERATO IL SUDOKU (DLV)
 		this.gameManager.setDifficulty(this.difficulty);
 		text = new Text (gameManager.getTimerString());
+		loadedGame=false;
 		createBackground();
 		createButtons();
 		createTimerLabel();//INIZIALIZZA ED IMPOSTA IL LABEL RAPPRESENTANTE IL TIMER
@@ -76,7 +78,6 @@ public class GameView extends ViewManager implements IView {
 
 		this.stage.setScene(scene);
 		this.stage.show();
-		youWon = false;
 	}
 	
 	public GameView(ArrayList<SudokuCell> sudokuCells) 	//COSTRUTTORE DA UTILIZZARE PER CARICARE LA PARTITA
@@ -86,9 +87,11 @@ public class GameView extends ViewManager implements IView {
 		gameManager = new GameManager();
 
 		this.grid = new SudokuGrid(sudokuCells);
+		loadedGame=true;
 
 		this.gameButtons = new ArrayList<SudokuButton>();
 		this.numberButtons = new ArrayList<NumberButton>();
+		text = new Text ();
 
 		createBackground();
 		createButtons();
@@ -338,6 +341,8 @@ public class GameView extends ViewManager implements IView {
 					saveBtn.setLayoutY(533.0);
 					gameManager.saveGame(difficulty, grid.getCells());
 					saveNotification();
+					animationTimer.stop();
+					gameManager.restartTimer();
 				}
 			}
 		});
@@ -376,25 +381,25 @@ public class GameView extends ViewManager implements IView {
 
 	public void createTimerLabel() 
 	{
-		Text t = new Text(gameManager.getTimerString());
+		text = new Text(gameManager.getTimerString());
 
 		TEXT_TIMER_STYLE = "-fx-font: 32px Tahoma;"+
 							"-fx-fill: linear-gradient(from 0% 0% to 100% 200%, repeat, aqua 0%, red 50%);"+
 							"-fx-stroke: black;"+
 							"-fx-stroke-width: 1;";
-		t.setStyle(TEXT_TIMER_STYLE);
-	    t.setLayoutX(306);
-	    t.setLayoutY(50);
+		text.setStyle(TEXT_TIMER_STYLE);
+	    text.setLayoutX(306);
+	    text.setLayoutY(50);
 		animationTimer = new AnimationTimer() { //AGGIORNA CONTINUAMENTE IL TESTO DEL LABEL BASANDOSI SUL TIMER PRESENTE NEL GAMEMANAGER.
 			@Override
 			public void handle(long now) 
 			{
 				gameManager.upgradeTimer();
-				String text = gameManager.getTimerString();
-				t.setText(text);
+				String t = gameManager.getTimerString();
+				text.setText(t);
 			}
 		};
-		pane.getChildren().add(t);
+		pane.getChildren().add(text);
 	}
 	
 	private boolean needSolution() 
