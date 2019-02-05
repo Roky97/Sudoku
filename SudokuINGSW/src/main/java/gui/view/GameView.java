@@ -56,7 +56,8 @@ public class GameView extends ViewManager implements IView {
 	public GameView(DIFFICULTY difficulty) 
 	{
 		this.stage = new Stage();
-
+		this.stage.setResizable(false);
+		
 		this.difficulty = difficulty;
 
 		this.grid = new SudokuGrid();
@@ -80,11 +81,12 @@ public class GameView extends ViewManager implements IView {
 	public GameView(ArrayList<SudokuCell> sudokuCells) 	//COSTRUTTORE DA UTILIZZARE PER CARICARE LA PARTITA
 	{
 		stage = new Stage();
-
+		stage.setResizable(false);
+		
 		gameManager = new GameManager();
 
 		this.grid = new SudokuGrid(sudokuCells);
-
+		
 		this.gameButtons = new ArrayList<SudokuButton>();
 		this.numberButtons = new ArrayList<NumberButton>();
 		text = new Text ();
@@ -92,19 +94,84 @@ public class GameView extends ViewManager implements IView {
 		createBackground();
 		createButtons();
 		if(!needSolution()) {
-			System.out.println("carico...");
-			loadGrid();
+			loadSavedGame();
 		}
 		else {
+			System.out.println("ELSE");
 			if(gameManager.getSolution(gameManager.parseToCell(sudokuCells)))
 				createGrid(gameManager.getGrid());
-			else
-				System.out.println("NO SOLUTION"); //COMUNICARE CHE NON FUNZIONA
 		}
 		stage.setScene(scene);
 		stage.show();
 	}
 	
+	private void loadSavedGame() 
+	{
+		gameManager.loadGame();
+		
+		int x;
+		int y = 130;
+
+		//creazione e disposizione delle celle grafiche
+		for(int r = 0; r < 9; r++) 
+		{
+			x = 190;
+			for (int c = 0; c < 9; c++) 
+			{
+				for(SudokuCell cell : grid.getCells())
+				{
+					if(cell.getRow() == r && cell.getColumn() == c)
+					{
+						cell.setScale(1.2,1.2);
+						cell.setLayoutX(x);
+							
+						if(c == 2 || c == 5)
+							x += 50;
+						else
+							x += 40;
+	
+						cell.setLayoutY(y);
+						if(!cell.isHide()) 
+						{
+							cell.setStartFont();
+							cell.showContent();
+							for(NumberButton number : numberButtons)
+							{
+								if(number.getValue() == cell.getValue())
+									number.setCont(number.getCont()-1);
+							}
+						}else {
+							cell.removeContent();
+						}
+						addCellListener(cell);
+					}
+				}
+			}
+			if(r == 2 || r == 5)
+				y += 45;
+			else
+				y += 38;
+		}
+		for(SudokuCell c : gameManager.getSudokuCells()) 
+		{
+			if(!c.isHide()) 
+			{
+				for(SudokuCell sc : grid.getCells()) 
+				{
+					if(sc.checkPosition(c.getRow(), c.getColumn()) && sc.isHide()) 
+					{
+						System.out.println(c.toString());
+						sc.setAssignedValue(c.getAssignedValue());
+					}
+				}
+			}
+		}
+		gameManager.setSudokuCells(grid.getCells());
+		pane.getChildren().addAll(grid.getCells());
+		grid.setState(grid);
+		gameManager.getCareTaker().add(grid.getState());
+	}
+
 	public void createBackground() 
 	{
 		Image backroundImage = new Image("/gui/resources/texture.png");
@@ -333,6 +400,7 @@ public class GameView extends ViewManager implements IView {
 				if(event.getButton().equals(MouseButton.PRIMARY)) 
 				{
 					saveBtn.setLayoutY(533.0);
+					System.out.println("SAVE");
 					gameManager.saveGame(difficulty, grid.getCells());
 					saveNotification();
 					animationTimer.stop();
@@ -905,7 +973,7 @@ public class GameView extends ViewManager implements IView {
 		grid.setState(grid);
 		gameManager.getCareTaker().add(grid.getState());
 	}
-	
+
 	private void setVisibleCell(int cellToShow) 
 	{
 		while(cellToShow > 0) 
@@ -1052,8 +1120,9 @@ public class GameView extends ViewManager implements IView {
 	private void winnerNotification() 
 	{
 		SudokuSubScene winSubScene = new SudokuSubScene();
-		winSubScene.setLabel("SUDOKU COMPLETATO! \n" + "il tuo tempo e' " + gameManager.getTimerString() );
+		winSubScene.setLabel("SUDOKU COMPLETED! \n" + "your time is " + gameManager.getTimerString() );
 		winSubScene.getLabel().setStyle("-fx-text-fill: Gold;");
+		winSubScene.setLabelLayout(115,30);
 		winSubScene.setLayoutY(127.5);
 		winSubScene.setTransitionCoordinate(-1355, 0);
 

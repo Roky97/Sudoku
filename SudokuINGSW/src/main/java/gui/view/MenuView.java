@@ -11,7 +11,6 @@ import gui.model.*;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import logic.ai.Cell;
 import logic.ai.GameManager;
 import logic.ai.Scanner;
 import javafx.event.ActionEvent;
@@ -39,14 +38,9 @@ public class MenuView extends ViewManager implements IView {
 	private SudokuSubScene scannerSubScene;
 	private SudokuSubScene loadSubScene;
 
-	// Campi da usare per lo scanner
-	private ArrayList<SudokuCell> sudokuCells;
-	private ArrayList<Cell> cells;
-	private String action;
-
 	public MenuView() {
 		stage = new Stage();
-
+		stage.setResizable(false);
 		setMenuButtons(new ArrayList<SudokuButton>());
 		createBackground();
 		createSubScenes();
@@ -88,7 +82,7 @@ public class MenuView extends ViewManager implements IView {
 		loadBtn.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event) {
 				if (gameManager.loadGame()) {
-//					GameView game = new GameView(gameManager.getSudokuCells());
+					System.out.println("load");
 					GameView game = new GameView(gameManager.getStartGrid());
 					game.setDifficulty(gameManager.getDifficulty());
 					game.loadTimer(gameManager.getTimerString());

@@ -34,10 +34,9 @@ public class SudokuGenerator {
 			executable = "lib/dlv.x86-64-linux-elf-static.bin";
 		else
 			executable = "lib/dlvApple.bin";
-
 	}
 
-	public boolean generateSudoku() 
+	public boolean generateSudoku(ArrayList<Cell> generatedCell) 
 	{
 		handler = new DesktopHandler(new DLVDesktopService(executable));
 		
@@ -47,7 +46,7 @@ public class SudokuGenerator {
 		
 		InputProgram facts = new ASPInputProgram();
 		
-		cells = factsGenerator();
+		cells = generatedCell;
 				
 		try {
 			for(Cell cell : cells)
@@ -74,7 +73,7 @@ public class SudokuGenerator {
 						if((obj instanceof Cell)) 
 						{
 							Cell cell = (Cell) obj;
-								cells.add(cell);
+							cells.add(cell);
 						}
 					}
 				} catch (IllegalAccessException e) {
@@ -94,13 +93,12 @@ public class SudokuGenerator {
 		} else {
 			System.out.println("No answer set");
 			cells.clear();
-			generateSudoku();
 		}
 		return false;
 	}
 
 	//inizializzazione casuale di una sottomatrice per avere delle celle da passare come fatti al risolutore
-	private ArrayList<Cell> factsGenerator() 
+	public ArrayList<Cell> factsGenerator() 
 	{
 		ArrayList<Cell> cells = new ArrayList<Cell>();
 		ArrayList<Integer> values = new ArrayList<Integer>();
@@ -128,61 +126,7 @@ public class SudokuGenerator {
 
 	public boolean solveSudoku(ArrayList<Cell> grid) 
 	{
-		handler = new DesktopHandler(new DLVDesktopService(executable));
-		
-		InputProgram encoding = new ASPInputProgram();
-		encoding.addFilesPath(encodingResource);
-		handler.addProgram(encoding);
-		
-		InputProgram facts = new ASPInputProgram();
-				
-		try {
-			for(Cell cell : grid) {
-				System.out.println("cell(" + cell.getRow() + "," + cell.getColumn() + "," + cell.getValue() + ")");
-				facts.addObjectInput(cell);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		handler.addProgram(facts);
-		OptionDescriptor filter = new OptionDescriptor("-n=1 ");
-		handler.addOption(filter);
-		Output out = handler.startSync();
-		AnswerSets answer = (DLVAnswerSets) out;
-
-		if(answer.getAnswersets().size() > 0) 
-		{
-			cells.clear();
-			System.out.println("Answer set find");
-			AnswerSet firstAs = answer.getAnswersets().get(0);
-
-			try {
-				for (Object obj : firstAs.getAtoms()) 
-				{
-					if((obj instanceof Cell)) 
-					{
-						Cell cell = (Cell) obj;
-						cells.add(cell);
-					}
-				}
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			}
-			return true;
-		} else {
-			System.out.println("No answer set");
-		}
-		return false;
+		return generateSudoku(grid);
 	}
+
 }

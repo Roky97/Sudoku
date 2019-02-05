@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.bytedeco.javacpp.indexer.FloatRawIndexer;
@@ -84,6 +85,8 @@ public class Scanner {
 	private AtomicReference<Boolean> start;
 	private AtomicReference<VideoCapture> capture;
 	private CanvasFrame result;
+
+	private GameManager gameManager = new GameManager();
 	
 	public Scanner() {
 		/* Load Pre-trained Network */
@@ -339,7 +342,7 @@ public class Scanner {
 								
 								modifyPanel(puzzle);
 							}
- 					 result.showImage(SudokuSolver.converter.convert(color));
+							result.showImage(SudokuSolver.converter.convert(color));
 						} 
 					}else {
 						// End If sudoku puzzle exists
@@ -362,9 +365,14 @@ public class Scanner {
 				log.error(ex.getMessage());
 			}
 		} // End While !scanComplete
-		playSudokuFromImage();
-		mainframe.setVisible(false);
-		result.setVisible(false);
+		if(gameManager.getSolution(gameManager.parseToCell(sudokuCells))) 
+		{
+			playSudokuFromImage();
+			mainframe.setVisible(false);
+			result.setVisible(false);
+		}else {
+			JOptionPane.showMessageDialog(mainframe,"This Sudoku has no solution!");
+		}
 	}
 	
 	public boolean initGallery(FileChooser chooser) 
@@ -580,8 +588,11 @@ public class Scanner {
 										SudokuSolver.printResult(color, solvedpuz, puz, rects);
 									}
 								} else {
+									createSudokuCellFromImage(puzzle);
+									start.set(false);
+									scanComplete = true;
 									// break to get another image if sudoku is invalid
-									break;
+//									break;
 								}
 								start.set(Boolean.FALSE);
 								modifyPanel(puzzle);
@@ -609,9 +620,14 @@ public class Scanner {
 				log.error(ex.getMessage());
 			}
 		} // End While !scanComplete
-		playSudokuFromImage();
-		mainframe.setVisible(false);
-		result.setVisible(false);
+		if(gameManager.getSolution(gameManager.parseToCell(sudokuCells))) 
+		{
+			playSudokuFromImage();
+			mainframe.setVisible(false);
+			result.setVisible(false);
+		}else {
+			JOptionPane.showMessageDialog(mainframe,"This Sudoku has no solution!");
+		}
 	}
 
 	private void modifyPanel(double[] puzzle) 
@@ -623,7 +639,7 @@ public class Scanner {
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) 
 			{
-				result.setVisible(true);
+				result.setVisible(!result.isVisible());
 			}
 		});
 		JButton playBtn = new JButton("PLAY GAME");
@@ -633,7 +649,7 @@ public class Scanner {
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) 
 			{
-				System.out.println("PLAY");
+				result.setVisible(false);
 				createSudokuCellFromImage(puzzle);
 			}
 		});
@@ -659,8 +675,9 @@ public class Scanner {
 				c = 0;
 			}
 		}
-		if (sudokuCells.size() > 0)
+		if (sudokuCells.size() > 0) {
 			scanComplete = true;
+		}
 	}
 
 	private boolean isMultiple(int i) {

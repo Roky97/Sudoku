@@ -61,7 +61,7 @@ public class GameManager {
 	
 	public void generateSudoku() //Funzione che genera lo schema sudoku su cui giocare.
 	{
-		if(generator.generateSudoku()) 
+		if(generator.generateSudoku(generator.factsGenerator())) 
 		{
 			sudokuCells.clear();
 			grid.clear();
@@ -244,6 +244,7 @@ public class GameManager {
 	          out.writeObject(timerString);
 	          out.close();
 	          fileOut.close();
+	          System.out.println("saved successfull");
 	       } catch (IOException i) {
 	          i.printStackTrace();
 	       }
@@ -257,6 +258,7 @@ public class GameManager {
 			fileIn = new FileInputStream("saves/game.ser");
 			if(fileIn.available() > 0) 
 			{
+				System.out.println("loading..");
 				ObjectInputStream in = new ObjectInputStream(fileIn);
 				this.difficulty = (DIFFICULTY) in.readObject();
 				this.startGrid = (ArrayList<SudokuCell>) in.readObject();
@@ -333,6 +335,7 @@ public class GameManager {
 				if(cell.getRow() == selectedCell.getRow() && 
 						cell.getColumn() == selectedCell.getColumn() &&
 							!cell.isHide()) {
+					System.out.println("presente nella griglia iniziale");
 					this.selectedCell = new SudokuCell();
 					return false;
 				}
@@ -356,7 +359,7 @@ public class GameManager {
 		switch (difficulty)
 		{
 			case EASY:
-				return (rand.nextInt(80-75)+75);
+				return (rand.nextInt(80-79)+79);
 			case NORMAL:
 				return (rand.nextInt(40-35)+35);
 			case HARD:
@@ -374,7 +377,7 @@ public class GameManager {
 	public boolean getSolution(ArrayList<Cell> cells) 
 	{
 		grid = cells;
-		boolean hasSolution = generator.solveSudoku(grid); 
+		boolean hasSolution = generator.solveSudoku(grid);
 		grid = generator.getGrid();
 		return hasSolution;
 	}
