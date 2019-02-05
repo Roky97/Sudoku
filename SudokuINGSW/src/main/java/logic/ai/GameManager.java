@@ -14,6 +14,8 @@ import gui.model.CareTaker;
 import gui.model.DIFFICULTY;
 import gui.model.SudokuCell;
 import gui.model.TimerSudoku;
+import logic.Score;
+import logic.ScoreCollection;
 
 public class GameManager {
 
@@ -31,6 +33,9 @@ public class GameManager {
 	private ArrayList<Point> sameValue; //ArrayList di punti che contiene le coord delle celle che hanno lo stesso valore di un numero che immettiamo e si trovano nella stessa riga,colonna o sottomatrice.
 	private SudokuCell selectedCell; //Rappresente la cella sulla quale clicchiamoo.
 
+	private ScoreCollection scores;
+	private Score actualScore;
+	
 	private TimerSudoku timer;
 	private boolean stopTimer; //Boolean che gestisce l'aggiornamento del timer
 	private boolean alreadyStarted;
@@ -44,6 +49,8 @@ public class GameManager {
 	public GameManager() 
 	{
 		setValue(0);
+		actualScore = new Score();
+		scores = new ScoreCollection();
 		generator = new SudokuGenerator();
 		grid = new ArrayList<Cell>();
 		sudokuCells = new ArrayList<SudokuCell>();
@@ -284,6 +291,20 @@ public class GameManager {
 	/////////////
 	//SET E GET//
 	/////////////
+	
+	public Score getActualScore() {
+		return actualScore;
+	}
+	public void setActialScore(Score s) {
+		actualScore = s;
+		
+	}
+	
+	public TimerSudoku getTimer() {
+		return timer;
+	}
+	
+	public ScoreCollection getScores() {return scores;}
 	
 	public DIFFICULTY getDifficulty() { return this.difficulty; }
 	public void setDifficulty(DIFFICULTY diff) { this.difficulty = diff; }

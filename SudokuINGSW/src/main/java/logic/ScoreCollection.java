@@ -37,7 +37,8 @@ public class ScoreCollection {
 	
 	@Override
 	public String toString() {
-		String text = "";
+		sort();
+		String text = "User \t Diffilcuty \t Time\n";
 		for (Score score : scores) {
 			text += score.toString();	
 		}
@@ -47,6 +48,8 @@ public class ScoreCollection {
 	
 	public boolean isHighScore(Score s) {
 		sort();
+		if(scores.isEmpty())
+			return true;
 		Score temp = scores.get(0);
 		if(temp.getTime().isMinus(s.getTime()))
 		{

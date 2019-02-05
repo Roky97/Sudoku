@@ -44,6 +44,8 @@ public class TimeScored{
 		hours = t.getHours();
 		minutes = t.getMinutes();
 		seconds = t.getSeconds();
+		
+				
 	}
 	
 	
@@ -57,14 +59,21 @@ public class TimeScored{
 		
 		if(hours < 10)
 			stringH = "0" + String.valueOf(hours);
+		else 
+			stringH = String.valueOf(hours);
 		
 		if(minutes < 10)
 			stringM = "0" + String.valueOf(minutes);
+		else
+			stringM = String.valueOf(minutes);
 		
 		if(seconds < 10)
 			stringS = "0" + String.valueOf(seconds);
+		else
+			stringS = String.valueOf(seconds);
 		
 		text = "[" + stringH+ ":" + stringM+":"+stringS+"]";
+		
 		
 		return text;
 		
