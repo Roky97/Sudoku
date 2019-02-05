@@ -902,7 +902,7 @@ public class GameView extends ViewManager implements IView {
 		rankingSubScene.setLabel("RANKING");
 		rankingSubScene.setLayoutY(170);
 		rankingSubScene.getLabel().setStyle("-fx-text-fill : Gold;");
-		rankingSubScene.backgroundSettings(400,400);
+		rankingSubScene.backgroundSettings(400,350);
 		rankingSubScene.setTransitionCoordinate(-1329,0);
 		
 		Label ranking = new Label();
@@ -966,7 +966,7 @@ public class GameView extends ViewManager implements IView {
 			rankingVBox.setAlignment(Pos.CENTER);
 			rankingVBox.getChildren().addAll(rankingSubScene.getButtons());
 			rankingVBox.setLayoutX(100);
-			rankingVBox.setLayoutY(200);
+			rankingVBox.setLayoutY(250);
 			
 			rankingSubScene.setLabelLayout(25,30);
 			rankingSubScene.getPane().getChildren().add(rankingSubScene.getLabel());
