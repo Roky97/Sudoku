@@ -160,7 +160,6 @@ public class GameView extends ViewManager implements IView {
 				{
 					if(sc.checkPosition(c.getRow(), c.getColumn()) && sc.isHide()) 
 					{
-						System.out.println(c.toString());
 						sc.setAssignedValue(c.getAssignedValue());
 					}
 				}
@@ -216,7 +215,7 @@ public class GameView extends ViewManager implements IView {
 			public void handle(ActionEvent event) {
 				removeHighlight();
 				if(gameManager.undoIteration(gameManager.getIteration()-1)) {
-					grid.setCells(gameManager.getCareTaker().get(gameManager.getIteration()).getCells());
+					grid = gameManager.getCareTaker().get(gameManager.getIteration());
 					updateGrid();
 				}
 			}
@@ -231,7 +230,7 @@ public class GameView extends ViewManager implements IView {
 			@Override
 			public void handle(ActionEvent event) {
 				if(gameManager.redoIteration(gameManager.getIteration()+1)) {
-					grid.setCells(gameManager.getCareTaker().get(gameManager.getIteration()).getCells());
+					grid = gameManager.getCareTaker().get(gameManager.getIteration());
 					updateGrid();
 				}
 			}
@@ -1119,6 +1118,9 @@ public class GameView extends ViewManager implements IView {
 
 	private void winnerNotification() 
 	{
+		if(difficulty == null)
+			difficulty = DIFFICULTY.NORMAL;
+		
 		SudokuSubScene winSubScene = new SudokuSubScene();
 		winSubScene.setLabel("SUDOKU COMPLETED! \n" + "your time is " + gameManager.getTimerString() );
 		winSubScene.getLabel().setStyle("-fx-text-fill: Gold;");
@@ -1128,6 +1130,8 @@ public class GameView extends ViewManager implements IView {
 
 		ArrayList<SudokuButton> buttons = new ArrayList<SudokuButton>();
 		SudokuButton restart = new SudokuButton("RESTART");
+		restart.setDifficulty(difficulty);
+		restart.setDifficultyStyle();
 		restart.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -1162,6 +1166,8 @@ public class GameView extends ViewManager implements IView {
 		});
 		buttons.add(restart);
 		SudokuButton newGame = new SudokuButton("NEW GAME");
+		newGame.setDifficulty(difficulty);
+		newGame.setDifficultyStyle();
 		newGame.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -1194,6 +1200,8 @@ public class GameView extends ViewManager implements IView {
 		});
 		buttons.add(newGame);
 		SudokuButton menu = new SudokuButton("BACK TO MENU");
+		menu.setDifficulty(difficulty);
+		menu.setDifficultyStyle();
 		menu.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
