@@ -46,13 +46,13 @@ public class Score implements Comparable<Score>{
 	@Override
 	public String toString() {
 		if(difficulty == DIFFICULTY.EASY)
-			return user + "\t Easy" + "\t" + time + "\n";
+			return user + " \t Easy \t" + time + "\n";
 		
 		if(difficulty == DIFFICULTY.NORMAL)
-			return user + "\t Normal" + "\t" + time + "\n";
+			return user + " \t Normal \t" + time + "\n";
 		
 		if(difficulty == DIFFICULTY.HARD)
-			return user + "\t Hard" + "\t" + time + "\n";
+			return user +  "\t Hard \t" + time + "\n";
 		
 		
 		return "";

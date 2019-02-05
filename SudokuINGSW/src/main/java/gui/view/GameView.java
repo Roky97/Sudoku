@@ -36,6 +36,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import logic.Score;
+import logic.TimeScored;
 import logic.ai.Cell;
 import logic.ai.GameManager;
 
@@ -81,7 +83,7 @@ public class GameView extends ViewManager implements IView {
 		createTimerLabel();//INIZIALIZZA ED IMPOSTA IL LABEL RAPPRESENTANTE IL TIMER
 		createGrid(this.gameManager.getGrid());//CREAZIONE DEL SUDOKU CON LISTA DI CELL PASSATE DAL GAMEMANAGER
 		createSubScene();
-		isBestScore=true;
+		isBestScore=false;
 
 		this.stage.setScene(scene);
 		this.stage.show();
@@ -787,7 +789,8 @@ public class GameView extends ViewManager implements IView {
 		
 		//FINISHGAME SUBSCENE
 		highscoreSubScene = new SudokuSubScene();
-		highscoreSubScene.setLabel("CONGRATULATION" );//VA MESSO LO SCORE
+		highscoreSubScene.setLabel("Congratulation!\nNEW HIGH SCORE!\nDo you want to save the score?" );//VA MESSO LO SCORE
+		
 		highscoreSubScene.setLayoutY(120);
 		highscoreSubScene.getLabel().setStyle("-fx-text-fill : Gold;");
 		highscoreSubScene.backgroundSettings(400,200);
@@ -831,11 +834,6 @@ public class GameView extends ViewManager implements IView {
 					b.setDisable(false);
 				}
 				
-				///////////////////////////////
-				////SALVA LO SCORE/////////////
-				///////////////////////////////
-				
-
 				highscoreSubScene.moveSubScene();
 				createSubScene();
 
@@ -904,8 +902,16 @@ public class GameView extends ViewManager implements IView {
 		rankingSubScene.setLabel("RANKING");
 		rankingSubScene.setLayoutY(170);
 		rankingSubScene.getLabel().setStyle("-fx-text-fill : Gold;");
-		rankingSubScene.backgroundSettings(400,200);
+		rankingSubScene.backgroundSettings(400,400);
 		rankingSubScene.setTransitionCoordinate(-1329,0);
+		
+		Label ranking = new Label();
+		
+		ranking.setLayoutX(50);
+		ranking.setLayoutY(80);
+		
+		ranking.setText(gameManager.getScores().toString());
+		System.out.println(ranking.getText());
 		
 		ArrayList<SudokuButton> rankingButtons = new ArrayList<SudokuButton>();
 		SudokuButton rankingOkButton = new SudokuButton("OK");
@@ -952,6 +958,7 @@ public class GameView extends ViewManager implements IView {
 			
 			rankingButtons.add(rankingOkButton);
 			rankingSubScene.addButtons(rankingButtons);
+			
 
 			VBox rankingVBox = new VBox();
 			
@@ -959,11 +966,12 @@ public class GameView extends ViewManager implements IView {
 			rankingVBox.setAlignment(Pos.CENTER);
 			rankingVBox.getChildren().addAll(rankingSubScene.getButtons());
 			rankingVBox.setLayoutX(100);
-			rankingVBox.setLayoutY(70);
+			rankingVBox.setLayoutY(200);
 			
 			rankingSubScene.setLabelLayout(25,30);
 			rankingSubScene.getPane().getChildren().add(rankingSubScene.getLabel());
 			rankingSubScene.getPane().getChildren().add(rankingVBox);
+			rankingSubScene.getPane().getChildren().add(ranking);
 		
 			pane.getChildren().add(rankingSubScene);
 	
@@ -1005,13 +1013,19 @@ public class GameView extends ViewManager implements IView {
 					//SALVIAMO IL NOME SCRITTO ALL'INTERNO DEL TEXTBOXE//
 					/////////////////////////////////////////////////////						
 							
+					gameManager.getActualScore().setUser(userName);
+					
 					
 					/////////////////////////////////////////
 					//INSERISCI IL PUNTEGGIO NELLA CLASSIFICA//
 					/////////////////////////////////////////
-					insertIdSubScene.moveSubScene();
 					
-					System.out.println(userName);
+					gameManager.getScores().addScore(gameManager.getActualScore());
+					
+					
+					insertIdSubScene.moveSubScene();
+					ranking.setText(gameManager.getScores().toString());
+					
 					rankingSubScene.moveSubScene();
 				}
 			});
@@ -1294,7 +1308,8 @@ public class GameView extends ViewManager implements IView {
 												//CONTROLLO SE IL PUNTEGGIO FATTO È IL MIGLIORE IN CLASSIFICA//
 												///////////////////////////////////////////////////////////////
 												
-												//isBestcore= (bool)migliorPunteggio
+				     						gameManager.setActialScore(new Score("", new TimeScored(gameManager.getTimer()), difficulty)); ;
+											isBestScore = gameManager.getScores().isHighScore(gameManager.getActualScore());
 												
 												if(isBestScore) {
 													isBestScore=false;
@@ -1347,6 +1362,7 @@ public class GameView extends ViewManager implements IView {
 	
 	private void showValue(SudokuCell selectedCell) 
 	{
+		
 		gameManager.getCellWithSameValue().clear();
 		for(SudokuCell cell : grid.getCells())
 		{
@@ -1380,6 +1396,13 @@ public class GameView extends ViewManager implements IView {
 								///////////////////////////////////////////////////////////////
 								//CONTROLLO SE IL PUNTEGGIO FATTO È IL MIGLIORE IN CLASSIFICA//
 								///////////////////////////////////////////////////////////////
+								
+								
+								gameManager.setActialScore(new Score("", new TimeScored(gameManager.getTimer()), difficulty)); ;
+								
+								
+				
+								isBestScore = gameManager.getScores().isHighScore(gameManager.getActualScore());
 								if(isBestScore) {
 									isBestScore=false;
 									highscoreSubScene.moveSubScene();
