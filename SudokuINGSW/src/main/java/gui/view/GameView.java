@@ -30,6 +30,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -864,18 +865,23 @@ public class GameView extends ViewManager implements IView {
 				winnerNotification();
 			}
 		});
+		
+		yesHighScore.setScaleX(0.8);
+		yesHighScore.setScaleY(0.8);
+		noHighScore.setScaleX(0.8);
+		noHighScore.setScaleY(0.8);
+		
 
 		highButtons.add(yesHighScore);
 		highButtons.add(noHighScore);
 		
 		highscoreSubScene.addButtons(highButtons);
 
-		VBox highScoreBox = new VBox();
-		highScoreBox.setSpacing(10);
+		HBox highScoreBox = new HBox();
 		highScoreBox.setAlignment(Pos.CENTER);
 		highScoreBox.getChildren().addAll(highscoreSubScene.getButtons());
-		highScoreBox.setLayoutX(100);
-		highScoreBox.setLayoutY(70);
+		highScoreBox.setLayoutX(10);
+		highScoreBox.setLayoutY(130);
 		
 		
 		
@@ -973,14 +979,13 @@ public class GameView extends ViewManager implements IView {
 			SudokuButton insertButton = new SudokuButton("INSERT");
 			
 	    	TextArea nameTextAria=TextAreaBuilder.create()
-	                .prefWidth(50).prefHeight(50)
+	                .prefWidth(200).prefHeight(10)
 	                .wrapText(true)
 	                .build();
 	    	
-	    	nameTextAria.setLayoutX(100);
-	    	nameTextAria.setLayoutY(100);
-	    	
-			
+	    	nameTextAria.setLayoutX(110);
+	    	nameTextAria.setLayoutY(80);
+	    
 			
 
 			if(difficulty != null) {
@@ -1005,26 +1010,30 @@ public class GameView extends ViewManager implements IView {
 					//INSERISCI IL PUNTEGGIO NELLA CLASSIFICA//
 					/////////////////////////////////////////
 					insertIdSubScene.moveSubScene();
+					
+					System.out.println(userName);
 					rankingSubScene.moveSubScene();
 				}
 			});
 			
 				
+				insertButton.setScaleX(0.8);
+				insertButton.setScaleY(0.8);
 				
 				insertIdButtons.add(insertButton);
 				insertIdSubScene.addButtons(insertIdButtons);
 
 				VBox insertIdBox = new VBox();
-				
-				insertIdBox.setSpacing(10);
-				insertIdBox.setAlignment(Pos.BASELINE_CENTER);
+
+				insertIdBox.setAlignment(Pos.BOTTOM_RIGHT);
 				insertIdBox.getChildren().addAll(insertIdSubScene.getButtons());
-				insertIdBox.setLayoutX(100);
-				insertIdBox.setLayoutY(70);
+				insertIdBox.setLayoutX(110);
+				insertIdBox.setLayoutY(140);
 				
 				insertIdSubScene.setLabelLayout(25,30);
 				insertIdSubScene.getPane().getChildren().add(insertIdSubScene.getLabel());
 				insertIdSubScene.getPane().getChildren().add(insertIdBox);
+				insertIdSubScene.getPane().getChildren().add(nameTextAria);
 			
 				pane.getChildren().add(insertIdSubScene);
 	}
