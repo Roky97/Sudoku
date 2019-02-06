@@ -393,26 +393,27 @@ public class Scanner {
 		result.setLocationRelativeTo(null);;
 		result.setVisible(false);
 		control = new JButton("STOP");// start and pause camera capturing
-		control.addActionListener(new ActionListener() {
+		//control.addActionListener(new ActionListener() {
 			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				control.setText("STOP");
-				panel.removeAll();
-				panel.add(control);
-				panel.repaint();
-				result.setVisible(false);
-				scanComplete = false;
-				start.set(true);
-			}
-		});
+			//@Override
+			//public void actionPerformed(ActionEvent e) {
+				//control.setText("STOP");
+				//panel.removeAll();
+			//	panel.add(control);
+			//	panel.repaint();
+			//	result.setVisible(false);
+			//	scanComplete = false;
+			//	start.set(true);
+		//	}
+		//});
 		panel = new JPanel();
 		panel.setLayout(new FlowLayout());
 		panel.setBackground(Color.WHITE);
-		control.setBackground(new Color(55, 135, 255));
-		control.setForeground(Color.WHITE);
+		//control.setBackground(new Color(55, 135, 255));
+		//control.setForeground(Color.WHITE);
 		
-		panel.add(control);
+		control.setEnabled(false);
+		//panel.add(control);
 		mainframe.add(panel, BorderLayout.SOUTH);
 		mainframe.pack();
 		mainframe.setVisible(true);
@@ -604,7 +605,7 @@ public class Scanner {
 								start.set(Boolean.FALSE);
 								modifyPanel(puzzle);
 							}
-							
+							panel.repaint();
 						} 
 					}else {
 						// End If sudoku puzzle exists
@@ -673,10 +674,11 @@ public class Scanner {
 				createSudokuCellFromImage(puzzle);
 			}
 		});
-		control.setText("REPEAT");
+		//control.setText("REPEAT");
 		panel.add(solutionBtn);
 		panel.add(playBtn);
 		panel.repaint();
+		
 	}
 
 	private void createSudokuCellFromImage(double[] puzzle) 
