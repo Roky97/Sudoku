@@ -2,7 +2,8 @@ package logic;
 
 import gui.model.DIFFICULTY;
 
-public class Score implements Comparable<Score>{
+@SuppressWarnings("serial")
+public class Score implements Comparable<Score> {
 	private String user;
 	private TimeScored time;
 	private DIFFICULTY difficulty;

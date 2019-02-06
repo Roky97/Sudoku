@@ -49,8 +49,10 @@ public class SudokuGenerator {
 		cells = generatedCell;
 				
 		try {
-			for(Cell cell : cells)
+			for(Cell cell : cells) {
+				System.out.println(cell.getRow() + "," + cell.getColumn() + "," + cell.getValue());
 				facts.addObjectInput(cell);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

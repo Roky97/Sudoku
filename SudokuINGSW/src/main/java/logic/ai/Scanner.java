@@ -565,7 +565,7 @@ public class Scanner {
 										Future<Object> solver = (Future<Object>) service.submit(() -> {
 											Sudoku.solve(0, 0, solvedpuz);
 										});
-										System.out.println(solver.get(10, TimeUnit.SECONDS));
+										System.out.println(solver.get(25, TimeUnit.SECONDS));
 									} catch (final TimeoutException e) {
 										log.info("It takes a lot of time to solve, Going to break!!");
 										/* break to get another image if sudoku solution takes more than 5

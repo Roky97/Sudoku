@@ -251,7 +251,6 @@ public class GameManager {
 	          out.writeObject(timerString);
 	          out.close();
 	          fileOut.close();
-	          System.out.println("saved successfull");
 	       } catch (IOException i) {
 	          i.printStackTrace();
 	       }
@@ -265,7 +264,6 @@ public class GameManager {
 			fileIn = new FileInputStream("saves/game.ser");
 			if(fileIn.available() > 0) 
 			{
-				System.out.println("loading..");
 				ObjectInputStream in = new ObjectInputStream(fileIn);
 				this.difficulty = (DIFFICULTY) in.readObject();
 				this.startGrid = (ArrayList<SudokuCell>) in.readObject();
@@ -295,16 +293,17 @@ public class GameManager {
 	public Score getActualScore() {
 		return actualScore;
 	}
-	public void setActialScore(Score s) {
+	public void setActualScore(Score s) {
 		actualScore = s;
-		
 	}
 	
 	public TimerSudoku getTimer() {
 		return timer;
 	}
 	
-	public ScoreCollection getScores() {return scores;}
+	public ScoreCollection getScores() {
+		return scores;
+	}
 	
 	public DIFFICULTY getDifficulty() { return this.difficulty; }
 	public void setDifficulty(DIFFICULTY diff) { this.difficulty = diff; }
@@ -466,4 +465,5 @@ public class GameManager {
 		this.timerString = timer;
 		this.timer.set(timerString);
 	}
+
 }
