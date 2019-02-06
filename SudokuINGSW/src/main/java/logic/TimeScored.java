@@ -2,7 +2,7 @@ package logic;
 
 import gui.model.TimerSudoku;
 
-public class TimeScored{
+public class TimeScored {
 	
 	private int hours;
 	private int minutes; 

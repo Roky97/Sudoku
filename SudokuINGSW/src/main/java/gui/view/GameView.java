@@ -108,7 +108,6 @@ public class GameView extends ViewManager implements IView {
 			loadSavedGame();
 		}
 		else {
-			System.out.println("ELSE");
 			if(gameManager.getSolution(gameManager.parseToCell(sudokuCells)))
 				createGrid(gameManager.getGrid());
 		}
@@ -171,7 +170,6 @@ public class GameView extends ViewManager implements IView {
 				{
 					if(sc.checkPosition(c.getRow(), c.getColumn()) && sc.isHide()) 
 					{
-						System.out.println(c.toString());
 						sc.setAssignedValue(c.getAssignedValue());
 					}
 				}
@@ -227,7 +225,7 @@ public class GameView extends ViewManager implements IView {
 			public void handle(ActionEvent event) {
 				removeHighlight();
 				if(gameManager.undoIteration(gameManager.getIteration()-1)) {
-					grid.setCells(gameManager.getCareTaker().get(gameManager.getIteration()).getCells());
+					grid = gameManager.getCareTaker().get(gameManager.getIteration());
 					updateGrid();
 				}
 			}
@@ -242,7 +240,7 @@ public class GameView extends ViewManager implements IView {
 			@Override
 			public void handle(ActionEvent event) {
 				if(gameManager.redoIteration(gameManager.getIteration()+1)) {
-					grid.setCells(gameManager.getCareTaker().get(gameManager.getIteration()).getCells());
+					grid = gameManager.getCareTaker().get(gameManager.getIteration());
 					updateGrid();
 				}
 			}
@@ -411,11 +409,11 @@ public class GameView extends ViewManager implements IView {
 				if(event.getButton().equals(MouseButton.PRIMARY)) 
 				{
 					saveBtn.setLayoutY(533.0);
-					System.out.println("SAVE");
 					gameManager.saveGame(difficulty, grid.getCells());
-					saveNotification();
 					animationTimer.stop();
 					gameManager.restartTimer();
+					hiddenStage.show();
+					stage.close();
 				}
 			}
 		});
@@ -640,12 +638,10 @@ public class GameView extends ViewManager implements IView {
 		ArrayList<SudokuButton> restartButtons = new ArrayList<SudokuButton>();
 		SudokuButton yesRestart = new SudokuButton("YES");
 		SudokuButton noRestart = new SudokuButton("NO");
-		if(difficulty != null) {
-			yesRestart.setDifficulty(this.difficulty);
-			yesRestart.setDifficultyStyle();
-			noRestart.setDifficulty(this.difficulty);
-			noRestart.setDifficultyStyle();
-		}
+		yesRestart.setDifficulty(this.difficulty);
+		yesRestart.setDifficultyStyle();
+		noRestart.setDifficulty(this.difficulty);
+		noRestart.setDifficultyStyle();
 		yesRestart.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			public void handle(ActionEvent event) 
@@ -789,83 +785,41 @@ public class GameView extends ViewManager implements IView {
 		
 		//FINISHGAME SUBSCENE
 		highscoreSubScene = new SudokuSubScene();
-		highscoreSubScene.setLabel("Congratulation!\nNEW HIGH SCORE!\nDo you want to save the score?" );//VA MESSO LO SCORE
+		highscoreSubScene.setLabel("       CONGRATULATIONS!\n"+
+									"        NEW HIGH SCORE!\n"+
+									"Do you want to save your score?" );//VA MESSO LO SCORE
 		
 		highscoreSubScene.setLayoutY(120);
 		highscoreSubScene.getLabel().setStyle("-fx-text-fill : Gold;");
 		highscoreSubScene.backgroundSettings(400,200);
 		highscoreSubScene.setTransitionCoordinate(-1329,0);
 		
-		
 		ArrayList<SudokuButton> highButtons = new ArrayList<SudokuButton>();
 		SudokuButton yesHighScore = new SudokuButton("YES");
 		SudokuButton noHighScore = new SudokuButton("NO");
-		if(difficulty != null) {
-			yesHighScore.setDifficulty(this.difficulty);
-			yesHighScore.setDifficultyStyle();
-			noHighScore.setDifficulty(this.difficulty);
-			noHighScore.setDifficultyStyle();
-		}
-		
-		
+		yesHighScore.setDifficulty(this.difficulty);
+		yesHighScore.setDifficultyStyle();
 		yesHighScore.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			public void handle(ActionEvent event) 
 			{
-				gameManager.selectedValue(0);
-				gameManager.getCellWithSameValue().clear();
-				removeHighlight();
-
-				ArrayList<SudokuCell> cellToErase = new ArrayList<>();
-				for(Object o : pane.getChildren()) {
-					if(o instanceof SudokuCell)
-						cellToErase.add((SudokuCell) o);
-				}
-				pane.getChildren().removeAll(cellToErase);
-				grid = new SudokuGrid();
-				gameManager.clearCaretaker();
-				grid.setCells(gameManager.getStartGrid());
-
-				gameManager.clearStartGrid();
-				for(NumberButton number : numberButtons) 
-					number.setCont(9);
-				loadGrid();
-				for(SudokuButton b : gameButtons) {
-					b.setDisable(false);
-				}
-				
 				highscoreSubScene.moveSubScene();
-				createSubScene();
-
 				insertIdSubScene.moveSubScene();
-
-				
-				
 			}
 		});
+		yesHighScore.setScaleX(0.8);
+		yesHighScore.setScaleY(0.8);
 		
-		
+		noHighScore.setDifficulty(this.difficulty);
+		noHighScore.setDifficultyStyle();
 		noHighScore.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			public void handle(ActionEvent event) 
 			{
-				for(SudokuCell c : grid.getCells())
-					c.setDisable(!c.isDisable());
-				for(SudokuButton b : gameButtons) {
-					b.setDisable(false);
-				}
-				for(NumberButton n : numberButtons) {
-					if(!n.isEmpty())
-						n.setDisable(!n.isDisable());
-				}
-				
 				highscoreSubScene.moveSubScene();
 				winnerNotification();
 			}
 		});
-		
-		yesHighScore.setScaleX(0.8);
-		yesHighScore.setScaleY(0.8);
 		noHighScore.setScaleX(0.8);
 		noHighScore.setScaleY(0.8);
 		
@@ -881,21 +835,11 @@ public class GameView extends ViewManager implements IView {
 		highScoreBox.setLayoutX(10);
 		highScoreBox.setLayoutY(130);
 		
-		
-		
-//		highscoreSubScene.getPane().getChildren().add(yesHighScore);
-//		highscoreSubScene.getPane().getChildren().add(noHighScore);
 		highscoreSubScene.setLabelLayout(25,30);
 		highscoreSubScene.getPane().getChildren().add(highscoreSubScene.getLabel());
 		highscoreSubScene.getPane().getChildren().add(highScoreBox);
 	
 		pane.getChildren().add(highscoreSubScene);
-		
-
-
-		
-		
-		
 		
 		//RANKING SUBSCENE
 		rankingSubScene = new SudokuSubScene();
@@ -911,145 +855,99 @@ public class GameView extends ViewManager implements IView {
 		ranking.setLayoutY(80);
 		
 		ranking.setText(gameManager.getScores().toString());
-		System.out.println(ranking.getText());
 		
 		ArrayList<SudokuButton> rankingButtons = new ArrayList<SudokuButton>();
 		SudokuButton rankingOkButton = new SudokuButton("OK");
-		
-		
-		if(difficulty != null) {
-			rankingOkButton.setDifficulty(this.difficulty);
-			rankingOkButton.setDifficultyStyle();
-		}
-		
+
+		rankingOkButton.setDifficulty(this.difficulty);
+		rankingOkButton.setDifficultyStyle();
 		rankingOkButton.setOnAction(new EventHandler<ActionEvent>() 
 		{
 			public void handle(ActionEvent event) 
 			{
-				gameManager.selectedValue(0);
-				gameManager.getCellWithSameValue().clear();
-				removeHighlight();
-
-				ArrayList<SudokuCell> cellToErase = new ArrayList<>();
-				for(Object o : pane.getChildren()) {
-					if(o instanceof SudokuCell)
-						cellToErase.add((SudokuCell) o);
-				}
-				pane.getChildren().removeAll(cellToErase);
-				grid = new SudokuGrid();
-				gameManager.clearCaretaker();
-				grid.setCells(gameManager.getStartGrid());
-
-				gameManager.clearStartGrid();
-				for(NumberButton number : numberButtons) 
-					number.setCont(9);
-				loadGrid();
-				for(SudokuButton b : gameButtons) {
-					b.setDisable(false);
-				}
-				
 				rankingSubScene.moveSubScene();
-
 				winnerNotification();
 			}
 		});
+		rankingButtons.add(rankingOkButton);
+		rankingSubScene.addButtons(rankingButtons);
+			
+		VBox rankingVBox = new VBox();
 		
-			
-			
-			rankingButtons.add(rankingOkButton);
-			rankingSubScene.addButtons(rankingButtons);
-			
-
-			VBox rankingVBox = new VBox();
-			
-			rankingVBox.setSpacing(10);
-			rankingVBox.setAlignment(Pos.CENTER);
-			rankingVBox.getChildren().addAll(rankingSubScene.getButtons());
-			rankingVBox.setLayoutX(100);
-			rankingVBox.setLayoutY(250);
-			
-			rankingSubScene.setLabelLayout(25,30);
-			rankingSubScene.getPane().getChildren().add(rankingSubScene.getLabel());
-			rankingSubScene.getPane().getChildren().add(rankingVBox);
-			rankingSubScene.getPane().getChildren().add(ranking);
+		rankingVBox.setSpacing(10);
+		rankingVBox.setAlignment(Pos.CENTER);
+		rankingVBox.getChildren().addAll(rankingSubScene.getButtons());
+		rankingVBox.setLayoutX(100);
+		rankingVBox.setLayoutY(250);
 		
-			pane.getChildren().add(rankingSubScene);
+		rankingSubScene.setLabelLayout(25,30);
+		rankingSubScene.getPane().getChildren().add(rankingSubScene.getLabel());
+		rankingSubScene.getPane().getChildren().add(rankingVBox);
+		rankingSubScene.getPane().getChildren().add(ranking);
 	
-			//insertID SUBSCENE
-			insertIdSubScene = new SudokuSubScene();
-			insertIdSubScene.setLabel("INSERISCI IL TUO NOME: ");
-			insertIdSubScene.setLayoutY(170);
-			insertIdSubScene.getLabel().setStyle("-fx-text-fill : Gold;");
-			insertIdSubScene.backgroundSettings(400,200);
-			insertIdSubScene.setTransitionCoordinate(-1329,0);
-			
-			ArrayList<SudokuButton> insertIdButtons = new ArrayList<SudokuButton>();
-			SudokuButton insertButton = new SudokuButton("INSERT");
-			
-	    	TextArea nameTextAria=TextAreaBuilder.create()
-	                .prefWidth(200).prefHeight(10)
-	                .wrapText(true)
-	                .build();
-	    	
-	    	nameTextAria.setLayoutX(110);
-	    	nameTextAria.setLayoutY(80);
-	    
-			
+		pane.getChildren().add(rankingSubScene);
 
-			if(difficulty != null) {
-				insertButton.setDifficulty(this.difficulty);
-				insertButton.setDifficultyStyle();
-			}
-			
-			insertButton.setOnAction(new EventHandler<ActionEvent>() 
+		//insertID SUBSCENE
+		insertIdSubScene = new SudokuSubScene();
+		insertIdSubScene.setLabel("INSERT YOUR NAME: ");
+		insertIdSubScene.setLayoutY(170);
+		insertIdSubScene.getLabel().setStyle("-fx-text-fill : Gold;");
+		insertIdSubScene.backgroundSettings(400,200);
+		insertIdSubScene.setTransitionCoordinate(-1329,0);
+		
+		ArrayList<SudokuButton> insertIdButtons = new ArrayList<SudokuButton>();
+		SudokuButton insertButton = new SudokuButton("INSERT");
+		
+    	TextArea nameTextAria=TextAreaBuilder.create()
+                .prefWidth(200).prefHeight(10)
+                .wrapText(true)
+                .build();
+    	
+    	nameTextAria.setLayoutX(110);
+    	nameTextAria.setLayoutY(80);
+
+		insertButton.setDifficulty(this.difficulty);
+		insertButton.setDifficultyStyle();
+		insertButton.setOnAction(new EventHandler<ActionEvent>() 
+		{
+			public void handle(ActionEvent event) 
 			{
-				public void handle(ActionEvent event) 
-				{
-
-					
-					userName=nameTextAria.getText();
-					
-					/////////////////////////////////////////////////////
-					//SALVIAMO IL NOME SCRITTO ALL'INTERNO DEL TEXTBOXE//
-					/////////////////////////////////////////////////////						
-							
-					gameManager.getActualScore().setUser(userName);
-					
-					
-					/////////////////////////////////////////
-					//INSERISCI IL PUNTEGGIO NELLA CLASSIFICA//
-					/////////////////////////////////////////
-					
-					gameManager.getScores().addScore(gameManager.getActualScore());
-					
-					
-					insertIdSubScene.moveSubScene();
-					ranking.setText(gameManager.getScores().toString());
-					
-					rankingSubScene.moveSubScene();
-				}
-			});
-			
+				userName = nameTextAria.getText();
+				/////////////////////////////////////////////////////
+				//SALVIAMO IL NOME SCRITTO ALL'INTERNO DEL TEXTBOXE//
+				/////////////////////////////////////////////////////						
+				gameManager.getActualScore().setUser(userName);
+				/////////////////////////////////////////
+				//INSERISCI IL PUNTEGGIO NELLA CLASSIFICA//
+				/////////////////////////////////////////
+				gameManager.getScores().addScore(gameManager.getActualScore());
 				
-				insertButton.setScaleX(0.8);
-				insertButton.setScaleY(0.8);
+				insertIdSubScene.moveSubScene();
+				ranking.setText(gameManager.getScores().toString());
 				
-				insertIdButtons.add(insertButton);
-				insertIdSubScene.addButtons(insertIdButtons);
+				rankingSubScene.moveSubScene();
+			}
+		});
+						
+		insertButton.setScaleX(0.8);
+		insertButton.setScaleY(0.8);
+		
+		insertIdButtons.add(insertButton);
+		insertIdSubScene.addButtons(insertIdButtons);
 
-				VBox insertIdBox = new VBox();
+		VBox insertIdBox = new VBox();
 
-				insertIdBox.setAlignment(Pos.BOTTOM_RIGHT);
-				insertIdBox.getChildren().addAll(insertIdSubScene.getButtons());
-				insertIdBox.setLayoutX(110);
-				insertIdBox.setLayoutY(140);
-				
-				insertIdSubScene.setLabelLayout(25,30);
-				insertIdSubScene.getPane().getChildren().add(insertIdSubScene.getLabel());
-				insertIdSubScene.getPane().getChildren().add(insertIdBox);
-				insertIdSubScene.getPane().getChildren().add(nameTextAria);
-			
-				pane.getChildren().add(insertIdSubScene);
+		insertIdBox.setAlignment(Pos.BOTTOM_RIGHT);
+		insertIdBox.getChildren().addAll(insertIdSubScene.getButtons());
+		insertIdBox.setLayoutX(110);
+		insertIdBox.setLayoutY(140);
+		
+		insertIdSubScene.setLabelLayout(25,30);
+		insertIdSubScene.getPane().getChildren().add(insertIdSubScene.getLabel());
+		insertIdSubScene.getPane().getChildren().add(insertIdBox);
+		insertIdSubScene.getPane().getChildren().add(nameTextAria);
+	
+		pane.getChildren().add(insertIdSubScene);
 	}
 
 	private void createGrid(ArrayList<Cell> cells) 
@@ -1303,15 +1201,9 @@ public class GameView extends ViewManager implements IView {
 										gameManager.setValue(0);
 				     					 if(gameManager.getHideCells() == 0) 
 											{
-												
-												///////////////////////////////////////////////////////////////
 												//CONTROLLO SE IL PUNTEGGIO FATTO È IL MIGLIORE IN CLASSIFICA//
-												///////////////////////////////////////////////////////////////
-												
-				     						gameManager.setActialScore(new Score("", new TimeScored(gameManager.getTimer()), difficulty)); ;
-											isBestScore = gameManager.getScores().isHighScore(gameManager.getActualScore());
-												
-												if(isBestScore) {
+				     						 	gameManager.setActualScore(new Score("", new TimeScored(gameManager.getTimer()), difficulty)); ;
+												if(gameManager.getScores().isHighScore(gameManager.getActualScore())) {
 													isBestScore=false;
 													highscoreSubScene.moveSubScene();
 												}
@@ -1362,7 +1254,6 @@ public class GameView extends ViewManager implements IView {
 	
 	private void showValue(SudokuCell selectedCell) 
 	{
-		
 		gameManager.getCellWithSameValue().clear();
 		for(SudokuCell cell : grid.getCells())
 		{
@@ -1392,19 +1283,14 @@ public class GameView extends ViewManager implements IView {
 						{
 							if(gameManager.getHideCells() == 0) 
 							{
-								
-								///////////////////////////////////////////////////////////////
 								//CONTROLLO SE IL PUNTEGGIO FATTO È IL MIGLIORE IN CLASSIFICA//
-								///////////////////////////////////////////////////////////////
-								
-								
-								gameManager.setActialScore(new Score("", new TimeScored(gameManager.getTimer()), difficulty)); ;
-								
-								
-				
-								isBestScore = gameManager.getScores().isHighScore(gameManager.getActualScore());
-								if(isBestScore) {
-									isBestScore=false;
+								gameManager.setActualScore(new Score("", new TimeScored(gameManager.getTimer()), difficulty)); ;
+								if(gameManager.getScores().isHighScore(gameManager.getActualScore())) 
+								{
+									for(SudokuCell c : grid.getCells())
+										c.setDisable(true);
+									
+									isBestScore = false;
 									highscoreSubScene.moveSubScene();
 								}
 								else {
@@ -1429,6 +1315,9 @@ public class GameView extends ViewManager implements IView {
 
 	private void winnerNotification() 
 	{
+		if(difficulty == null)
+			difficulty = DIFFICULTY.NORMAL;
+		
 		SudokuSubScene winSubScene = new SudokuSubScene();
 		winSubScene.setLabel("SUDOKU COMPLETED! \n" + "your time is " + gameManager.getTimerString() );
 		winSubScene.getLabel().setStyle("-fx-text-fill: Gold;");
@@ -1438,6 +1327,8 @@ public class GameView extends ViewManager implements IView {
 
 		ArrayList<SudokuButton> buttons = new ArrayList<SudokuButton>();
 		SudokuButton restart = new SudokuButton("RESTART");
+		restart.setDifficulty(difficulty);
+		restart.setDifficultyStyle();
 		restart.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -1472,6 +1363,8 @@ public class GameView extends ViewManager implements IView {
 		});
 		buttons.add(restart);
 		SudokuButton newGame = new SudokuButton("NEW GAME");
+		newGame.setDifficulty(difficulty);
+		newGame.setDifficultyStyle();
 		newGame.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -1504,6 +1397,8 @@ public class GameView extends ViewManager implements IView {
 		});
 		buttons.add(newGame);
 		SudokuButton menu = new SudokuButton("BACK TO MENU");
+		menu.setDifficulty(difficulty);
+		menu.setDifficultyStyle();
 		menu.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -1532,34 +1427,6 @@ public class GameView extends ViewManager implements IView {
 		for(SudokuButton button : gameButtons) {
 			button.setDisable(true);
 		}
-	}
-
-	private void saveNotification() 
-	{
-		SudokuSubScene saveSubScene = new SudokuSubScene();
-		
-		saveSubScene = new SudokuSubScene();
-		saveSubScene.setLabel("SAVED GAME !");
-		saveSubScene.setLabelLayout(21, 35);
-		saveSubScene.setLayout(1522, 252);
-		saveSubScene.getLabel().setStyle("-fx-text-fill : Gold;");
-		saveSubScene.backgroundSettings(200, 100);
-		saveSubScene.setTransitionCoordinate(-1250, 0);
-		saveSubScene.getPane().getChildren().add(saveSubScene.getLabel());
-
-		pane.getChildren().add(saveSubScene);
-		
-		for(SudokuButton button : gameButtons)
-			button.setDisable(true);
-		for(SudokuCell c : grid.getCells())
-			c.setDisable(true);
-		for(NumberButton n : numberButtons)
-			n.setDisable(true);
-
-		saveSubScene.moveSubScene();
-
-		hiddenStage.show();
-		stage.close();
 	}
 	
 	public void setGameManager(GameManager gameManager) { this.gameManager = gameManager; }
