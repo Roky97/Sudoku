@@ -225,7 +225,7 @@ public class MenuView extends ViewManager implements IView {
 				if(selectedFile != null) {
 					Mat colorimg = OpenCVUtilsJava.loadOrExit(selectedFile);
 					Scanner scanner = new Scanner();
-				    scanner.initGallery(fileChooser);
+				    scanner.initGallery();
 					scanner.manageDisplayTransition(stage);
 					scanner.startScanning(colorimg);
 				}

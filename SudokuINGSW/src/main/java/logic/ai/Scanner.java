@@ -81,11 +81,12 @@ public class Scanner {
 	private JButton control;
 	private Mat colorimg ;
 	private boolean scanComplete;
-
+    private Mat color;
 	private AtomicReference<Boolean> start;
 	private AtomicReference<VideoCapture> capture;
 	private CanvasFrame result;
-
+	private boolean in=true;
+    private boolean selected=false;
 	private GameManager gameManager = new GameManager();
 	
 	public Scanner() {
@@ -99,6 +100,7 @@ public class Scanner {
 	
 	public boolean enableCamera() 
 	{
+		in=true;
 		capture = new AtomicReference<VideoCapture>(new VideoCapture());
 		capture.get().set(CV_CAP_PROP_FRAME_WIDTH, 1280);
 		capture.get().set(CV_CAP_PROP_FRAME_HEIGHT, 720);
@@ -375,8 +377,9 @@ public class Scanner {
 		}
 	}
 	
-	public boolean initGallery(FileChooser chooser) 
+	public boolean initGallery() 
 	{
+		in=false;
 		start = new AtomicReference<Boolean>(true);
 
 		mainframe = new CanvasFrame("SCANNER");
@@ -442,7 +445,7 @@ public class Scanner {
 					Rect r = SudokuSolver.getLargestRect(binimg);
 					Mat procimg = SudokuSolver.warpPrespectivePuzzle(binimg.clone());
 
-					Mat color = new Mat(colorimg);
+					color = new Mat(colorimg);
 					if (SudokuSolver.isSudokuExist(binimg)) 
 					{
 						// IL SUDOKU VIENE RICONOSCIUTO NELL'INQUADRATURA
@@ -565,7 +568,7 @@ public class Scanner {
 										Future<Object> solver = (Future<Object>) service.submit(() -> {
 											Sudoku.solve(0, 0, solvedpuz);
 										});
-										System.out.println(solver.get(10, TimeUnit.SECONDS));
+										System.out.println(solver.get(50, TimeUnit.SECONDS));
 									} catch (final TimeoutException e) {
 										log.info("It takes a lot of time to solve, Going to break!!");
 										/* break to get another image if sudoku solution takes more than 5
@@ -588,16 +591,16 @@ public class Scanner {
 										SudokuSolver.printResult(color, solvedpuz, puz, rects);
 									}
 								} else {
-									createSudokuCellFromImage(puzzle);
-									start.set(false);
-									scanComplete = true;
+									//createSudokuCellFromImage(puzzle);
+									//start.set(false);
+									//scanComplete = true;
 									// break to get another image if sudoku is invalid
-//									break;
+									break;
 								}
 								start.set(Boolean.FALSE);
 								modifyPanel(puzzle);
 							}
-							result.showImage(SudokuSolver.converter.convert(color));
+							
 						} 
 					}else {
 						// End If sudoku puzzle exists
@@ -620,14 +623,17 @@ public class Scanner {
 				log.error(ex.getMessage());
 			}
 		} // End While !scanComplete
-		if(gameManager.getSolution(gameManager.parseToCell(sudokuCells))) 
+		playSudokuFromImage();
+		mainframe.setVisible(false);
+		result.setVisible(false);
+		/*if(gameManager.getSolution(gameManager.parseToCell(sudokuCells))) 
 		{
 			playSudokuFromImage();
 			mainframe.setVisible(false);
 			result.setVisible(false);
 		}else {
 			JOptionPane.showMessageDialog(mainframe,"This Sudoku has no solution!");
-		}
+		}*/
 	}
 
 	private void modifyPanel(double[] puzzle) 
@@ -639,7 +645,17 @@ public class Scanner {
 			@Override
 			public void actionPerformed(java.awt.event.ActionEvent e) 
 			{
-				result.setVisible(!result.isVisible());
+				if(in)result.setVisible(!result.isVisible());
+				else{
+					if(!selected) {
+						mainframe.showImage(SudokuSolver.converter.convert(color));
+						selected=true;
+					}
+					else {
+						mainframe.showImage(SudokuSolver.converter.convert(colorimg));
+						selected=false;
+					}
+				}
 			}
 		});
 		JButton playBtn = new JButton("PLAY GAME");
